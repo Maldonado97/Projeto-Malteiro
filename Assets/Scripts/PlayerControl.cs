@@ -5,13 +5,16 @@ using UnityEngine;
 public class PlayerControl : MonoBehaviour
 {
     private Rigidbody2D playerRB;
+    private float shipHeading;
     public float forwardImpulse;
     public float turnTorque;
-    private float shipHeading;
+    [Tooltip("Change this before running the game.")]
+    public Vector2 centerOfMass;
     // Start is called before the first frame update
     void Start()
     {
         playerRB = gameObject.GetComponent<Rigidbody2D>();
+        playerRB.centerOfMass = centerOfMass;
     }
 
     // Update is called once per frame
@@ -19,7 +22,6 @@ public class PlayerControl : MonoBehaviour
     {
         MovePlayer();
         GetShipHeading();
-        //Debug.Log(GetShipSpeed());
     }
     void MovePlayer()
     {

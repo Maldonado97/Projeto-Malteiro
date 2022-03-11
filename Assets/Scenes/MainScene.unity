@@ -757,6 +757,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 2076127529}
+  positionLerpAlfa: 0.01
+  rotationLerpAlfa: 0.009
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -3608,7 +3610,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   forwardImpulse: 2
-  turnTorque: 0.1
+  turnTorque: 0.15
+  centerOfMass: {x: 0, y: -0.42}
 --- !u!1 &2085258441
 GameObject:
   m_ObjectHideFlags: 0
