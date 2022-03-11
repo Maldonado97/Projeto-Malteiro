@@ -37,7 +37,7 @@ public class PlayerControl : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.S))
         {
-            playerRB.AddRelativeForce(-Vector2.up * forwardImpulse * Time.deltaTime, ForceMode2D.Impulse);
+            playerRB.AddRelativeForce(-Vector2.up * (forwardImpulse/2) * Time.deltaTime, ForceMode2D.Impulse);
         }
     }
     void GetShipHeading()
