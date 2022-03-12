@@ -757,7 +757,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 2076127529}
-  positionLerpAlfa: 0.01
+  positionDeadZoneMax: 2
+  positionDeadZoneMin: 0.2
+  rotationDeadZoneMax: 20
+  rotationDeadZoneMin: 1
+  positionLerpAlfa: 0.015
   rotationLerpAlfa: 0.009
 --- !u!20 &519420031
 Camera:
@@ -3609,6 +3613,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3886273c7508504cb75a9989e885479, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shipHeading: 0
   forwardImpulse: 2
   turnTorque: 0.15
   centerOfMass: {x: 0, y: -0.42}
