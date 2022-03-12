@@ -6,16 +6,24 @@ public class CameraControl : MonoBehaviour
 {
     [Tooltip("Determines what the camera will follow (Should be player).")]
     [SerializeField] GameObject target;
-    [Header("Zoom Settings")]
+
+    [Header("Camera Dynamic Zoom Settings")]
     [SerializeField] float defaultZoom;
-    [Header("Deadzone settings")]
+    [Tooltip("Determines how much the camera will zoom out with the target's speed.")]
+    [SerializeField] float zoomDistortionIntensity;
+    [Tooltip("Determines how aggressively the camera will zoom out with the target's speed.")]
+    [SerializeField] float zoomDistortionSensitivity;
+    [Tooltip("Determines the minimum target speed that will trigger the camera zoom distortion.")]
+    [SerializeField] float zoomDistortionTriggerSpeed;
+
+    [Header("Camera Movement Deadzone settings")]
     [Tooltip("Determines max distance between the target and the camera before the camera begins" +
         " moving.")]
     [SerializeField] float positionDeadZoneMax; //Ideal = 2
     [Tooltip("Determines at which distance from the target the camera should stop moving.")]
     [SerializeField] float positionDeadZoneMin; //Ideal = 0.2
-    [SerializeField] float rotationDeadZoneMax;
-    [SerializeField] float rotationDeadZoneMin;
+    [SerializeField] float rotationDeadZoneMax; //Ideal = 20
+    [SerializeField] float rotationDeadZoneMin; //Ideal = 1
     [Header("Lerp settings")]
     [Tooltip("Determines how fast the camera will follow the player.")]
     [SerializeField] float positionLerpAlfa; //Ideal = 0.015f
@@ -26,8 +34,11 @@ public class CameraControl : MonoBehaviour
     private Camera cameraComponent;
     private float targetXPos;
     private float targetYPos;
+    private float cameraHeading;
+    private float targetHeading;
     private bool positionDeadZoneEnabled;
     private bool rotationDeadZoneEnabled;
+    private bool cameraDistortionDeadzoneEnabled;
 
     void Start()
     {
@@ -35,11 +46,11 @@ public class CameraControl : MonoBehaviour
     }
     void FixedUpdate()
     {
-        Debug.Log(AngularDistance());
+        Debug.Log(GetTargetSpeed());
         GetTargetPosition();
         SetCameraDestination();
         MoveAndRotateCamera();
-        //ChangeCameraZoom();
+        DistortCameraZoom();
     }
     void GetTargetPosition()
     {
@@ -62,9 +73,18 @@ public class CameraControl : MonoBehaviour
             transform.rotation = Quaternion.Lerp(transform.rotation, target.transform.rotation, rotationLerpAlfa);
         }
     }
-    void ChangeCameraZoom()
+    void DistortCameraZoom()
     {
-        cameraComponent.orthographicSize = defaultZoom + PlayerControl.instance.GetShipSpeed();
+        var distortedZoom = defaultZoom + GetTargetSpeed() * zoomDistortionIntensity;
+
+        if(GetTargetSpeed() > zoomDistortionTriggerSpeed)
+        {
+            cameraComponent.orthographicSize = Mathf.Lerp(cameraComponent.orthographicSize, distortedZoom, zoomDistortionSensitivity);
+        }
+        else
+        {
+            cameraComponent.orthographicSize = Mathf.Lerp(cameraComponent.orthographicSize, defaultZoom, zoomDistortionSensitivity);
+        }
     }
     bool PositionDeadZoneCheck()
     {
@@ -102,8 +122,6 @@ public class CameraControl : MonoBehaviour
     float AngularDistance()
     {
         float angularDistance;
-        float cameraHeading;
-        float targetHeading;
 
         cameraHeading = 360 - transform.eulerAngles.z;
         targetHeading = 360 - target.transform.eulerAngles.z;
@@ -113,5 +131,21 @@ public class CameraControl : MonoBehaviour
             angularDistance = 360 - angularDistance;
         }
         return angularDistance;
+    }
+    public float GetTargetSpeed()
+    {
+        float forwardSpeed;
+        float xSpeed;
+        float ySpeed;
+        float headingRad;
+        var targetRB = target.GetComponent<Rigidbody2D>();
+
+        xSpeed = targetRB.velocity.x;
+        ySpeed = targetRB.velocity.y;
+        headingRad = Mathf.Deg2Rad * targetHeading;
+        forwardSpeed = (xSpeed * Mathf.Sin(headingRad)) + (ySpeed * Mathf.Cos(headingRad));
+
+
+        return forwardSpeed;
     }
 }

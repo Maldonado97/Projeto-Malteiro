@@ -757,6 +757,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 2076127529}
+  defaultZoom: 5
+  zoomDistortionIntensity: 2
+  zoomDistortionSensitivity: 0.01
+  zoomDistortionTriggerSpeed: 1
   positionDeadZoneMax: 2
   positionDeadZoneMin: 0.2
   rotationDeadZoneMax: 20
