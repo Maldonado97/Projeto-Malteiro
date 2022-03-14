@@ -48,7 +48,6 @@ public class PlayerControl : MonoBehaviour
     void GetShipHeading()
     {
         shipHeading = 360 - transform.eulerAngles.z;
-        //Debug.Log(Mathf.Sin(shipHeading));
     }
     public float GetShipSpeed()
     {

@@ -46,7 +46,6 @@ public class CameraControl : MonoBehaviour
     }
     void FixedUpdate()
     {
-        Debug.Log(GetTargetSpeed());
         GetTargetPosition();
         SetCameraDestination();
         MoveAndRotateCamera();
