@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerControl : MonoBehaviour
+public class ShipControl : MonoBehaviour
 {
-    public static PlayerControl instance;
+    public static ShipControl instance;
 
     private Rigidbody2D playerRB;
     [HideInInspector] public float shipHeading;
