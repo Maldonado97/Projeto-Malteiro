@@ -4,14 +4,20 @@ using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {
+    public static PlayerControl instance;
+
     private Rigidbody2D playerRB;
-    public float forwardImpulse;
-    public float turnTorque;
-    private float shipHeading;
+    [HideInInspector] public float shipHeading;
+    [SerializeField] float forwardImpulse;
+    [SerializeField] float turnTorque;
+    [Tooltip("Change this before running the game.")]
+    [SerializeField] Vector2 centerOfMass;
     // Start is called before the first frame update
     void Start()
     {
+        instance = this;
         playerRB = gameObject.GetComponent<Rigidbody2D>();
+        playerRB.centerOfMass = centerOfMass;
     }
 
     // Update is called once per frame
@@ -19,7 +25,6 @@ public class PlayerControl : MonoBehaviour
     {
         MovePlayer();
         GetShipHeading();
-        //Debug.Log(GetShipSpeed());
     }
     void MovePlayer()
     {
@@ -43,9 +48,8 @@ public class PlayerControl : MonoBehaviour
     void GetShipHeading()
     {
         shipHeading = 360 - transform.eulerAngles.z;
-        //Debug.Log(Mathf.Sin(shipHeading));
     }
-    float GetShipSpeed()
+    public float GetShipSpeed()
     {
         float forwardSpeed;
         float xSpeed;
