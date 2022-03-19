@@ -21,7 +21,6 @@ public class DynamicWaterSplash : MonoBehaviour
     void Update()
     {
         var waterSplashEmisssion = waterSplash.emission;
-        Debug.Log(attatchedShipHeading);
         waterSplashEmisssion.rateOverTime = GetShipSpeed() * 10;
     }
     public float GetShipSpeed()
