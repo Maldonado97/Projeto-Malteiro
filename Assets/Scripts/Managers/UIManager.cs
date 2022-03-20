@@ -10,7 +10,11 @@ public class UIManager : MonoBehaviour
     private TextMeshProUGUI headingIndicatorText;
     [Header("Pause Menu")]
     [SerializeField] GameObject pauseMenu;
+    [Header("Player Menu")]
+    [SerializeField] GameObject playerMenu;
+
     private bool pauseMenuOpen;
+    private bool playerMenuOpen;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,28 +26,41 @@ public class UIManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (!pauseMenuOpen)
-            {
-                OpenPauseMenu();
-            }
-            else
-            {
-                ClosePauseMenu();
-            }
+            TogglePauseMenu();
+        }
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            TogglePlayerMenu();
         }
     }
     public void UpdateHUD()
     {
         headingIndicatorText.text = "Heading:" + Mathf.RoundToInt(ShipControl.instance.shipHeading);
     }
-    public void OpenPauseMenu()
+    public void TogglePauseMenu()
     {
-        pauseMenu.SetActive(true);
-        pauseMenuOpen = true;
+        if (!pauseMenuOpen)
+        {
+            pauseMenu.SetActive(true);
+            pauseMenuOpen = true;
+        }
+        else
+        {
+            pauseMenu.SetActive(false);
+            pauseMenuOpen = false;
+        }
     }
-    public void ClosePauseMenu()
+    public void TogglePlayerMenu()
     {
-        pauseMenu.SetActive(false);
-        pauseMenuOpen = false;
+        if (!playerMenuOpen)
+        {
+            playerMenu.SetActive(true);
+            playerMenuOpen = true;
+        }
+        else
+        {
+            playerMenu.SetActive(false);
+            playerMenuOpen = false;
+        }
     }
 }
