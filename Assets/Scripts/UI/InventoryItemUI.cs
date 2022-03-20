@@ -8,12 +8,15 @@ public class InventoryItemUI : CustomButton
 {
     [SerializeField] Color highlightedCellColor;
     [SerializeField] Color defaultCellColor;
-    [SerializeField] TextMeshProUGUI itemName;
-    [SerializeField] TextMeshProUGUI itemAmount;
+    [SerializeField] TextMeshProUGUI itemNameTM;
+    [SerializeField] TextMeshProUGUI itemAmountTM;
     private Image cell;
+    private int orderInList;
     private void Start()
     {
         cell = gameObject.GetComponent<Image>();
+        orderInList = transform.GetSiblingIndex();
+        Debug.Log(orderInList);
     }
     public void HighlightCell()
     {
@@ -25,7 +28,7 @@ public class InventoryItemUI : CustomButton
     }
     public void Test()
     {
-        itemName.text = "Coke";
-        itemAmount.text = "1000";
+        itemNameTM.text = "Coke";
+        itemAmountTM.text = "1000";
     }
 }
