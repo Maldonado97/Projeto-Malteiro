@@ -8,6 +8,7 @@ public class PlayerMenuInventoryScreenManager : MonoBehaviour
 {
     public static PlayerMenuInventoryScreenManager instance;
 
+    private GameItemDictionary gameItemDictionary;
     public GameObject inventoryItemUI;
     [Tooltip("Where the inventoryItemUI should spawn.")]
     public GameObject inventoryItemUIParent;
@@ -16,14 +17,52 @@ public class PlayerMenuInventoryScreenManager : MonoBehaviour
     public TextMeshProUGUI itemWeightTM;
     public TextMeshProUGUI itemValueTM;
 
-    public event Action onItemSelected;
+    [HideInInspector] public List<InventoryItemUI> inventoryItems;
+
+    public event Action onNewItemSelected;
     private void Start()
     {
         instance = this;
+
+        gameItemDictionary = GameItemDictionary.instance; //COULD BREAK CODE
     }
     public void CreateItemUI()
     {
         Instantiate(inventoryItemUI, inventoryItemUIParent.transform);
+    }
+    public void SubscribeItemUI(InventoryItemUI inventoryItem)
+    {
+        if(inventoryItems == null)
+        {
+            inventoryItems = new List<InventoryItemUI>();
+        }
+        inventoryItems.Add(inventoryItem);
+    }
+    public void UnsubscribeItemUI(InventoryItemUI inventoryItem)
+    {
+        inventoryItems.Remove(inventoryItem);
+    }
+    public void OnInventoryItemEnter(InventoryItemUI inventoryItem)
+    {
+
+    }
+    public void OnInventoryItemExit(InventoryItemUI inventoryItem)
+    {
+
+    }
+    public void OnInventoryItemSelected(InventoryItemUI inventoryItem)
+    {
+        var inventoryItemUIScript = inventoryItem.GetComponent<InventoryItemUI>();
+        var GID = gameItemDictionary;
+        int selectedItemID;
+
+        SelectNewInventoryItem();
+        inventoryItemUIScript.SelectThisItem();
+        selectedItemID = inventoryItemUIScript.myitemID;
+    }
+    public void SelectNewInventoryItem()
+    {
+        onNewItemSelected?.Invoke();
     }
     public void DisplayItemDescription(string itemDescription, float itemWeight, float itemValue)
     {

@@ -7,6 +7,7 @@ public class GameItemDictionary : MonoBehaviour
     public static GameItemDictionary instance;
 
     public List<string> gameItemNames = new List<string>();
+    public List<string> gameItemDescriptions = new List<string>();
     public List<float> gameItemValues = new List<float>();
     public List<float> gameItemWeights = new List<float>();
     private void Start()
@@ -14,10 +15,13 @@ public class GameItemDictionary : MonoBehaviour
         instance = this;
         //ID:0, Cake, value: 10, weight: 1.5
         gameItemNames.Add("Cake");
+        gameItemDescriptions.Add("Probably just a lie.");
         gameItemValues.Add(10f);
         gameItemWeights.Add(1.5f);
         //ID:1, Contraband, value: 50, weight: 17
         gameItemNames.Add("Contraband");
+        gameItemDescriptions.Add("Worth a lot for some reason, just try not to ask too many questions, " +
+            "and definitely don't get caught with it.");
         gameItemValues.Add(50f);
         gameItemWeights.Add(17f);
         //ID:2, Empty Crate, value: 5, weight: 5

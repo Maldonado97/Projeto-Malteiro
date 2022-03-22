@@ -9,17 +9,17 @@ public abstract class CustomButton : MonoBehaviour, IPointerClickHandler, IPoint
     public UnityEvent onPointerEnter;
     public UnityEvent onPointerExit;
     public UnityEvent onPointerClick;
-    public void OnPointerClick(PointerEventData eventData)
+    public virtual void OnPointerClick(PointerEventData eventData)
     {
         onPointerClick.Invoke();
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    public virtual void OnPointerEnter(PointerEventData eventData)
     {
         onPointerEnter.Invoke();
     }
 
-    public void OnPointerExit(PointerEventData eventData)
+    public virtual void OnPointerExit(PointerEventData eventData)
     {
         onPointerExit.Invoke();
     }

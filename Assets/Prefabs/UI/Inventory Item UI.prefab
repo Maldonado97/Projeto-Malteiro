@@ -241,49 +241,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onPointerEnter:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7421386640920029772}
-        m_TargetAssemblyTypeName: InventoryItemUI, Assembly-CSharp
-        m_MethodName: HighlightCell
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   onPointerExit:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7421386640920029772}
-        m_TargetAssemblyTypeName: InventoryItemUI, Assembly-CSharp
-        m_MethodName: ResetCell
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   onPointerClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7421386640920029772}
-        m_TargetAssemblyTypeName: InventoryItemUI, Assembly-CSharp
-        m_MethodName: Test
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
+  inventoryScreenManager: {fileID: 0}
+  inventoryManager: {fileID: 0}
   highlightedCellColor: {r: 0.34117648, g: 0.39607844, b: 0.45490196, a: 0.78431374}
   defaultCellColor: {r: 0.34117648, g: 0.39607847, b: 0.454902, a: 0}
   itemNameTM: {fileID: 7421386641114490254}
