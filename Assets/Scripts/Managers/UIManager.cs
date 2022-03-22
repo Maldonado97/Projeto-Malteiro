@@ -5,6 +5,7 @@ using TMPro;
 
 public class UIManager : MonoBehaviour
 {
+    public static UIManager instance;
     [Header("HUD")]
     [SerializeField] GameObject headingIndicator;
     private TextMeshProUGUI headingIndicatorText;
@@ -18,6 +19,7 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        instance = this;
         headingIndicatorText = headingIndicator.GetComponent<TextMeshProUGUI>();
     }
 
