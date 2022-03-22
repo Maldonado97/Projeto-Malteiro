@@ -21,8 +21,8 @@ public class InventoryItemUI : CustomButton
     [HideInInspector] public bool itemSelected;
     private void Start()
     {
-        inventoryScreenManager = PlayerMenuInventoryScreenManager.instance; //COULD BREAK CODE
-        inventoryManager = PlayerInventoryManager.instance; //COULD BREAK CODE
+        inventoryScreenManager = PlayerMenuInventoryScreenManager.instance;
+        inventoryManager = PlayerInventoryManager.instance;
         gameItemDictionary = GameItemDictionary.instance;
 
         inventoryManager.onInventoryChanged += OnInventoryChanged;

@@ -26,14 +26,18 @@ public class GameItemDictionary : MonoBehaviour
         gameItemWeights.Add(17f);
         //ID:2, Empty Crate, value: 5, weight: 5
         gameItemNames.Add("Empty Crate");
+        gameItemDescriptions.Add("Well, what can I say? It's just an empty crate");
         gameItemValues.Add(5f);
         gameItemWeights.Add(5f);
         //ID:3, Medicine Box, value: 60, weight: 16
         gameItemNames.Add("Medicine Box");
+        gameItemDescriptions.Add("Vital for curing diseases and conducting life saving medical procedures.");
         gameItemValues.Add(60f);
         gameItemWeights.Add(16f);
         //ID:4, Scrap Metal, value: 25, weight: 25
         gameItemNames.Add("Scrap Metal");
+        gameItemDescriptions.Add("Once part of something greater, now just a husk of its former glory. " +
+            "It's almost like a foreshadowing of what destiny has in store for you.");
         gameItemValues.Add(25f);
         gameItemWeights.Add(25f);
 

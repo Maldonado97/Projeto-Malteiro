@@ -8,7 +8,6 @@ public class PlayerMenuInventoryScreenManager : MonoBehaviour
 {
     public static PlayerMenuInventoryScreenManager instance;
 
-    private GameItemDictionary gameItemDictionary;
     public GameObject inventoryItemUI;
     [Tooltip("Where the inventoryItemUI should spawn.")]
     public GameObject inventoryItemUIParent;
@@ -23,8 +22,6 @@ public class PlayerMenuInventoryScreenManager : MonoBehaviour
     private void Start()
     {
         instance = this;
-
-        gameItemDictionary = GameItemDictionary.instance; //COULD BREAK CODE
     }
     public void CreateItemUI()
     {
@@ -53,12 +50,14 @@ public class PlayerMenuInventoryScreenManager : MonoBehaviour
     public void OnInventoryItemSelected(InventoryItemUI inventoryItem)
     {
         var inventoryItemUIScript = inventoryItem.GetComponent<InventoryItemUI>();
-        var GID = gameItemDictionary;
+        var GID = GameItemDictionary.instance;
         int selectedItemID;
 
         SelectNewInventoryItem();
         inventoryItemUIScript.SelectThisItem();
         selectedItemID = inventoryItemUIScript.myitemID;
+        DisplayItemDescription(GID.gameItemDescriptions[selectedItemID], GID.gameItemWeights[selectedItemID],
+            GID.gameItemValues[selectedItemID]);
     }
     public void SelectNewInventoryItem()
     {
@@ -67,7 +66,7 @@ public class PlayerMenuInventoryScreenManager : MonoBehaviour
     public void DisplayItemDescription(string itemDescription, float itemWeight, float itemValue)
     {
         itemDescriptionTM.text = itemDescription;
-        itemWeightTM.text = itemWeight.ToString();
-        itemValueTM.text = itemValue.ToString();
+        itemWeightTM.text = "Weight: " + itemWeight.ToString();
+        itemValueTM.text = "Value: " + itemValue.ToString();
     }
 }
