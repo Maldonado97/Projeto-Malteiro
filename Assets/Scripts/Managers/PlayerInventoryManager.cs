@@ -16,8 +16,8 @@ public class PlayerInventoryManager : MonoBehaviour
         instance = this;
 
         //AddItemToInventory(0, 2); //Cake
-        //AddItemToInventory(4); //Scrap Metal
-        //AddItemToInventory(2); //Medicine Box
+        //AddItemToInventory(4, 1); //Scrap Metal
+        //AddItemToInventory(2, 1); //Medicine Box
     }
     private void Update()
     {
@@ -43,12 +43,11 @@ public class PlayerInventoryManager : MonoBehaviour
         else
         {
             itemIDsInInventory.Add(itemID);
-            itemIDsInInventory.Sort();
+            //itemIDsInInventory.Sort(); //=> if disabled, keeps list in chronological order
             itemAmount.Add(itemID, amountToAdd);
-            PlayerMenuInventoryScreenManager.instance.CreateItemUI();
+            PlayerMenuInventoryScreenManager.instance.CreateItemUI(itemID);
         }
         NotifySubscribersOfInventoryChange(itemID);
-        //onInventoryChanged?.Invoke(itemID); -> also a valid way to test if null
     }
     public void RemoveItemFromInventory(int itemID, int amountToRemove)
     {
@@ -62,7 +61,7 @@ public class PlayerInventoryManager : MonoBehaviour
             else if (itemAmount[itemID] == amountToRemove)
             {
                 itemIDsInInventory.Remove(itemID);
-                itemIDsInInventory.Sort();
+                //itemIDsInInventory.Sort(); //=> if disabled, keeps list in chronological order
                 itemAmount.Remove(itemID);
                 NotifySubscribersOfInventoryChange(itemID);
             }
@@ -84,6 +83,7 @@ public class PlayerInventoryManager : MonoBehaviour
         {
             onInventoryChanged(itemID);
         }
+        //onInventoryChanged?.Invoke(itemID); -> also a valid way to test if null
     }
     //TESTING METHODS
     public void AddTestItem() //Adds random amount of random item to player inventory

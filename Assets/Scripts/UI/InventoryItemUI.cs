@@ -25,26 +25,22 @@ public class InventoryItemUI : CustomButton
         inventoryManager = PlayerInventoryManager.instance;
         gameItemDictionary = GameItemDictionary.instance;
 
-        inventoryManager.onInventoryChanged += OnInventoryChanged;
-        inventoryScreenManager.onNewItemSelected += DeselectThisItem;
-        inventoryScreenManager.SubscribeItemUI(this);
+        inventoryManager.onInventoryChanged += UpdateInformation;
+        inventoryScreenManager.onAllItemsDeselected += DeselectThisItem;
 
         cell = gameObject.GetComponent<Image>();
         orderInList = transform.GetSiblingIndex();
 
-        UpdateInformation();
+        GetItemID();
+        SetUIInformation();
+        //UpdateInformation(1);
     }
-    public void OnInventoryChanged(int id)
-    {
-        UpdateInformation();
-        //Debug.Log("Info updated");
-    }
-    public void UpdateInformation()
+    public void UpdateInformation(int id) //Works even if parent is inactive!
     {
         CheckIfShouldRemoveSelf();
         if (!CheckIfShouldRemoveSelf())
         {
-            GetItemID();
+            //GetItemID();
             SetUIInformation();
         }
     }
@@ -60,11 +56,18 @@ public class InventoryItemUI : CustomButton
     public bool CheckIfShouldRemoveSelf()
     {
         bool shouldRemoveSelf = false;
-        if((orderInList + 1) > inventoryManager.itemIDsInInventory.Count)
+
+        //if((orderInList + 1) > inventoryManager.itemIDsInInventory.Count)
+        {
+            //shouldRemoveSelf = true;
+            //RemoveSelf();
+        }
+        if (!inventoryManager.itemIDsInInventory.Contains(myitemID))
         {
             shouldRemoveSelf = true;
             RemoveSelf();
         }
+
         return shouldRemoveSelf;
     }
     public void RemoveSelf()
@@ -83,9 +86,12 @@ public class InventoryItemUI : CustomButton
     }
     public void OnDestroy()
     {
-        inventoryManager.onInventoryChanged -= OnInventoryChanged;
-        inventoryScreenManager.onNewItemSelected -= DeselectThisItem;
-        inventoryScreenManager.UnsubscribeItemUI(this);
+        if (itemSelected)
+        {
+            inventoryScreenManager.DeselectAllItems();
+        }
+        inventoryManager.onInventoryChanged -= UpdateInformation;
+        inventoryScreenManager.onAllItemsDeselected -= DeselectThisItem;
     }
     //USER INTERFACE METHODS
     public override void OnPointerClick(PointerEventData eventData)

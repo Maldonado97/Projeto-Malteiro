@@ -16,28 +16,16 @@ public class PlayerMenuInventoryScreenManager : MonoBehaviour
     public TextMeshProUGUI itemWeightTM;
     public TextMeshProUGUI itemValueTM;
 
-    [HideInInspector] public List<InventoryItemUI> inventoryItems;
+    private int selectedItemID;
 
-    public event Action onNewItemSelected;
+    public event Action onAllItemsDeselected;
     private void Start()
     {
         instance = this;
     }
-    public void CreateItemUI()
+    public void CreateItemUI(int itemID)
     {
         Instantiate(inventoryItemUI, inventoryItemUIParent.transform);
-    }
-    public void SubscribeItemUI(InventoryItemUI inventoryItem)
-    {
-        if(inventoryItems == null)
-        {
-            inventoryItems = new List<InventoryItemUI>();
-        }
-        inventoryItems.Add(inventoryItem);
-    }
-    public void UnsubscribeItemUI(InventoryItemUI inventoryItem)
-    {
-        inventoryItems.Remove(inventoryItem);
     }
     public void OnInventoryItemEnter(InventoryItemUI inventoryItem)
     {
@@ -51,17 +39,19 @@ public class PlayerMenuInventoryScreenManager : MonoBehaviour
     {
         var inventoryItemUIScript = inventoryItem.GetComponent<InventoryItemUI>();
         var GID = GameItemDictionary.instance;
-        int selectedItemID;
 
-        SelectNewInventoryItem();
+        DeselectAllItems();
         inventoryItemUIScript.SelectThisItem();
         selectedItemID = inventoryItemUIScript.myitemID;
         DisplayItemDescription(GID.gameItemDescriptions[selectedItemID], GID.gameItemWeights[selectedItemID],
             GID.gameItemValues[selectedItemID]);
     }
-    public void SelectNewInventoryItem()
+    public void DeselectAllItems()
     {
-        onNewItemSelected?.Invoke();
+        onAllItemsDeselected?.Invoke();
+        itemDescriptionTM.text = "-";
+        itemWeightTM.text = "Weight: -";
+        itemValueTM.text = "Value: -";
     }
     public void DisplayItemDescription(string itemDescription, float itemWeight, float itemValue)
     {
