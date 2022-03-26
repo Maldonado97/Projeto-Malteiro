@@ -25,7 +25,12 @@ public class InventoryItemUI : CustomButton
         inventoryManager = PlayerInventoryManager.instance;
         gameItemDictionary = GameItemDictionary.instance;
 
-        inventoryManager.onInventoryChanged += UpdateInformation;
+        //inventoryManager.onInventoryChanged += UpdateInformation;
+        inventoryManager.onInventoryChanged += OnInventoryChanged;
+        inventoryManager.onInventoryItemAdded += OnInventoryItemAdded;
+        inventoryManager.onInventoryItemRemoved += OnInventoryItemRemoved;
+        inventoryManager.onSortModeChanged += OnSortModeChanged;
+        inventoryScreenManager.onInventoryItemUIRemoved += OnInventoryItemUIRemoved;
         inventoryScreenManager.onAllItemsDeselected += DeselectThisItem;
 
         cell = gameObject.GetComponent<Image>();
@@ -33,16 +38,37 @@ public class InventoryItemUI : CustomButton
 
         GetItemID();
         SetUIInformation();
-        //UpdateInformation(1);
     }
-    public void UpdateInformation(int id) //Works even if parent is inactive!
+    public void OnInventoryChanged(int changedItemID)
     {
-        CheckIfShouldRemoveSelf();
-        if (!CheckIfShouldRemoveSelf())
+        if(changedItemID == myitemID)
         {
-            //GetItemID();
             SetUIInformation();
         }
+    }
+    public void OnInventoryItemAdded()
+    {
+        orderInList = transform.GetSiblingIndex();
+        GetItemID();
+        SetUIInformation();
+    }
+    public void OnInventoryItemRemoved(int removedItemID)
+    {
+        if(removedItemID == myitemID)
+        {
+            RemoveSelf();
+        }
+    }
+    public void OnInventoryItemUIRemoved()
+    {
+        orderInList = transform.GetSiblingIndex();
+        //SetUIInformation();
+    }
+    public void OnSortModeChanged()
+    {
+        orderInList = transform.GetSiblingIndex();
+        GetItemID();
+        SetUIInformation();
     }
     public void GetItemID()
     {
@@ -52,23 +78,6 @@ public class InventoryItemUI : CustomButton
     {
         itemNameTM.text = gameItemDictionary.gameItemNames[myitemID];
         itemAmountTM.text = inventoryManager.itemAmount[myitemID].ToString();
-    }
-    public bool CheckIfShouldRemoveSelf()
-    {
-        bool shouldRemoveSelf = false;
-
-        //if((orderInList + 1) > inventoryManager.itemIDsInInventory.Count)
-        {
-            //shouldRemoveSelf = true;
-            //RemoveSelf();
-        }
-        if (!inventoryManager.itemIDsInInventory.Contains(myitemID))
-        {
-            shouldRemoveSelf = true;
-            RemoveSelf();
-        }
-
-        return shouldRemoveSelf;
     }
     public void RemoveSelf()
     {
@@ -90,14 +99,20 @@ public class InventoryItemUI : CustomButton
         {
             inventoryScreenManager.DeselectAllItems();
         }
-        inventoryManager.onInventoryChanged -= UpdateInformation;
+        inventoryManager.onInventoryChanged -= OnInventoryChanged;
+        inventoryManager.onInventoryItemAdded -= OnInventoryItemAdded;
+        inventoryManager.onInventoryItemRemoved -= OnInventoryItemRemoved;
+        inventoryManager.onSortModeChanged -= OnSortModeChanged;
+        inventoryScreenManager.onInventoryItemUIRemoved -= OnInventoryItemUIRemoved;
         inventoryScreenManager.onAllItemsDeselected -= DeselectThisItem;
+        inventoryScreenManager.OnInventoryItemUIRemoved(); //This doesn't work because item is still active when it's invoked
     }
     //USER INTERFACE METHODS
     public override void OnPointerClick(PointerEventData eventData)
     {
         base.OnPointerClick(eventData);
         inventoryScreenManager.OnInventoryItemSelected(this);
+        Debug.Log("My order in list is: " + orderInList + " and my item is " + gameItemDictionary.gameItemNames[myitemID]);
     }
     public override void OnPointerEnter(PointerEventData eventData)
     {

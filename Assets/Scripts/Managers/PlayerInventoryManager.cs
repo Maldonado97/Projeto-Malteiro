@@ -11,13 +11,12 @@ public class PlayerInventoryManager : MonoBehaviour
     [HideInInspector] public List<int> itemIDsInInventory = new List<int>();
 
     public event Action<int> onInventoryChanged;
+    public event Action onInventoryItemAdded;
+    public event Action<int> onInventoryItemRemoved;
+    public event Action onSortModeChanged;
     public void Start()
     {
         instance = this;
-
-        //AddItemToInventory(0, 2); //Cake
-        //AddItemToInventory(4, 1); //Scrap Metal
-        //AddItemToInventory(2, 1); //Medicine Box
     }
     private void Update()
     {
@@ -33,12 +32,17 @@ public class PlayerInventoryManager : MonoBehaviour
         {
             ListInventoryItems();
         }
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            SortByValue();
+        }
     }
     public void AddItemToInventory(int itemID, int amountToAdd)
     {
         if (itemAmount.ContainsKey(itemID))
         {
             itemAmount[itemID] += amountToAdd;
+            onInventoryChanged?.Invoke(itemID);
         }
         else
         {
@@ -46,8 +50,9 @@ public class PlayerInventoryManager : MonoBehaviour
             //itemIDsInInventory.Sort(); //=> if disabled, keeps list in chronological order
             itemAmount.Add(itemID, amountToAdd);
             PlayerMenuInventoryScreenManager.instance.CreateItemUI(itemID);
+            onInventoryItemAdded?.Invoke();
         }
-        NotifySubscribersOfInventoryChange(itemID);
+        //NotifySubscribersOfInventoryChange();
     }
     public void RemoveItemFromInventory(int itemID, int amountToRemove)
     {
@@ -56,14 +61,16 @@ public class PlayerInventoryManager : MonoBehaviour
             if(itemAmount[itemID] > amountToRemove)
             {
                 itemAmount[itemID] -= amountToRemove;
-                NotifySubscribersOfInventoryChange(itemID);
+                //NotifySubscribersOfInventoryChange();
+                onInventoryChanged?.Invoke(itemID);
             }
             else if (itemAmount[itemID] == amountToRemove)
             {
                 itemIDsInInventory.Remove(itemID);
                 //itemIDsInInventory.Sort(); //=> if disabled, keeps list in chronological order
                 itemAmount.Remove(itemID);
-                NotifySubscribersOfInventoryChange(itemID);
+                //NotifySubscribersOfInventoryChange();
+                onInventoryItemRemoved?.Invoke(itemID);
             }
             else
             {
@@ -77,14 +84,51 @@ public class PlayerInventoryManager : MonoBehaviour
             Debug.LogWarning("Tried to remove an item that does not exist in player inventory.");
         }
     }
-    public void NotifySubscribersOfInventoryChange(int itemID)
+    public void SortByValue()
     {
-        if (onInventoryChanged != null)
+        int buffer = 0;
+        List<int> bufferInventory = new List<int>();
+        bool sortComplete = false;
+
+        Debug.Log("bufferInventory count = " + bufferInventory.Count);
+        while (!sortComplete)
         {
-            onInventoryChanged(itemID);
+            buffer = 0;
+            foreach(int itemID in itemIDsInInventory)
+            {
+                if (bufferInventory.Contains(itemID)) { continue; }
+                if (bufferInventory.Contains(buffer))
+                {
+                    buffer = itemID;
+                }
+                if (GameItemDictionary.instance.gameItemValues[itemID] > GameItemDictionary.instance.gameItemValues[buffer])
+                {
+                    buffer = itemID;
+                }
+            }
+            bufferInventory.Add(buffer);
+            if (itemIDsInInventory.Count == bufferInventory.Count)
+            {
+                sortComplete = true;
+            }
         }
-        //onInventoryChanged?.Invoke(itemID); -> also a valid way to test if null
+        for (int i = 0; i < bufferInventory.Count; i++)
+        {
+            itemIDsInInventory[i] = bufferInventory[i];
+        }
+        //foreach(int itemID in bufferInventory)
+        {
+           // bufferInventory.Remove(itemID);
+        }
+        onSortModeChanged?.Invoke();
     }
+    //public void NotifySubscribersOfInventoryChange()
+    //{
+        //if (onInventoryChanged != null)
+        //{
+            //onInventoryChanged();
+        //}
+    //}
     //TESTING METHODS
     public void AddTestItem() //Adds random amount of random item to player inventory
     {

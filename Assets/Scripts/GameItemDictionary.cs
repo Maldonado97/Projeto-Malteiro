@@ -53,12 +53,17 @@ public class GameItemDictionary : MonoBehaviour
     {
         int buffer = 0;
         bool sortComplete = false;
+
         while (!sortComplete)
         {
             buffer = 0;
             for (int i = 0; i < gameItemNames.Count; i++)
             {
                 if (gameItemsByValue.Contains(i)) { continue; }
+                if (gameItemsByValue.Contains(buffer))
+                {
+                    buffer = i;
+                }
                 if (gameItemValues[i] > gameItemValues[buffer])
                 {
                     buffer = i;
@@ -69,6 +74,11 @@ public class GameItemDictionary : MonoBehaviour
             {
                 sortComplete = true;
             }
+        }
+        Debug.Log("Listing game items by value:");
+        foreach(int itemID in gameItemsByValue)
+        {
+            Debug.Log(gameItemNames[itemID] + " value: " + gameItemValues[itemID]);
         }
     }
 }

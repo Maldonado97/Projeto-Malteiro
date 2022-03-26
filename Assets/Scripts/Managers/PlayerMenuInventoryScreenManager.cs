@@ -17,8 +17,11 @@ public class PlayerMenuInventoryScreenManager : MonoBehaviour
     public TextMeshProUGUI itemValueTM;
 
     private int selectedItemID;
+    private bool checkingForDeadZombieItemUI = false;
+    private InventoryItemUI zombieItemUI;
 
     public event Action onAllItemsDeselected;
+    public event Action onInventoryItemUIRemoved;
     private void Start()
     {
         instance = this;
@@ -27,6 +30,20 @@ public class PlayerMenuInventoryScreenManager : MonoBehaviour
     {
         Instantiate(inventoryItemUI, inventoryItemUIParent.transform);
     }
+    public void DisplayItemDescription(string itemDescription, float itemWeight, float itemValue)
+    {
+        itemDescriptionTM.text = itemDescription;
+        itemWeightTM.text = "Weight: " + itemWeight.ToString();
+        itemValueTM.text = "Value: " + itemValue.ToString();
+    }
+    public void DeselectAllItems()
+    {
+        onAllItemsDeselected?.Invoke();
+        itemDescriptionTM.text = "-";
+        itemWeightTM.text = "Weight: -";
+        itemValueTM.text = "Value: -";
+    }
+    //EVENT METHODS
     public void OnInventoryItemEnter(InventoryItemUI inventoryItem)
     {
 
@@ -46,17 +63,8 @@ public class PlayerMenuInventoryScreenManager : MonoBehaviour
         DisplayItemDescription(GID.gameItemDescriptions[selectedItemID], GID.gameItemWeights[selectedItemID],
             GID.gameItemValues[selectedItemID]);
     }
-    public void DeselectAllItems()
+    public void OnInventoryItemUIRemoved()
     {
-        onAllItemsDeselected?.Invoke();
-        itemDescriptionTM.text = "-";
-        itemWeightTM.text = "Weight: -";
-        itemValueTM.text = "Value: -";
-    }
-    public void DisplayItemDescription(string itemDescription, float itemWeight, float itemValue)
-    {
-        itemDescriptionTM.text = itemDescription;
-        itemWeightTM.text = "Weight: " + itemWeight.ToString();
-        itemValueTM.text = "Value: " + itemValue.ToString();
+        onInventoryItemUIRemoved?.Invoke();
     }
 }
