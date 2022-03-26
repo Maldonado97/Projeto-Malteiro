@@ -48,9 +48,13 @@ public class InventoryItemUI : CustomButton
     }
     public void OnInventoryItemAdded()
     {
-        orderInList = transform.GetSiblingIndex();
+        //orderInList = transform.GetSiblingIndex();
         GetItemID();
         SetUIInformation();
+        if (myitemID == inventoryScreenManager.selectedItemID)
+        {
+            inventoryScreenManager.OnInventoryItemSelected(this);
+        }
     }
     public void OnInventoryItemRemoved(int removedItemID)
     {
@@ -59,14 +63,18 @@ public class InventoryItemUI : CustomButton
             RemoveSelf();
         }
     }
-    public void OnInventoryItemUIRemoved()
+    public void OnInventoryItemUIRemoved(int removedItemUIOrderInList) //USELESS. UPDATES ORDER IN LIST WHILE REMOVED ITEM UI IS STILL THERE
     {
-        orderInList = transform.GetSiblingIndex();
+        if(removedItemUIOrderInList < orderInList)
+        {
+            orderInList -= 1;
+        }
+        //orderInList = transform.GetSiblingIndex();
         //SetUIInformation();
     }
     public void OnSortModeChanged()
     {
-        orderInList = transform.GetSiblingIndex();
+        //orderInList = transform.GetSiblingIndex();
         GetItemID();
         SetUIInformation();
     }
@@ -93,6 +101,14 @@ public class InventoryItemUI : CustomButton
         itemSelected = false;
         ResetCell();
     }
+    public void HighlightCell()
+    {
+        cell.color = highlightedCellColor;
+    }
+    public void ResetCell()
+    {
+        cell.color = defaultCellColor;
+    }
     public void OnDestroy()
     {
         if (itemSelected)
@@ -105,7 +121,7 @@ public class InventoryItemUI : CustomButton
         inventoryManager.onSortModeChanged -= OnSortModeChanged;
         inventoryScreenManager.onInventoryItemUIRemoved -= OnInventoryItemUIRemoved;
         inventoryScreenManager.onAllItemsDeselected -= DeselectThisItem;
-        inventoryScreenManager.OnInventoryItemUIRemoved(); //This doesn't work because item is still active when it's invoked
+        inventoryScreenManager.OnInventoryItemUIRemoved(orderInList); //This doesn't work because item is still active when it's invoked
     }
     //USER INTERFACE METHODS
     public override void OnPointerClick(PointerEventData eventData)
@@ -126,18 +142,5 @@ public class InventoryItemUI : CustomButton
         {
             ResetCell();
         }
-    }
-    public void HighlightCell()
-    {
-        cell.color = highlightedCellColor;
-    }
-    public void ResetCell()
-    {
-        cell.color = defaultCellColor;
-    }
-    public void TestEvent()
-    {
-        itemNameTM.text = "Coke";
-        itemAmountTM.text = "1000";
     }
 }

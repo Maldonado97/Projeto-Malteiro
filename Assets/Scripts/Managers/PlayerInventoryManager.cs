@@ -52,7 +52,6 @@ public class PlayerInventoryManager : MonoBehaviour
             PlayerMenuInventoryScreenManager.instance.CreateItemUI(itemID);
             onInventoryItemAdded?.Invoke();
         }
-        //NotifySubscribersOfInventoryChange();
     }
     public void RemoveItemFromInventory(int itemID, int amountToRemove)
     {
@@ -90,14 +89,13 @@ public class PlayerInventoryManager : MonoBehaviour
         List<int> bufferInventory = new List<int>();
         bool sortComplete = false;
 
-        Debug.Log("bufferInventory count = " + bufferInventory.Count);
         while (!sortComplete)
         {
             buffer = 0;
             foreach(int itemID in itemIDsInInventory)
             {
                 if (bufferInventory.Contains(itemID)) { continue; }
-                if (bufferInventory.Contains(buffer))
+                if (bufferInventory.Contains(buffer) || !itemIDsInInventory.Contains(buffer))
                 {
                     buffer = itemID;
                 }
@@ -116,25 +114,15 @@ public class PlayerInventoryManager : MonoBehaviour
         {
             itemIDsInInventory[i] = bufferInventory[i];
         }
-        //foreach(int itemID in bufferInventory)
-        {
-           // bufferInventory.Remove(itemID);
-        }
         onSortModeChanged?.Invoke();
     }
-    //public void NotifySubscribersOfInventoryChange()
-    //{
-        //if (onInventoryChanged != null)
-        //{
-            //onInventoryChanged();
-        //}
-    //}
     //TESTING METHODS
     public void AddTestItem() //Adds random amount of random item to player inventory
     {
         var gameItemDictionary = GameItemDictionary.instance;
         int randomItemID = UnityEngine.Random.Range(0, gameItemDictionary.gameItemNames.Count);
         int randomAmount = UnityEngine.Random.Range(1, 10);
+        //AddItemToInventory(randomItemID, randomAmount);
         AddItemToInventory(randomItemID, randomAmount);
         Debug.Log("Added " + randomAmount + " " + GameItemDictionary.instance.gameItemNames[randomItemID] +
             "(s) to player inventory.");
@@ -143,6 +131,7 @@ public class PlayerInventoryManager : MonoBehaviour
     {
         var gameItemDictionary = GameItemDictionary.instance;
         int randomItemID = UnityEngine.Random.Range(0, gameItemDictionary.gameItemNames.Count);
+        Debug.Log(gameItemDictionary.gameItemNames.Count - 1);
         int randomAmount = UnityEngine.Random.Range(1, 10);
         RemoveItemFromInventory(randomItemID, randomAmount);
         Debug.Log("Removed " + randomAmount + " " + GameItemDictionary.instance.gameItemNames[randomItemID] + 

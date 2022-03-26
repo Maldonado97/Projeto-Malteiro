@@ -16,15 +16,14 @@ public class PlayerMenuInventoryScreenManager : MonoBehaviour
     public TextMeshProUGUI itemWeightTM;
     public TextMeshProUGUI itemValueTM;
 
-    private int selectedItemID;
-    private bool checkingForDeadZombieItemUI = false;
-    private InventoryItemUI zombieItemUI;
+    public int selectedItemID;
 
     public event Action onAllItemsDeselected;
-    public event Action onInventoryItemUIRemoved;
+    public event Action<int> onInventoryItemUIRemoved;
     private void Start()
     {
         instance = this;
+        selectedItemID = GameItemDictionary.instance.gameItemNames.Count;
     }
     public void CreateItemUI(int itemID)
     {
@@ -42,6 +41,7 @@ public class PlayerMenuInventoryScreenManager : MonoBehaviour
         itemDescriptionTM.text = "-";
         itemWeightTM.text = "Weight: -";
         itemValueTM.text = "Value: -";
+        selectedItemID = GameItemDictionary.instance.gameItemNames.Count + 1;
     }
     //EVENT METHODS
     public void OnInventoryItemEnter(InventoryItemUI inventoryItem)
@@ -63,8 +63,8 @@ public class PlayerMenuInventoryScreenManager : MonoBehaviour
         DisplayItemDescription(GID.gameItemDescriptions[selectedItemID], GID.gameItemWeights[selectedItemID],
             GID.gameItemValues[selectedItemID]);
     }
-    public void OnInventoryItemUIRemoved()
+    public void OnInventoryItemUIRemoved(int removedItemUIOrderInList)
     {
-        onInventoryItemUIRemoved?.Invoke();
+        onInventoryItemUIRemoved?.Invoke(removedItemUIOrderInList);
     }
 }
