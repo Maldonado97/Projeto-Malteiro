@@ -10,6 +10,8 @@ public class PlayerInventoryManager : MonoBehaviour
     [HideInInspector] public Dictionary<int, int> itemAmount = new Dictionary<int, int>();
     [HideInInspector] public List<int> itemIDsInInventory = new List<int>();
 
+    private string sortMode = "Alfabetical";
+
     public event Action<int> onInventoryChanged;
     public event Action onInventoryItemAdded;
     public event Action<int> onInventoryItemRemoved;
@@ -34,7 +36,16 @@ public class PlayerInventoryManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.J))
         {
-            SortByValue();
+            if(sortMode == "Alfabetical")
+            {
+                ChangeSortMode("By Value");
+                Debug.Log("Sorting inventory by value.");
+            }
+            else
+            {
+                ChangeSortMode("Alfabetical");
+                Debug.Log("Sorting inventory by alfabetical order.");
+            }
         }
     }
     public void AddItemToInventory(int itemID, int amountToAdd)
@@ -47,6 +58,7 @@ public class PlayerInventoryManager : MonoBehaviour
         else
         {
             itemIDsInInventory.Add(itemID);
+            SortInventory();
             //itemIDsInInventory.Sort(); //=> if disabled, keeps list in chronological order
             itemAmount.Add(itemID, amountToAdd);
             PlayerMenuInventoryScreenManager.instance.CreateItemUI(itemID);
@@ -60,7 +72,6 @@ public class PlayerInventoryManager : MonoBehaviour
             if(itemAmount[itemID] > amountToRemove)
             {
                 itemAmount[itemID] -= amountToRemove;
-                //NotifySubscribersOfInventoryChange();
                 onInventoryChanged?.Invoke(itemID);
             }
             else if (itemAmount[itemID] == amountToRemove)
@@ -68,7 +79,6 @@ public class PlayerInventoryManager : MonoBehaviour
                 itemIDsInInventory.Remove(itemID);
                 //itemIDsInInventory.Sort(); //=> if disabled, keeps list in chronological order
                 itemAmount.Remove(itemID);
-                //NotifySubscribersOfInventoryChange();
                 onInventoryItemRemoved?.Invoke(itemID);
             }
             else
@@ -83,16 +93,55 @@ public class PlayerInventoryManager : MonoBehaviour
             Debug.LogWarning("Tried to remove an item that does not exist in player inventory.");
         }
     }
+    public void ChangeSortMode(string desiredSortMode)
+    {
+        if(desiredSortMode == "By Value")
+        {
+            sortMode = "By Value";
+            SortInventory();
+            onSortModeChanged?.Invoke();
+        }
+        else if(desiredSortMode == "Alfabetical")
+        {
+            sortMode = "Alfabetical";
+            SortInventory();
+            onSortModeChanged?.Invoke();
+        }
+        else
+        {
+            Debug.LogWarning("Desired sort mode does not exist. Sorting by default.");
+            sortMode = "Alfabetical";
+            itemIDsInInventory.Sort();
+            onSortModeChanged?.Invoke();
+        }
+    }
+    public void SortInventory()
+    {
+        if (itemIDsInInventory.Count > 1)
+        {
+            if (sortMode == "By Value")
+            {
+                SortByValue();
+            }
+            else
+            {
+                itemIDsInInventory.Sort();
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Tried to sort inventory, but inventory does not have enough items to be sorted");
+        }
+    }
     public void SortByValue()
     {
         int buffer = 0;
         List<int> bufferInventory = new List<int>();
         bool sortComplete = false;
-
         while (!sortComplete)
         {
             buffer = 0;
-            foreach(int itemID in itemIDsInInventory)
+            foreach (int itemID in itemIDsInInventory)
             {
                 if (bufferInventory.Contains(itemID)) { continue; }
                 if (bufferInventory.Contains(buffer) || !itemIDsInInventory.Contains(buffer))
@@ -114,7 +163,7 @@ public class PlayerInventoryManager : MonoBehaviour
         {
             itemIDsInInventory[i] = bufferInventory[i];
         }
-        onSortModeChanged?.Invoke();
+        //onSortModeChanged?.Invoke();
     }
     //TESTING METHODS
     public void AddTestItem() //Adds random amount of random item to player inventory

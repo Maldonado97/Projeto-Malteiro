@@ -63,7 +63,7 @@ public class InventoryItemUI : CustomButton
             RemoveSelf();
         }
     }
-    public void OnInventoryItemUIRemoved(int removedItemUIOrderInList) //USELESS. UPDATES ORDER IN LIST WHILE REMOVED ITEM UI IS STILL THERE
+    public void OnInventoryItemUIRemoved(int removedItemUIOrderInList) 
     {
         if(removedItemUIOrderInList < orderInList)
         {
@@ -77,6 +77,10 @@ public class InventoryItemUI : CustomButton
         //orderInList = transform.GetSiblingIndex();
         GetItemID();
         SetUIInformation();
+        if (myitemID == inventoryScreenManager.selectedItemID)
+        {
+            inventoryScreenManager.OnInventoryItemSelected(this);
+        }
     }
     public void GetItemID()
     {

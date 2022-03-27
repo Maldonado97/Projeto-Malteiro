@@ -29,6 +29,10 @@ public class PlayerMenuInventoryScreenManager : MonoBehaviour
     {
         Instantiate(inventoryItemUI, inventoryItemUIParent.transform);
     }
+    public void RemoveItemUI(int itemID)
+    {
+
+    }
     public void DisplayItemDescription(string itemDescription, float itemWeight, float itemValue)
     {
         itemDescriptionTM.text = itemDescription;
