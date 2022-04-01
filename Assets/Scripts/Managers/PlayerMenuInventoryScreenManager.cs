@@ -24,14 +24,12 @@ public class PlayerMenuInventoryScreenManager : MonoBehaviour
     {
         instance = this;
         selectedItemID = GameItemDictionary.instance.gameItemNames.Count;
+
+        PlayerInventoryManager.instance.onInventoryItemAdded += CreateItemUI;
     }
-    public void CreateItemUI(int itemID)
+    public void CreateItemUI()
     {
         Instantiate(inventoryItemUI, inventoryItemUIParent.transform);
-    }
-    public void RemoveItemUI(int itemID)
-    {
-
     }
     public void DisplayItemDescription(string itemDescription, float itemWeight, float itemValue)
     {

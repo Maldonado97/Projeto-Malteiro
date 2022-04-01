@@ -48,7 +48,6 @@ public class InventoryItemUI : CustomButton
     }
     public void OnInventoryItemAdded()
     {
-        //orderInList = transform.GetSiblingIndex();
         GetItemID();
         SetUIInformation();
         if (myitemID == inventoryScreenManager.selectedItemID)
@@ -69,12 +68,9 @@ public class InventoryItemUI : CustomButton
         {
             orderInList -= 1;
         }
-        //orderInList = transform.GetSiblingIndex();
-        //SetUIInformation();
     }
     public void OnSortModeChanged()
     {
-        //orderInList = transform.GetSiblingIndex();
         GetItemID();
         SetUIInformation();
         if (myitemID == inventoryScreenManager.selectedItemID)

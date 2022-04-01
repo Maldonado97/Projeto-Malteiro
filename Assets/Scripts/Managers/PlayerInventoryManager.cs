@@ -10,7 +10,7 @@ public class PlayerInventoryManager : MonoBehaviour
     [HideInInspector] public Dictionary<int, int> itemAmount = new Dictionary<int, int>();
     [HideInInspector] public List<int> itemIDsInInventory = new List<int>();
 
-    private string sortMode = "Alfabetical";
+    private string sortMode = "Name";
 
     public event Action<int> onInventoryChanged;
     public event Action onInventoryItemAdded;
@@ -36,15 +36,15 @@ public class PlayerInventoryManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.J))
         {
-            if(sortMode == "Alfabetical")
+            if(sortMode == "Name")
             {
-                ChangeSortMode("By Value");
+                ChangeSortMode("Value");
                 Debug.Log("Sorting inventory by value.");
             }
             else
             {
-                ChangeSortMode("Alfabetical");
-                Debug.Log("Sorting inventory by alfabetical order.");
+                ChangeSortMode("Name");
+                Debug.Log("Sorting inventory by name.");
             }
         }
     }
@@ -59,9 +59,7 @@ public class PlayerInventoryManager : MonoBehaviour
         {
             itemIDsInInventory.Add(itemID);
             SortInventory();
-            //itemIDsInInventory.Sort(); //=> if disabled, keeps list in chronological order
             itemAmount.Add(itemID, amountToAdd);
-            PlayerMenuInventoryScreenManager.instance.CreateItemUI(itemID);
             onInventoryItemAdded?.Invoke();
         }
     }
@@ -77,7 +75,6 @@ public class PlayerInventoryManager : MonoBehaviour
             else if (itemAmount[itemID] == amountToRemove)
             {
                 itemIDsInInventory.Remove(itemID);
-                //itemIDsInInventory.Sort(); //=> if disabled, keeps list in chronological order
                 itemAmount.Remove(itemID);
                 onInventoryItemRemoved?.Invoke(itemID);
             }
@@ -95,22 +92,22 @@ public class PlayerInventoryManager : MonoBehaviour
     }
     public void ChangeSortMode(string desiredSortMode)
     {
-        if(desiredSortMode == "By Value")
+        if(desiredSortMode == "Value")
         {
-            sortMode = "By Value";
+            sortMode = "Value";
             SortInventory();
             onSortModeChanged?.Invoke();
         }
-        else if(desiredSortMode == "Alfabetical")
+        else if(desiredSortMode == "Name")
         {
-            sortMode = "Alfabetical";
+            sortMode = "Name";
             SortInventory();
             onSortModeChanged?.Invoke();
         }
         else
         {
             Debug.LogWarning("Desired sort mode does not exist. Sorting by default.");
-            sortMode = "Alfabetical";
+            sortMode = "Name";
             itemIDsInInventory.Sort();
             onSortModeChanged?.Invoke();
         }
@@ -119,7 +116,7 @@ public class PlayerInventoryManager : MonoBehaviour
     {
         if (itemIDsInInventory.Count > 1)
         {
-            if (sortMode == "By Value")
+            if (sortMode == "Value")
             {
                 SortByValue();
             }
