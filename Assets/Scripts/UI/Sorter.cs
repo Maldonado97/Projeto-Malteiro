@@ -14,6 +14,7 @@ public class Sorter : CustomButton
     public void Start()
     {
         sorterImage = gameObject.GetComponent<Image>();
+        dropDownBox.SetActive(false);
     }
     public override void OnPointerClick(PointerEventData eventData)
     {

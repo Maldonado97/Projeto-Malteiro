@@ -8,7 +8,8 @@ public class ShipControl : MonoBehaviour
 
     private Rigidbody2D playerRB;
     [HideInInspector] public float shipHeading;
-    [SerializeField] float forwardImpulse;
+    [SerializeField] [Range(0, 10)] int engineControlSensitivity;
+    [SerializeField] float engineForce;
     [SerializeField] float turnTorque;
     [Tooltip("Change this before running the game.")]
     [SerializeField] Vector2 centerOfMass;
@@ -23,15 +24,37 @@ public class ShipControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        MovePlayer();
+        ControlEngineSliders();
+        MoveShip();
         GetShipHeading();
     }
-    void MovePlayer()
+    void ControlEngineSliders()
     {
         if (Input.GetKey(KeyCode.W))
         {
-            playerRB.AddRelativeForce(Vector2.up * forwardImpulse * Time.deltaTime, ForceMode2D.Impulse);
+            UIManager.instance.leftEngineSlider.value += (engineControlSensitivity / 5) * Time.deltaTime;
+            UIManager.instance.rightEngineSlider.value += (engineControlSensitivity / 5) * Time.deltaTime;
         }
+        if (Input.GetKey(KeyCode.S))
+        {
+            UIManager.instance.leftEngineSlider.value -= (engineControlSensitivity / 5) * Time.deltaTime;
+            UIManager.instance.rightEngineSlider.value -= (engineControlSensitivity / 5) * Time.deltaTime;
+        }
+    }
+    void MoveShip()
+    {
+        var leftEngineSliderValue = UIManager.instance.leftEngineSlider.value;
+        var rightEngineSliderValue = UIManager.instance.rightEngineSlider.value;
+
+        if (Input.GetKey(KeyCode.W))
+        {
+            //playerRB.AddRelativeForce(Vector2.up * engineForce * Time.deltaTime, ForceMode2D.Impulse);
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            //playerRB.AddRelativeForce(-Vector2.up * (engineForce / 2) * Time.deltaTime, ForceMode2D.Impulse);
+        }
+        playerRB.AddRelativeForce(Vector2.up * engineForce * leftEngineSliderValue * Time.deltaTime, ForceMode2D.Impulse);
         if (Input.GetKey(KeyCode.D))
         {
             playerRB.AddTorque(-turnTorque * GetShipSpeed() * Time.deltaTime, ForceMode2D.Impulse);
@@ -39,10 +62,6 @@ public class ShipControl : MonoBehaviour
         if (Input.GetKey(KeyCode.A))
         {
             playerRB.AddTorque(turnTorque * GetShipSpeed() * Time.deltaTime, ForceMode2D.Impulse);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            playerRB.AddRelativeForce(-Vector2.up * (forwardImpulse/2) * Time.deltaTime, ForceMode2D.Impulse);
         }
     }
     void GetShipHeading()

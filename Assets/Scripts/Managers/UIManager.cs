@@ -1,26 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager instance;
+
     [Header("HUD")]
     [SerializeField] GameObject headingIndicator;
+    [SerializeField] GameObject speedIndicator;
     private TextMeshProUGUI headingIndicatorText;
+    private TextMeshProUGUI speedIndicatorText;
+    public GameObject leftEngineSliderUI; //Sliders Controled by the Ship Control Script!!!
+    public GameObject rightEngineSliderUI;
+    [HideInInspector] public Slider leftEngineSlider;
+    [HideInInspector] public Slider rightEngineSlider;
     [Header("Pause Menu")]
     [SerializeField] GameObject pauseMenu;
     [Header("Player Menu")]
     [SerializeField] GameObject playerMenu;
 
-    private bool pauseMenuOpen;
-    private bool playerMenuOpen;
+    private bool pauseMenuOpen = false;
+    private bool playerMenuOpen = false;
     // Start is called before the first frame update
     void Start()
     {
         instance = this;
         headingIndicatorText = headingIndicator.GetComponent<TextMeshProUGUI>();
+        speedIndicatorText = speedIndicator.GetComponent<TextMeshProUGUI>();
+        leftEngineSlider = leftEngineSliderUI.GetComponent<Slider>();
+        rightEngineSlider = rightEngineSliderUI.GetComponent<Slider>();
+
+        pauseMenu.SetActive(false);
+        playerMenu.SetActive(false);
     }
 
     // Update is called once per frame
@@ -38,7 +52,8 @@ public class UIManager : MonoBehaviour
     }
     public void UpdateHUD()
     {
-        headingIndicatorText.text = "Heading:" + Mathf.RoundToInt(ShipControl.instance.shipHeading);
+        headingIndicatorText.text = "Heading: " + Mathf.RoundToInt(ShipControl.instance.shipHeading);
+        speedIndicatorText.text = "Speed: " + (Mathf.Round(ShipControl.instance.GetShipSpeed() * 100)/100);
     }
     public void TogglePauseMenu()
     {
