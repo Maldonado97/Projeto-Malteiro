@@ -9,8 +9,10 @@ public class UIManager : MonoBehaviour
     public static UIManager instance;
 
     [Header("HUD")]
+    [SerializeField] GameObject HUD;
     [SerializeField] GameObject headingIndicator;
     [SerializeField] GameObject speedIndicator;
+    [SerializeField] GameObject dockPrompt;
     private TextMeshProUGUI headingIndicatorText;
     private TextMeshProUGUI speedIndicatorText;
     public GameObject leftEngineSliderUI; //Sliders Controled by the Ship Control Script!!!
@@ -33,8 +35,9 @@ public class UIManager : MonoBehaviour
         leftEngineSlider = leftEngineSliderUI.GetComponent<Slider>();
         rightEngineSlider = rightEngineSliderUI.GetComponent<Slider>();
 
-        pauseMenu.SetActive(false);
-        playerMenu.SetActive(false);
+        //pauseMenu.SetActive(false);
+        //playerMenu.SetActive(false);
+        dockPrompt.SetActive(false);
     }
 
     // Update is called once per frame
@@ -52,8 +55,8 @@ public class UIManager : MonoBehaviour
     }
     public void UpdateHUD()
     {
-        headingIndicatorText.text = "Heading: " + Mathf.RoundToInt(ShipControl.instance.shipHeading);
-        speedIndicatorText.text = "Speed: " + (Mathf.Round(ShipControl.instance.GetShipSpeed() * 100)/100);
+        headingIndicatorText.text = "Heading: " + Mathf.RoundToInt(PlayerControl.instance.shipHeading);
+        speedIndicatorText.text = "Speed: " + (Mathf.Round(PlayerControl.instance.GetShipSpeed() * 100)/100);
     }
     public void TogglePauseMenu()
     {
@@ -80,5 +83,13 @@ public class UIManager : MonoBehaviour
             playerMenu.SetActive(false);
             playerMenuOpen = false;
         }
+    }
+    public void ActivateDockPrompt()
+    {
+        dockPrompt.SetActive(true);
+    }
+    public void DeactivateDockPrompt()
+    {
+        dockPrompt.SetActive(false);
     }
 }
