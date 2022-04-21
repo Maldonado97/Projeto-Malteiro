@@ -15,7 +15,8 @@ public class PlayerControl : MonoBehaviour
     [Tooltip("Change this before running the game.")]
     [SerializeField] Vector2 centerOfMass;
 
-    [HideInInspector] public bool playerInDockZone;
+    [HideInInspector] public bool playerDocked = false;
+    //[HideInInspector] public bool playerInDockZone;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,8 +28,11 @@ public class PlayerControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ControlEngineSliders();
-        MoveShip();
+        if (!playerDocked)
+        {
+            ControlEngineSliders();
+            MoveShip();
+        }
         GetShipHeading();
     }
     void ControlEngineSliders()
@@ -118,5 +122,10 @@ public class PlayerControl : MonoBehaviour
 
 
         return forwardSpeed;
+    }
+    public void UndockShip() //Dock ship method is executed by dockzone scripts
+    {
+        playerDocked = false;
+        UIManager.instance.HUD.SetActive(true);
     }
 }

@@ -9,7 +9,7 @@ public class UIManager : MonoBehaviour
     public static UIManager instance;
 
     [Header("HUD")]
-    [SerializeField] GameObject HUD;
+    public GameObject HUD;
     [SerializeField] GameObject headingIndicator;
     [SerializeField] GameObject speedIndicator;
     [SerializeField] GameObject dockPrompt;
@@ -38,6 +38,7 @@ public class UIManager : MonoBehaviour
         //pauseMenu.SetActive(false);
         //playerMenu.SetActive(false);
         dockPrompt.SetActive(false);
+        HUD.SetActive(true);
     }
 
     // Update is called once per frame
@@ -62,11 +63,13 @@ public class UIManager : MonoBehaviour
     {
         if (!pauseMenuOpen)
         {
+            HUD.SetActive(false);
             pauseMenu.SetActive(true);
             pauseMenuOpen = true;
         }
         else
         {
+            HUD.SetActive(true);
             pauseMenu.SetActive(false);
             pauseMenuOpen = false;
         }
@@ -75,11 +78,13 @@ public class UIManager : MonoBehaviour
     {
         if (!playerMenuOpen)
         {
+            HUD.SetActive(false);
             playerMenu.SetActive(true);
             playerMenuOpen = true;
         }
         else
         {
+            HUD.SetActive(true);
             playerMenu.SetActive(false);
             playerMenuOpen = false;
         }
