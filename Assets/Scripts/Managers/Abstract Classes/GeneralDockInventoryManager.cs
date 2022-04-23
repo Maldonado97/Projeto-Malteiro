@@ -3,10 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerInventoryManager : MonoBehaviour
+public abstract class GeneralDockInventoryManager : MonoBehaviour
 {
-    public static PlayerInventoryManager instance;
-
+    public string shopId;
     [HideInInspector] public Dictionary<int, int> itemAmount = new Dictionary<int, int>();
     [HideInInspector] public List<int> itemIDsInInventory = new List<int>();
 
@@ -16,10 +15,6 @@ public class PlayerInventoryManager : MonoBehaviour
     public event Action onInventoryItemAdded;
     public event Action<int> onInventoryItemRemoved;
     public event Action onSortModeChanged;
-    public void Awake()
-    {
-        instance = this;
-    }
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.K))
@@ -30,13 +25,9 @@ public class PlayerInventoryManager : MonoBehaviour
         {
             RemoveTestItem();
         }
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            ListInventoryItems();
-        }
         if (Input.GetKeyDown(KeyCode.J))
         {
-            if(sortMode == "Name")
+            if (sortMode == "Name")
             {
                 ChangeSortMode("Value");
                 Debug.Log("Sorting inventory by value.");
@@ -67,7 +58,7 @@ public class PlayerInventoryManager : MonoBehaviour
     {
         if (itemAmount.ContainsKey(itemID))
         {
-            if(itemAmount[itemID] > amountToRemove)
+            if (itemAmount[itemID] > amountToRemove)
             {
                 itemAmount[itemID] -= amountToRemove;
                 onInventoryChanged?.Invoke(itemID);
@@ -81,24 +72,24 @@ public class PlayerInventoryManager : MonoBehaviour
             else
             {
                 Debug.LogWarning("Tried to remove " + amountToRemove + " " +
-                    GameItemDictionary.instance.gameItemNames[itemID] + "(s) from player inventory " +
+                    GameItemDictionary.instance.gameItemNames[itemID] + "(s) from " + shopId + " inventory " +
                     "but there are only " + itemAmount[itemID] + " to remove.");
             }
         }
         else
         {
-            Debug.LogWarning("Tried to remove an item that does not exist in player inventory.");
+            Debug.LogWarning("Tried to remove an item that does not exist in " + shopId + " inventory.");
         }
     }
     public void ChangeSortMode(string desiredSortMode)
     {
-        if(desiredSortMode == "Value")
+        if (desiredSortMode == "Value")
         {
             sortMode = "Value";
             SortInventory();
             onSortModeChanged?.Invoke();
         }
-        else if(desiredSortMode == "Name")
+        else if (desiredSortMode == "Name")
         {
             sortMode = "Name";
             SortInventory();
@@ -127,7 +118,7 @@ public class PlayerInventoryManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Tried to sort inventory, but inventory does not have enough items to be sorted");
+            Debug.LogWarning("Tried to sort " + shopId + " inventory, but inventory does not have enough items to be sorted");
         }
     }
     public void SortByValue()
@@ -160,7 +151,6 @@ public class PlayerInventoryManager : MonoBehaviour
         {
             itemIDsInInventory[i] = bufferInventory[i];
         }
-        //onSortModeChanged?.Invoke();
     }
     //TESTING METHODS
     public void AddTestItem() //Adds random amount of random item to player inventory
@@ -171,7 +161,7 @@ public class PlayerInventoryManager : MonoBehaviour
         //AddItemToInventory(randomItemID, randomAmount);
         AddItemToInventory(randomItemID, randomAmount);
         Debug.Log("Added " + randomAmount + " " + GameItemDictionary.instance.gameItemNames[randomItemID] +
-            "(s) to player inventory.");
+            "(s) to " + shopId + " inventory.");
     }
     public void RemoveTestItem()
     {
@@ -180,15 +170,7 @@ public class PlayerInventoryManager : MonoBehaviour
         Debug.Log(gameItemDictionary.gameItemNames.Count - 1);
         int randomAmount = UnityEngine.Random.Range(1, 10);
         RemoveItemFromInventory(randomItemID, randomAmount);
-        Debug.Log("Removed " + randomAmount + " " + GameItemDictionary.instance.gameItemNames[randomItemID] + 
-            "(s) from player inventory.");
-    }
-    public void ListInventoryItems()
-    {
-        var itemDictionary = GameItemDictionary.instance;
-        foreach (int itemID in itemIDsInInventory)
-        {
-            Debug.Log(itemDictionary.gameItemNames[itemID] + " (" + itemAmount[itemID] + ").");
-        }
+        Debug.Log("Removed " + randomAmount + " " + GameItemDictionary.instance.gameItemNames[randomItemID] +
+            "(s) from" + shopId + " inventory.");
     }
 }

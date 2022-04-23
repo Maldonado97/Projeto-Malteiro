@@ -25,19 +25,21 @@ public class InventoryItemUI : CustomButton
         inventoryManager = PlayerInventoryManager.instance;
         gameItemDictionary = GameItemDictionary.instance;
 
-        //inventoryManager.onInventoryChanged += UpdateInformation;
+        cell = gameObject.GetComponent<Image>();
+        orderInList = transform.GetSiblingIndex();
+
+        SubscribeToEvents();
+        GetItemID();
+        SetUIInformation();
+    }
+    public void SubscribeToEvents()
+    {
         inventoryManager.onInventoryChanged += OnInventoryChanged;
         inventoryManager.onInventoryItemAdded += OnInventoryItemAdded;
         inventoryManager.onInventoryItemRemoved += OnInventoryItemRemoved;
         inventoryManager.onSortModeChanged += OnSortModeChanged;
         inventoryScreenManager.onInventoryItemUIRemoved += OnInventoryItemUIRemoved;
         inventoryScreenManager.onAllItemsDeselected += DeselectThisItem;
-
-        cell = gameObject.GetComponent<Image>();
-        orderInList = transform.GetSiblingIndex();
-
-        GetItemID();
-        SetUIInformation();
     }
     public void OnInventoryChanged(int changedItemID)
     {
@@ -115,13 +117,17 @@ public class InventoryItemUI : CustomButton
         {
             inventoryScreenManager.DeselectAllItems();
         }
+        inventoryScreenManager.OnInventoryItemUIRemoved(orderInList);
+        UnsubscribeFromAllEvents();
+    }
+    public void UnsubscribeFromAllEvents()
+    {
         inventoryManager.onInventoryChanged -= OnInventoryChanged;
         inventoryManager.onInventoryItemAdded -= OnInventoryItemAdded;
         inventoryManager.onInventoryItemRemoved -= OnInventoryItemRemoved;
         inventoryManager.onSortModeChanged -= OnSortModeChanged;
         inventoryScreenManager.onInventoryItemUIRemoved -= OnInventoryItemUIRemoved;
         inventoryScreenManager.onAllItemsDeselected -= DeselectThisItem;
-        inventoryScreenManager.OnInventoryItemUIRemoved(orderInList); //This doesn't work because item is still active when it's invoked
     }
     //USER INTERFACE METHODS
     public override void OnPointerClick(PointerEventData eventData)
