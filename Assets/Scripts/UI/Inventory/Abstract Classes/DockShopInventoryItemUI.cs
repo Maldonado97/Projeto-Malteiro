@@ -23,6 +23,7 @@ public abstract class DockShopInventoryItemUI : CustomButton
     [HideInInspector] public int myItemID;
     [HideInInspector] public int myItemAmount;
     [HideInInspector] public string myItemName;
+    protected bool transferingItem = false;
 
     protected void Start()
     {
@@ -45,6 +46,8 @@ public abstract class DockShopInventoryItemUI : CustomButton
         shopInventoryManager.onInventoryItemRemoved += OnInventoryItemRemoved;
         shopInventoryManager.onSortModeChanged += OnSortModeChanged;
         shopScreenManager.onInventoryItemUIRemoved += OnInventoryItemUIRemoved;
+        shopScreenManager.onItemTransferConfirmed += TransferMultipleItems;
+        shopScreenManager.onItemTransferCanceled += CancelItemTransfer;
     }
     public void OnInventoryChanged(int changedItemID)
     {
@@ -97,10 +100,23 @@ public abstract class DockShopInventoryItemUI : CustomButton
     {
         cell.color = defaultCellColor;
     }
-    public virtual void TransferItem(int amountToTransfer)
+    public virtual void TransferSingleItem()
     {
-        shopInventoryManager.RemoveItemFromInventory(myItemID, amountToTransfer);
-        playerInventoryManager.AddItemToInventory(myItemID, amountToTransfer);
+        shopInventoryManager.RemoveItemFromInventory(myItemID, 1);
+        playerInventoryManager.AddItemToInventory(myItemID, 1);
+    }
+    public virtual void TransferMultipleItems(int amountToTransfer)
+    {
+        if(transferingItem == true)
+        {
+            shopInventoryManager.RemoveItemFromInventory(myItemID, amountToTransfer);
+            playerInventoryManager.AddItemToInventory(myItemID, amountToTransfer);
+            transferingItem = false;
+        }
+    }
+    public void CancelItemTransfer()
+    {
+        transferingItem = false;
     }
     protected virtual void OnDestroy()
     {
@@ -114,13 +130,24 @@ public abstract class DockShopInventoryItemUI : CustomButton
         shopInventoryManager.onInventoryItemRemoved -= OnInventoryItemRemoved;
         shopInventoryManager.onSortModeChanged -= OnSortModeChanged;
         shopScreenManager.onInventoryItemUIRemoved -= OnInventoryItemUIRemoved;
+        shopScreenManager.onItemTransferConfirmed += TransferMultipleItems;
+        shopScreenManager.onItemTransferCanceled += CancelItemTransfer;
     }
 
     //USER INTERFACE METHODS
     public override void OnPointerClick(PointerEventData eventData)
     {
         base.OnPointerClick(eventData);
-        TransferItem(1);
+
+        if(myItemAmount > 1)
+        {
+            transferingItem = true;
+            shopScreenManager.OpenTransferAmountSelector(myItemAmount);
+        }
+        else
+        {
+            TransferSingleItem();
+        }
     }
     public override void OnPointerEnter(PointerEventData eventData)
     {

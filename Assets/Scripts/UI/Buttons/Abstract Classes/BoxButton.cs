@@ -6,17 +6,17 @@ using UnityEngine.EventSystems;
 using TMPro;
 using UnityEngine.UI;
 
-public abstract class BoxButton : CustomButton
+public class BoxButton : CustomButton
 {
-    [SerializeField] Color defaultTextColor;
-    [SerializeField] Color defaultBoxColor;
-    [SerializeField] Color highlightedTextColor;
-    [SerializeField] Color highlightedBoxColor;
-    [SerializeField] GameObject buttonText;
-    [SerializeField] GameObject box;
+    [SerializeField] protected Color defaultTextColor;
+    [SerializeField] protected Color defaultBoxColor;
+    [SerializeField] protected Color highlightedTextColor;
+    [SerializeField] protected Color highlightedBoxColor;
+    [SerializeField] protected GameObject buttonText;
+    [SerializeField] protected GameObject box;
 
-    private TextMeshProUGUI buttonTextTMPro;
-    private Image boxImage;
+    protected TextMeshProUGUI buttonTextTMPro;
+    protected Image boxImage;
 
     public void Start()
     {
@@ -36,6 +36,8 @@ public abstract class BoxButton : CustomButton
     public override void OnPointerClick(PointerEventData eventData)
     {
         base.OnPointerClick(eventData);
+
+        UnhighlightButton();
     }
     public override void OnPointerEnter(PointerEventData eventData)
     {

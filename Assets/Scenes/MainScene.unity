@@ -4427,13 +4427,25 @@ MonoBehaviour:
   m_FillRect: {fileID: 94882686}
   m_HandleRect: {fileID: 499408274}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 1
-  m_WholeNumbers: 0
-  m_Value: 0
+  m_MinValue: 1
+  m_MaxValue: 2
+  m_WholeNumbers: 1
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1102235639}
+        m_TargetAssemblyTypeName: GeneralDockShopScreenManager, Assembly-CSharp
+        m_MethodName: UpdateTransferAmountSelectorText
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &455760839
 GameObject:
   m_ObjectHideFlags: 0
@@ -5607,7 +5619,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 177.375, y: 0}
   m_SizeDelta: {x: 0, y: 62.1523}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &551654738
@@ -7363,7 +7375,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 702231376}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bcdbc4a1220dc564cbc36416d54d4131, type: 3}
+  m_Script: {fileID: 11500000, guid: 7850653c6829c97498cd3172a6a3bf93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   onPointerEnter:
@@ -7374,7 +7386,19 @@ MonoBehaviour:
       m_Calls: []
   onPointerClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1102235639}
+        m_TargetAssemblyTypeName: GeneralDockShopScreenManager, Assembly-CSharp
+        m_MethodName: CancelItemTransfer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onPointerDown:
     m_PersistentCalls:
       m_Calls: []
@@ -7382,13 +7406,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   defaultTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
-  defaultBoxColor: {r: 0.34117648, g: 0.39607847, b: 0.454902, a: 1}
+  defaultBoxColor: {r: 0.34117648, g: 0.39607844, b: 0.45490196, a: 1}
   highlightedTextColor: {r: 0.69803923, g: 0.6745098, b: 0.6745098, a: 1}
   highlightedBoxColor: {r: 0.29411766, g: 0.3372549, b: 0.38039216, a: 1}
   buttonText: {fileID: 1379361488}
   box: {fileID: 702231376}
-  screenToOpen: {fileID: 366838436}
-  screenToClose: {fileID: 1585869016}
 --- !u!114 &702231379
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15509,7 +15531,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1552339841}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bcdbc4a1220dc564cbc36416d54d4131, type: 3}
+  m_Script: {fileID: 11500000, guid: 7850653c6829c97498cd3172a6a3bf93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   onPointerEnter:
@@ -15520,7 +15542,19 @@ MonoBehaviour:
       m_Calls: []
   onPointerClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1102235639}
+        m_TargetAssemblyTypeName: GeneralDockShopScreenManager, Assembly-CSharp
+        m_MethodName: ConfirmItemTransfer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onPointerDown:
     m_PersistentCalls:
       m_Calls: []
@@ -15528,13 +15562,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   defaultTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
-  defaultBoxColor: {r: 0.34117648, g: 0.39607847, b: 0.454902, a: 1}
+  defaultBoxColor: {r: 0.34117648, g: 0.39607844, b: 0.45490196, a: 1}
   highlightedTextColor: {r: 0.69803923, g: 0.6745098, b: 0.6745098, a: 1}
   highlightedBoxColor: {r: 0.29411766, g: 0.3372549, b: 0.38039216, a: 1}
   buttonText: {fileID: 1847779741}
   box: {fileID: 1552339841}
-  screenToOpen: {fileID: 366838436}
-  screenToClose: {fileID: 1585869016}
 --- !u!114 &1552339844
 MonoBehaviour:
   m_ObjectHideFlags: 0

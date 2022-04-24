@@ -6,36 +6,12 @@ using UnityEngine.EventSystems;
 using TMPro;
 using UnityEngine.UI;
 
-public class BoxButtonWithTransition : CustomButton
+public class BoxButtonWithTransition : BoxButton
 {
-    [SerializeField] Color defaultTextColor;
-    [SerializeField] Color defaultBoxColor;
-    [SerializeField] Color highlightedTextColor;
-    [SerializeField] Color highlightedBoxColor;
-    [SerializeField] GameObject buttonText;
-    [SerializeField] GameObject box;
     [Header("Transitions")]
     [SerializeField] GameObject screenToOpen;
     [SerializeField] GameObject screenToClose;
 
-    private TextMeshProUGUI buttonTextTMPro;
-    private Image boxImage;
-
-    public void Start()
-    {
-        buttonTextTMPro = buttonText.GetComponent<TextMeshProUGUI>();
-        boxImage = box.GetComponent<Image>();
-    }
-    public void HighlightButton()
-    {
-        buttonTextTMPro.color = highlightedTextColor;
-        boxImage.color = highlightedBoxColor;
-    }
-    public void UnhighlightButton()
-    {
-        buttonTextTMPro.color = defaultTextColor;
-        boxImage.color = defaultBoxColor;
-    }
     //USER INTERFACE METHODS
     public override void OnPointerClick(PointerEventData eventData)
     {
@@ -49,18 +25,6 @@ public class BoxButtonWithTransition : CustomButton
         {
             screenToClose?.SetActive(false);
         }
-        UnhighlightButton();
-    }
-    public override void OnPointerEnter(PointerEventData eventData)
-    {
-        base.OnPointerEnter(eventData);
-
-        HighlightButton();
-    }
-    public override void OnPointerExit(PointerEventData eventData)
-    {
-        base.OnPointerExit(eventData);
-
         UnhighlightButton();
     }
 }

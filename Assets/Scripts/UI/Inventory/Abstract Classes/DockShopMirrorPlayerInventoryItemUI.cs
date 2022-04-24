@@ -16,6 +16,8 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : DockShopInventoryIte
         playerInventoryManager.onInventoryItemRemoved += OnInventoryItemRemoved;
         playerInventoryManager.onSortModeChanged += OnSortModeChanged;
         shopScreenManager.onMirrorPlayerInventoryItemUIRemoved += OnInventoryItemUIRemoved;
+        shopScreenManager.onItemTransferConfirmed += TransferMultipleItems;
+        shopScreenManager.onItemTransferCanceled += CancelItemTransfer;
     }
     public override void GetItemInformation()
     {
@@ -23,10 +25,19 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : DockShopInventoryIte
         myItemAmount = playerInventoryManager.itemAmount[myItemID];
         myItemName = gameItemDictionary.gameItemNames[myItemID];
     }
-    public override void TransferItem(int amountToTransfer)
+    public override void TransferSingleItem()
     {
-        playerInventoryManager.RemoveItemFromInventory(myItemID, amountToTransfer);
-        shopInventoryManager.AddItemToInventory(myItemID, amountToTransfer);
+        playerInventoryManager.RemoveItemFromInventory(myItemID, 1);
+        shopInventoryManager.AddItemToInventory(myItemID, 1);
+    }
+    public override void TransferMultipleItems(int amountToTransfer)
+    {
+        if(transferingItem == true)
+        {
+            playerInventoryManager.RemoveItemFromInventory(myItemID, amountToTransfer);
+            shopInventoryManager.AddItemToInventory(myItemID, amountToTransfer);
+            transferingItem = false;
+        }
     }
     protected override void OnDestroy()
     {
@@ -40,5 +51,7 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : DockShopInventoryIte
         playerInventoryManager.onInventoryItemRemoved -= OnInventoryItemRemoved;
         playerInventoryManager.onSortModeChanged -= OnSortModeChanged;
         shopScreenManager.onMirrorPlayerInventoryItemUIRemoved -= OnInventoryItemUIRemoved;
+        shopScreenManager.onItemTransferConfirmed -= TransferMultipleItems;
+        shopScreenManager.onItemTransferCanceled -= CancelItemTransfer;
     }
 }

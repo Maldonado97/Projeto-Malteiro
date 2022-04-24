@@ -25,6 +25,8 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
 
     public event Action<int> onInventoryItemUIRemoved;
     public event Action<int> onMirrorPlayerInventoryItemUIRemoved;
+    public event Action<int> onItemTransferConfirmed;
+    public event Action onItemTransferCanceled;
 
     public void Start()
     {
@@ -60,12 +62,30 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     {
         onMirrorPlayerInventoryItemUIRemoved?.Invoke(removedItemUIOrderInList);
     }
-    public void OpenTransferAmountSelector()
+    //TRANSFER AMOUNT SELECTOR
+    public void OpenTransferAmountSelector(int selectorSliderMaxValue)
     {
+        selectorSlider.maxValue = selectorSliderMaxValue;
         transferAmountSelector.SetActive(true);
     }
     public void CloseTransferAmountSelector()
     {
         transferAmountSelector.SetActive(false);
+    }
+    public void UpdateTransferAmountSelectorText()
+    {
+        selectorText.text = ("Amount: " + selectorSlider.value);
+    }
+    public void ConfirmItemTransfer()
+    {
+        onItemTransferConfirmed?.Invoke(Mathf.RoundToInt(selectorSlider.value));
+        selectorSlider.value = 1;
+        CloseTransferAmountSelector();
+    }
+    public void CancelItemTransfer()
+    {
+        onItemTransferCanceled?.Invoke();
+        selectorSlider.value = 1;
+        CloseTransferAmountSelector();
     }
 }
