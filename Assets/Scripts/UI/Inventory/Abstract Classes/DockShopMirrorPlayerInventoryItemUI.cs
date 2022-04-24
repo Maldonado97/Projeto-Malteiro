@@ -9,7 +9,8 @@ using UnityEngine.EventSystems;
 public abstract class DockShopMirrorPlayerInventoryItemUI : CustomButton
 {
     [HideInInspector] public GeneralDockShopScreenManager shopScreenManager;
-    [HideInInspector] public PlayerInventoryManager parentInventoryManager;
+    [HideInInspector] public GeneralDockInventoryManager parentInventoryManager;
+    [HideInInspector] public PlayerInventoryManager playerInventoryManager;
     [HideInInspector] public GameItemDictionary gameItemDictionary;
     [Header("UI Elements")]
     [SerializeField] Color highlightedCellColor;
@@ -19,44 +20,48 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : CustomButton
 
     private Image cell;
     protected int orderInList;
-    [HideInInspector] public int myitemID;
+    [HideInInspector] public int myItemID;
+    [HideInInspector] public int myItemAmount;
+    [HideInInspector] public string myItemName;
 
     public void Start()
     {
         SetParentSingletonReferences();
+        playerInventoryManager = PlayerInventoryManager.instance;
         gameItemDictionary = GameItemDictionary.instance;
 
         cell = gameObject.GetComponent<Image>();
         orderInList = transform.GetSiblingIndex();
 
         SubscribeToEvents();
-        GetItemID();
+        GetItemInformation();
         SetUIInformation();
     }
     protected abstract void SetParentSingletonReferences();
     protected void SubscribeToEvents()
     {
-        parentInventoryManager.onInventoryChanged += OnInventoryChanged;
-        parentInventoryManager.onInventoryItemAdded += OnInventoryItemAdded;
-        parentInventoryManager.onInventoryItemRemoved += OnInventoryItemRemoved;
-        parentInventoryManager.onSortModeChanged += OnSortModeChanged;
+        playerInventoryManager.onInventoryChanged += OnInventoryChanged;
+        playerInventoryManager.onInventoryItemAdded += OnInventoryItemAdded;
+        playerInventoryManager.onInventoryItemRemoved += OnInventoryItemRemoved;
+        playerInventoryManager.onSortModeChanged += OnSortModeChanged;
         shopScreenManager.onMirrorPlayerInventoryItemUIRemoved += OnInventoryItemUIRemoved;
     }
     public void OnInventoryChanged(int changedItemID)
     {
-        if (changedItemID == myitemID)
+        if (changedItemID == myItemID)
         {
+            GetItemInformation();
             SetUIInformation();
         }
     }
     public void OnInventoryItemAdded()
     {
-        GetItemID();
+        GetItemInformation();
         SetUIInformation();
     }
     public void OnInventoryItemRemoved(int removedItemID)
     {
-        if (removedItemID == myitemID)
+        if (removedItemID == myItemID)
         {
             Destroy(gameObject);
         }
@@ -70,17 +75,19 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : CustomButton
     }
     public void OnSortModeChanged()
     {
-        GetItemID();
+        GetItemInformation();
         SetUIInformation();
     }
-    public void GetItemID()
+    public void GetItemInformation()
     {
-        myitemID = parentInventoryManager.itemIDsInInventory[orderInList];
+        myItemID = playerInventoryManager.itemIDsInInventory[orderInList];
+        myItemAmount = playerInventoryManager.itemAmount[myItemID];
+        myItemName = gameItemDictionary.gameItemNames[myItemID];
     }
     public void SetUIInformation()
     {
-        itemNameTM.text = gameItemDictionary.gameItemNames[myitemID];
-        itemAmountTM.text = parentInventoryManager.itemAmount[myitemID].ToString();
+        itemNameTM.text = myItemName;
+        itemAmountTM.text = myItemAmount.ToString();
     }
     public void HighlightCell()
     {
@@ -90,6 +97,11 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : CustomButton
     {
         cell.color = defaultCellColor;
     }
+    public void TransferItem(int amountToTransfer)
+    {
+        playerInventoryManager.RemoveItemFromInventory(myItemID, amountToTransfer);
+        parentInventoryManager.AddItemToInventory(myItemID, amountToTransfer);
+    }
     protected void OnDestroy()
     {
         shopScreenManager.OnMirrorPlayerInventoryItemUIRemoved(orderInList);
@@ -97,10 +109,10 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : CustomButton
     }
     protected void UnsubscribeFromAllEvents()
     {
-        parentInventoryManager.onInventoryChanged -= OnInventoryChanged;
-        parentInventoryManager.onInventoryItemAdded -= OnInventoryItemAdded;
-        parentInventoryManager.onInventoryItemRemoved -= OnInventoryItemRemoved;
-        parentInventoryManager.onSortModeChanged -= OnSortModeChanged;
+        playerInventoryManager.onInventoryChanged -= OnInventoryChanged;
+        playerInventoryManager.onInventoryItemAdded -= OnInventoryItemAdded;
+        playerInventoryManager.onInventoryItemRemoved -= OnInventoryItemRemoved;
+        playerInventoryManager.onSortModeChanged -= OnSortModeChanged;
         shopScreenManager.onMirrorPlayerInventoryItemUIRemoved -= OnInventoryItemUIRemoved;
     }
 
@@ -108,6 +120,7 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : CustomButton
     public override void OnPointerClick(PointerEventData eventData)
     {
         base.OnPointerClick(eventData);
+        TransferItem(1);
     }
     public override void OnPointerEnter(PointerEventData eventData)
     {

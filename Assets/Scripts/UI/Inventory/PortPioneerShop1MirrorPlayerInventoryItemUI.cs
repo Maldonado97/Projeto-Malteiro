@@ -7,6 +7,6 @@ public class PortPioneerShop1MirrorPlayerInventoryItemUI : DockShopMirrorPlayerI
     protected override void SetParentSingletonReferences()
     {
         shopScreenManager = PortPioneerShop1ScreenManager.instance;
-        parentInventoryManager = PlayerInventoryManager.instance;
+        parentInventoryManager = PortPioneerShop1InventoryManager.instance;
     }
 }

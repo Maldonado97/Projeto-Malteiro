@@ -6,10 +6,10 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
 
-public abstract class DockShopInventoryItemUI : CustomButton
+public abstract class DockShopOwnInventoryItemUI : CustomButton
 {
     [HideInInspector] public GeneralDockShopScreenManager shopScreenManager;
-    [HideInInspector] public GeneralDockInventoryManager shopInventoryManager;
+    [HideInInspector] public GeneralDockInventoryManager parentInventoryManager;
     [HideInInspector] public PlayerInventoryManager playerInventoryManager;
     [HideInInspector] public GameItemDictionary gameItemDictionary;
     [Header("UI Elements")]
@@ -23,12 +23,11 @@ public abstract class DockShopInventoryItemUI : CustomButton
     [HideInInspector] public int myItemID;
     [HideInInspector] public int myItemAmount;
     [HideInInspector] public string myItemName;
-
     public void Start()
     {
         SetParentSingletonReferences();
-        playerInventoryManager = PlayerInventoryManager.instance;
         gameItemDictionary = GameItemDictionary.instance;
+        playerInventoryManager = PlayerInventoryManager.instance;
 
         cell = gameObject.GetComponent<Image>();
         orderInList = transform.GetSiblingIndex();
@@ -38,7 +37,14 @@ public abstract class DockShopInventoryItemUI : CustomButton
         SetUIInformation();
     }
     protected abstract void SetParentSingletonReferences();
-    protected abstract void SubscribeToEvents();
+    protected virtual void SubscribeToEvents() //PROBLEMATIC CODE!!!!!!!!
+    {
+        parentInventoryManager.onInventoryChanged += OnInventoryChanged;
+        parentInventoryManager.onInventoryItemAdded += OnInventoryItemAdded;
+        parentInventoryManager.onInventoryItemRemoved += OnInventoryItemRemoved;
+        parentInventoryManager.onSortModeChanged += OnSortModeChanged;
+        shopScreenManager.onInventoryItemUIRemoved += OnInventoryItemUIRemoved;
+    }
     public void OnInventoryChanged(int changedItemID)
     {
         if (changedItemID == myItemID)
@@ -71,7 +77,12 @@ public abstract class DockShopInventoryItemUI : CustomButton
         GetItemInformation();
         SetUIInformation();
     }
-    public abstract void GetItemInformation();
+    public void GetItemInformation()
+    {
+        myItemID = parentInventoryManager.itemIDsInInventory[orderInList];
+        myItemAmount = parentInventoryManager.itemAmount[myItemID];
+        myItemName = gameItemDictionary.gameItemNames[myItemID];
+    }
     public void SetUIInformation()
     {
         itemNameTM.text = myItemName;
@@ -85,9 +96,24 @@ public abstract class DockShopInventoryItemUI : CustomButton
     {
         cell.color = defaultCellColor;
     }
-    public abstract void TransferItem(int amountToTransfer);
-    protected abstract void OnDestroy();
-    protected abstract void UnsubscribeFromAllEvents();
+    public void TransferItem(int amountToTransfer)
+    {
+        parentInventoryManager.RemoveItemFromInventory(myItemID, amountToTransfer);
+        playerInventoryManager.AddItemToInventory(myItemID, amountToTransfer);
+    }
+    public virtual void OnDestroy()
+    {
+        shopScreenManager.OnInventoryItemUIRemoved(orderInList);
+        UnsubscribeFromAllEvents();
+    }
+    protected virtual void UnsubscribeFromAllEvents()
+    {
+        parentInventoryManager.onInventoryChanged -= OnInventoryChanged;
+        parentInventoryManager.onInventoryItemAdded -= OnInventoryItemAdded;
+        parentInventoryManager.onInventoryItemRemoved -= OnInventoryItemRemoved;
+        parentInventoryManager.onSortModeChanged -= OnSortModeChanged;
+        shopScreenManager.onInventoryItemUIRemoved -= OnInventoryItemUIRemoved;
+    }
 
     //USER INTERFACE METHODS
     public override void OnPointerClick(PointerEventData eventData)

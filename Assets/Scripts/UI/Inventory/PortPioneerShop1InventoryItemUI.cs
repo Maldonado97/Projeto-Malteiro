@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PortPioneerShop1InventoryItemUI : DockShopInventoryItemUI
+public class PortPioneerShop1InventoryItemUI : DockShopOwnInventoryItemUI
 {
     protected override void SetParentSingletonReferences()
     {
