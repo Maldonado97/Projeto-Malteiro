@@ -13,18 +13,18 @@ public abstract class DockShopInventoryItemUI : CustomButton
     [HideInInspector] public PlayerInventoryManager playerInventoryManager;
     [HideInInspector] public GameItemDictionary gameItemDictionary;
     [Header("UI Elements")]
-    [SerializeField] Color highlightedCellColor;
-    [SerializeField] Color defaultCellColor;
-    [SerializeField] TextMeshProUGUI itemNameTM;
-    [SerializeField] TextMeshProUGUI itemAmountTM;
+    [SerializeField] protected Color highlightedCellColor;
+    [SerializeField] protected Color defaultCellColor;
+    [SerializeField] protected TextMeshProUGUI itemNameTM;
+    [SerializeField] protected TextMeshProUGUI itemAmountTM;
 
-    private Image cell;
+    protected Image cell;
     protected int orderInList;
     [HideInInspector] public int myItemID;
     [HideInInspector] public int myItemAmount;
     [HideInInspector] public string myItemName;
 
-    public void Start()
+    protected void Start()
     {
         SetParentSingletonReferences();
         playerInventoryManager = PlayerInventoryManager.instance;
@@ -38,7 +38,14 @@ public abstract class DockShopInventoryItemUI : CustomButton
         SetUIInformation();
     }
     protected abstract void SetParentSingletonReferences();
-    protected abstract void SubscribeToEvents();
+    protected virtual void SubscribeToEvents()
+    {
+        shopInventoryManager.onInventoryChanged += OnInventoryChanged;
+        shopInventoryManager.onInventoryItemAdded += OnInventoryItemAdded;
+        shopInventoryManager.onInventoryItemRemoved += OnInventoryItemRemoved;
+        shopInventoryManager.onSortModeChanged += OnSortModeChanged;
+        shopScreenManager.onInventoryItemUIRemoved += OnInventoryItemUIRemoved;
+    }
     public void OnInventoryChanged(int changedItemID)
     {
         if (changedItemID == myItemID)
@@ -71,7 +78,12 @@ public abstract class DockShopInventoryItemUI : CustomButton
         GetItemInformation();
         SetUIInformation();
     }
-    public abstract void GetItemInformation();
+    public virtual void GetItemInformation()
+    {
+        myItemID = shopInventoryManager.itemIDsInInventory[orderInList];
+        myItemAmount = shopInventoryManager.itemAmount[myItemID];
+        myItemName = gameItemDictionary.gameItemNames[myItemID];
+    }
     public void SetUIInformation()
     {
         itemNameTM.text = myItemName;
@@ -85,9 +97,24 @@ public abstract class DockShopInventoryItemUI : CustomButton
     {
         cell.color = defaultCellColor;
     }
-    public abstract void TransferItem(int amountToTransfer);
-    protected abstract void OnDestroy();
-    protected abstract void UnsubscribeFromAllEvents();
+    public virtual void TransferItem(int amountToTransfer)
+    {
+        shopInventoryManager.RemoveItemFromInventory(myItemID, amountToTransfer);
+        playerInventoryManager.AddItemToInventory(myItemID, amountToTransfer);
+    }
+    protected virtual void OnDestroy()
+    {
+        shopScreenManager.OnInventoryItemUIRemoved(orderInList);
+        UnsubscribeFromAllEvents();
+    }
+    protected virtual void UnsubscribeFromAllEvents()
+    {
+        shopInventoryManager.onInventoryChanged -= OnInventoryChanged;
+        shopInventoryManager.onInventoryItemAdded -= OnInventoryItemAdded;
+        shopInventoryManager.onInventoryItemRemoved -= OnInventoryItemRemoved;
+        shopInventoryManager.onSortModeChanged -= OnSortModeChanged;
+        shopScreenManager.onInventoryItemUIRemoved -= OnInventoryItemUIRemoved;
+    }
 
     //USER INTERFACE METHODS
     public override void OnPointerClick(PointerEventData eventData)
