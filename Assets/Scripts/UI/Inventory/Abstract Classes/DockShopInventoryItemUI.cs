@@ -17,12 +17,17 @@ public abstract class DockShopInventoryItemUI : CustomButton
     [SerializeField] protected Color defaultCellColor;
     [SerializeField] protected TextMeshProUGUI itemNameTM;
     [SerializeField] protected TextMeshProUGUI itemAmountTM;
+    [SerializeField] protected TextMeshProUGUI itemValueTM;
+    [SerializeField] protected TextMeshProUGUI itemWeightTM;
 
     protected Image cell;
     protected int orderInList;
     [HideInInspector] public int myItemID;
-    [HideInInspector] public int myItemAmount;
     [HideInInspector] public string myItemName;
+    [HideInInspector] public int myItemAmount;
+    [HideInInspector] public float myItemValue;
+    [HideInInspector] public float myItemWeight;
+    
     protected bool transferingItem = false;
 
     protected void Start()
@@ -86,11 +91,15 @@ public abstract class DockShopInventoryItemUI : CustomButton
         myItemID = shopInventoryManager.itemIDsInInventory[orderInList];
         myItemAmount = shopInventoryManager.itemAmount[myItemID];
         myItemName = gameItemDictionary.gameItemNames[myItemID];
+        myItemValue = gameItemDictionary.gameItemValues[myItemID];
+        myItemWeight = gameItemDictionary.gameItemWeights[myItemID];
     }
     public void SetUIInformation()
     {
         itemNameTM.text = myItemName;
         itemAmountTM.text = myItemAmount.ToString();
+        itemValueTM.text = myItemValue.ToString();
+        itemWeightTM.text = myItemWeight.ToString();
     }
     public void HighlightCell()
     {

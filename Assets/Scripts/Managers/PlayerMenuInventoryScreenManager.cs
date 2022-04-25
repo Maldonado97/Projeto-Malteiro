@@ -34,8 +34,8 @@ public class PlayerMenuInventoryScreenManager : MonoBehaviour
     public void DisplayItemDescription(string itemDescription, float itemWeight, float itemValue)
     {
         itemDescriptionTM.text = itemDescription;
-        itemWeightTM.text = "Weight: " + itemWeight.ToString();
-        itemValueTM.text = "Value: " + itemValue.ToString();
+        itemWeightTM.text = "Weight: " + itemWeight.ToString() + "Kg";
+        itemValueTM.text = "Value: $" + itemValue.ToString();
     }
     public void DeselectAllItems()
     {

@@ -24,6 +24,8 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : DockShopInventoryIte
         myItemID = playerInventoryManager.itemIDsInInventory[orderInList];
         myItemAmount = playerInventoryManager.itemAmount[myItemID];
         myItemName = gameItemDictionary.gameItemNames[myItemID];
+        myItemValue = gameItemDictionary.gameItemValues[myItemID];
+        myItemWeight = gameItemDictionary.gameItemWeights[myItemID];
     }
     public override void TransferSingleItem()
     {
