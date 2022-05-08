@@ -9,7 +9,7 @@ public class PlayerInventoryManager : MonoBehaviour
 
     [HideInInspector] public Dictionary<int, int> itemAmount = new Dictionary<int, int>();
     [HideInInspector] public List<int> itemIDsInInventory = new List<int>();
-    [HideInInspector] public int playerCash;
+    [HideInInspector] public float playerCash;
     [HideInInspector] public float totalWeight = 0;
     [HideInInspector] public float maxWeight = 1000; //Initialization isn't working for some reason, so i'm setting the value on the awake method.
 
@@ -19,6 +19,7 @@ public class PlayerInventoryManager : MonoBehaviour
     public event Action onInventoryItemAdded;
     public event Action<int> onInventoryItemRemoved;
     public event Action onInventoryWeightChanged;
+    public event Action onInventoryCashChanged;
     public event Action onSortModeChanged;
     public void Awake()
     {
@@ -115,6 +116,10 @@ public class PlayerInventoryManager : MonoBehaviour
     {
         float itemWeight = GameItemDictionary.instance.gameItemWeights[itemID];
         totalWeight -= itemWeight * itemAmount;
+    }
+    public void OnInventoryCashChanged()
+    {
+        onInventoryCashChanged?.Invoke();
     }
     //SORTING
     public void ChangeSortMode(string desiredSortMode)

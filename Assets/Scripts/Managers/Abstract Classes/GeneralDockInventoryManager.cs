@@ -10,11 +10,12 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
     [HideInInspector] public List<int> itemIDsInInventory = new List<int>();
 
     private string sortMode = "Name";
-    [HideInInspector] public int storeCash;
+    [HideInInspector] public float storeCash;
 
     public event Action<int> onInventoryChanged;
     public event Action onInventoryItemAdded;
     public event Action<int> onInventoryItemRemoved;
+    public event Action onInventoryCashChanged;
     public event Action onSortModeChanged;
     private void Update()
     {
@@ -82,6 +83,11 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
             Debug.LogWarning("Tried to remove an item that does not exist in " + shopId + " inventory.");
         }
     }
+    public void OnInventoryCashChanged()
+    {
+        onInventoryCashChanged?.Invoke();
+    }
+    //SORTING
     public void ChangeSortMode(string desiredSortMode)
     {
         if (desiredSortMode == "Value")

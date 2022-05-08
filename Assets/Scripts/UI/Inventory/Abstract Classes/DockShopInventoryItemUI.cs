@@ -111,15 +111,30 @@ public abstract class DockShopInventoryItemUI : CustomButton
     }
     public virtual void TransferSingleItem()
     {
+        //ITEM TRANSFER
         shopInventoryManager.RemoveItemFromInventory(myItemID, 1);
         playerInventoryManager.AddItemToInventory(myItemID, 1);
+        //CASH TRANSFER
+        shopInventoryManager.storeCash += myItemValue;
+        playerInventoryManager.playerCash -= myItemValue;
+        //EVEN TRIGGER
+        playerInventoryManager.OnInventoryCashChanged();
+        shopInventoryManager.OnInventoryCashChanged();
     }
     public virtual void TransferMultipleItems(int amountToTransfer)
     {
         if(transferingItem == true)
         {
+            //ITEM TRANSFER
             shopInventoryManager.RemoveItemFromInventory(myItemID, amountToTransfer);
             playerInventoryManager.AddItemToInventory(myItemID, amountToTransfer);
+            //CASH TRANSFER
+            shopInventoryManager.storeCash += myItemValue * amountToTransfer;
+            playerInventoryManager.playerCash -= myItemValue * amountToTransfer;
+            //EVENT TRIGGER
+            shopInventoryManager.OnInventoryCashChanged();
+            playerInventoryManager.OnInventoryCashChanged();
+
             transferingItem = false;
         }
     }

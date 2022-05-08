@@ -33,6 +33,7 @@ public class PlayerInventoryScreenManager : MonoBehaviour
 
         PlayerInventoryManager.instance.onInventoryItemAdded += CreateItemUI;
         PlayerInventoryManager.instance.onInventoryWeightChanged += UpdateCarryCapacityText;
+        PlayerInventoryManager.instance.onInventoryCashChanged += UpdatePlayerCashText;
     }
     public void CreateItemUI()
     {
@@ -59,10 +60,6 @@ public class PlayerInventoryScreenManager : MonoBehaviour
     public void UpdatePlayerCashText()
     {
         playerCashTM.text = $"Cash: {PlayerInventoryManager.instance.playerCash}";
-    }
-    public void UpdateOwnCashText()
-    {
-
     }
     //EVENT METHODS
     public void OnInventoryItemEnter(InventoryItemUI inventoryItem)

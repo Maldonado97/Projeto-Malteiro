@@ -29,15 +29,30 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : DockShopInventoryIte
     }
     public override void TransferSingleItem()
     {
+        //ITEM TRANSFER
         playerInventoryManager.RemoveItemFromInventory(myItemID, 1);
         shopInventoryManager.AddItemToInventory(myItemID, 1);
+        //CASH TRANSFER
+        playerInventoryManager.playerCash += myItemValue;
+        shopInventoryManager.storeCash -= myItemValue;
+        //EVEN TRIGGER
+        playerInventoryManager.OnInventoryCashChanged();
+        shopInventoryManager.OnInventoryCashChanged();
     }
     public override void TransferMultipleItems(int amountToTransfer)
     {
         if(transferingItem == true)
         {
+            //ITEM TRANSFER
             playerInventoryManager.RemoveItemFromInventory(myItemID, amountToTransfer);
             shopInventoryManager.AddItemToInventory(myItemID, amountToTransfer);
+            //CASH TRANSFER
+            playerInventoryManager.playerCash += myItemValue * amountToTransfer;
+            shopInventoryManager.storeCash -= myItemValue * amountToTransfer;
+            //EVENT TRIGGER
+            playerInventoryManager.OnInventoryCashChanged();
+            shopInventoryManager.OnInventoryCashChanged();
+
             transferingItem = false;
         }
     }

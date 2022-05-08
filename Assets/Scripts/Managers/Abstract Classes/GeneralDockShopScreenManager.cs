@@ -56,6 +56,8 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     {
         PlayerInventoryManager.instance.onInventoryItemAdded += CreateMirrorPlayerInventoryItemUI;
         PlayerInventoryManager.instance.onInventoryWeightChanged += UpdatePlayerCarryCapacityText;
+        PlayerInventoryManager.instance.onInventoryCashChanged += UpdatePlayerCashText;
+        ownInventory.onInventoryCashChanged += UpdateStoreCashText;
     }
     public void GetTransferAmountSelectorComponents()
     {
@@ -70,6 +72,7 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     {
         Instantiate(mirrorPlayerInventoryItemUI, mirrorPlayerInventoryPanel.transform);
     }
+    //INVENTORY INFORMATION
     public void UpdatePlayerCarryCapacityText()
     {
         playerCarryCapacityTM.text = $"Carry Capacity: {PlayerInventoryManager.instance.totalWeight}/{PlayerInventoryManager.instance.maxWeight}";
