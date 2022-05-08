@@ -10,6 +10,10 @@ public class HopeCityShop1ScreenManager : GeneralDockShopScreenManager
     {
         instance = this;
     }
+    public override void SetOwnInventoryReference()
+    {
+        ownInventory = HopeCityShop1InventoryManager.instance;
+    }
     public override void SubscribeToEvents()
     {
         base.SubscribeToEvents();

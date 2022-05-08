@@ -4,19 +4,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class PlayerMenuInventoryScreenManager : MonoBehaviour
+public class PlayerInventoryScreenManager : MonoBehaviour
 {
-    public static PlayerMenuInventoryScreenManager instance;
-
-    public GameObject inventoryItemUI;
+    public static PlayerInventoryScreenManager instance;
+    [Header("Item UI")]
+    [SerializeField] GameObject inventoryItemUI;
     [Tooltip("Where the inventoryItemUI should spawn.")]
-    public GameObject inventoryItemUIParent;
-    [Header("Description Area")]
-    public TextMeshProUGUI itemDescriptionTM;
-    public TextMeshProUGUI itemWeightTM;
-    public TextMeshProUGUI itemValueTM;
+    [SerializeField] GameObject inventoryItemUIParent;
+    [Header("Inventory Information Area")]
+    [SerializeField] TextMeshProUGUI playerCashTM;
+    [SerializeField] TextMeshProUGUI ownCashTM;
+    [SerializeField] TextMeshProUGUI carryCapacityTM;
+    [Header("Item Description Area")]
+    [SerializeField] TextMeshProUGUI itemDescriptionTM;
+    [SerializeField] TextMeshProUGUI itemWeightTM;
+    [SerializeField] TextMeshProUGUI itemValueTM;
 
-    public int selectedItemID;
+    [HideInInspector] public int selectedItemID;
 
     public event Action onAllItemsDeselected;
     public event Action<int> onInventoryItemUIRemoved;
@@ -24,8 +28,11 @@ public class PlayerMenuInventoryScreenManager : MonoBehaviour
     {
         instance = this;
         selectedItemID = GameItemDictionary.instance.gameItemNames.Count;
+        UpdateCarryCapacityText();
+        UpdatePlayerCashText();
 
         PlayerInventoryManager.instance.onInventoryItemAdded += CreateItemUI;
+        PlayerInventoryManager.instance.onInventoryWeightChanged += UpdateCarryCapacityText;
     }
     public void CreateItemUI()
     {
@@ -44,6 +51,18 @@ public class PlayerMenuInventoryScreenManager : MonoBehaviour
         itemWeightTM.text = "Weight: -";
         itemValueTM.text = "Value: -";
         selectedItemID = GameItemDictionary.instance.gameItemNames.Count + 1;
+    }
+    public void UpdateCarryCapacityText()
+    {
+        carryCapacityTM.text = $"Carry Capacity: {PlayerInventoryManager.instance.totalWeight}/{PlayerInventoryManager.instance.maxWeight}";
+    }
+    public void UpdatePlayerCashText()
+    {
+        playerCashTM.text = $"Cash: {PlayerInventoryManager.instance.playerCash}";
+    }
+    public void UpdateOwnCashText()
+    {
+
     }
     //EVENT METHODS
     public void OnInventoryItemEnter(InventoryItemUI inventoryItem)

@@ -151,7 +151,7 @@ public abstract class DockShopInventoryItemUI : CustomButton
         if(myItemAmount > 1)
         {
             transferingItem = true;
-            shopScreenManager.OpenTransferAmountSelector(myItemAmount);
+            shopScreenManager.OpenTransferAmountSelector(myItemAmount, myItemValue);
         }
         else
         {

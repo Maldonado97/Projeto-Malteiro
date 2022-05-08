@@ -8,5 +8,6 @@ public class HopeCityShop1InventoryManager : GeneralDockInventoryManager
     private void Awake()
     {
         instance = this;
+        storeCash = 13400;
     }
 }

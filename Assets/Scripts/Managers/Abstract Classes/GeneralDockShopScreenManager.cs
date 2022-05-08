@@ -16,13 +16,21 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     [SerializeField] GameObject ownInventoryPanel;
     [Tooltip("Where the mirror player inventory item UI should spawn.")]
     [SerializeField] GameObject mirrorPlayerInventoryPanel;
+    [Header("Player Inventory Information")]
+    [SerializeField] TextMeshProUGUI playerCashTM;
+    [SerializeField] TextMeshProUGUI playerCarryCapacityTM;
+    [Header("Store Information")]
+    [SerializeField] TextMeshProUGUI storeCashTM;
     [Header("Item Transfer Amount Selector")]
     [SerializeField] GameObject transferAmountSelector;
-    [SerializeField] GameObject selectorSliderTMPro;
-    [SerializeField] GameObject selectorTMPro;
+    [SerializeField] GameObject selectorSliderTM;
+    [SerializeField] GameObject selectedAmountTM;
+    [SerializeField] TextMeshProUGUI transactionValueTM;
 
+    protected GeneralDockInventoryManager ownInventory;
     private Slider selectorSlider;
     private TextMeshProUGUI selectorText;
+    private float transferingItemValue;
 
     public event Action<int> onInventoryItemUIRemoved;
     public event Action<int> onMirrorPlayerInventoryItemUIRemoved;
@@ -32,20 +40,27 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     public void Start()
     {
         SetInstance();
+        SetOwnInventoryReference();
         SubscribeToEvents();
         GetTransferAmountSelectorComponents();
+
+        UpdatePlayerCarryCapacityText();
+        UpdatePlayerCashText();
+        UpdateStoreCashText();
 
         CloseTransferAmountSelector();
     }
     public abstract void SetInstance();
+    public abstract void SetOwnInventoryReference();
     public virtual void SubscribeToEvents()
     {
         PlayerInventoryManager.instance.onInventoryItemAdded += CreateMirrorPlayerInventoryItemUI;
+        PlayerInventoryManager.instance.onInventoryWeightChanged += UpdatePlayerCarryCapacityText;
     }
     public void GetTransferAmountSelectorComponents()
     {
-        selectorSlider = selectorSliderTMPro.GetComponent<Slider>();
-        selectorText = selectorTMPro.GetComponent<TextMeshProUGUI>();
+        selectorSlider = selectorSliderTM.GetComponent<Slider>();
+        selectorText = selectedAmountTM.GetComponent<TextMeshProUGUI>();
     }
     public void CreateItemUI()
     {
@@ -55,6 +70,19 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     {
         Instantiate(mirrorPlayerInventoryItemUI, mirrorPlayerInventoryPanel.transform);
     }
+    public void UpdatePlayerCarryCapacityText()
+    {
+        playerCarryCapacityTM.text = $"Carry Capacity: {PlayerInventoryManager.instance.totalWeight}/{PlayerInventoryManager.instance.maxWeight}";
+    }
+    public void UpdatePlayerCashText()
+    {
+        playerCashTM.text = $"Cash: {PlayerInventoryManager.instance.playerCash}";
+    }
+    public void UpdateStoreCashText()
+    {
+        storeCashTM.text = $"Store Cash: {ownInventory.storeCash}";
+    }
+    //EVENT METHODS
     public void OnInventoryItemUIRemoved(int removedItemUIOrderInList)
     {
         onInventoryItemUIRemoved?.Invoke(removedItemUIOrderInList);
@@ -64,9 +92,11 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
         onMirrorPlayerInventoryItemUIRemoved?.Invoke(removedItemUIOrderInList);
     }
     //TRANSFER AMOUNT SELECTOR
-    public void OpenTransferAmountSelector(int selectorSliderMaxValue)
+    public void OpenTransferAmountSelector(int itemAmount, float itemValue)
     {
-        selectorSlider.maxValue = selectorSliderMaxValue;
+        selectorSlider.maxValue = itemAmount;
+        transferingItemValue = itemValue;
+        UpdateTransferAmountSelectorText();
         transferAmountSelector.SetActive(true);
     }
     public void CloseTransferAmountSelector()
@@ -75,7 +105,8 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     }
     public void UpdateTransferAmountSelectorText()
     {
-        selectorText.text = ("Amount: " + selectorSlider.value);
+        selectorText.text = ("Choose Amount: " + selectorSlider.value);
+        transactionValueTM.text = ($"Value: {selectorSlider.value * transferingItemValue}");
     }
     public void ConfirmItemTransfer()
     {

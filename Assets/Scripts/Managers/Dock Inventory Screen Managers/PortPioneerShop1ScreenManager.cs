@@ -12,6 +12,10 @@ public class PortPioneerShop1ScreenManager : GeneralDockShopScreenManager
     {
         instance = this;
     }
+    public override void SetOwnInventoryReference()
+    {
+        ownInventory = PortPioneerShop1InventoryManager.instance;
+    }
     public override void SubscribeToEvents()
     {
         base.SubscribeToEvents();

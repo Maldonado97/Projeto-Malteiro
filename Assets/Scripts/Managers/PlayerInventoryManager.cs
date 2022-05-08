@@ -9,16 +9,23 @@ public class PlayerInventoryManager : MonoBehaviour
 
     [HideInInspector] public Dictionary<int, int> itemAmount = new Dictionary<int, int>();
     [HideInInspector] public List<int> itemIDsInInventory = new List<int>();
+    [HideInInspector] public int playerCash;
+    [HideInInspector] public float totalWeight = 0;
+    [HideInInspector] public float maxWeight = 1000; //Initialization isn't working for some reason, so i'm setting the value on the awake method.
 
     private string sortMode = "Name";
 
     public event Action<int> onInventoryChanged;
     public event Action onInventoryItemAdded;
     public event Action<int> onInventoryItemRemoved;
+    public event Action onInventoryWeightChanged;
     public event Action onSortModeChanged;
     public void Awake()
     {
         instance = this;
+        maxWeight = 25000;
+        playerCash = 12000;
+        Debug.Log($"Player inventory Max Weight is: {maxWeight}");
     }
     private void Update()
     {
@@ -48,6 +55,7 @@ public class PlayerInventoryManager : MonoBehaviour
             }
         }
     }
+    //INVENTORY MANAGEMENT
     public void AddItemToInventory(int itemID, int amountToAdd)
     {
         if (itemAmount.ContainsKey(itemID))
@@ -62,27 +70,35 @@ public class PlayerInventoryManager : MonoBehaviour
             itemAmount.Add(itemID, amountToAdd);
             onInventoryItemAdded?.Invoke();
         }
+        AddInventoryWeight(itemID, amountToAdd);
+        onInventoryWeightChanged?.Invoke();
     }
     public void RemoveItemFromInventory(int itemID, int amountToRemove)
     {
         if (itemAmount.ContainsKey(itemID))
         {
-            if(itemAmount[itemID] > amountToRemove)
-            {
-                itemAmount[itemID] -= amountToRemove;
-                onInventoryChanged?.Invoke(itemID);
-            }
-            else if (itemAmount[itemID] == amountToRemove)
-            {
-                itemIDsInInventory.Remove(itemID);
-                itemAmount.Remove(itemID);
-                onInventoryItemRemoved?.Invoke(itemID);
-            }
-            else
+            if(itemAmount[itemID] < amountToRemove)
             {
                 Debug.LogWarning("Tried to remove " + amountToRemove + " " +
                     GameItemDictionary.instance.gameItemNames[itemID] + "(s) from player inventory " +
                     "but there are only " + itemAmount[itemID] + " to remove.");
+            }
+            else
+            {
+                if (itemAmount[itemID] > amountToRemove)
+                {
+                    itemAmount[itemID] -= amountToRemove;
+                    onInventoryChanged?.Invoke(itemID);
+
+                }
+                else if (itemAmount[itemID] == amountToRemove)
+                {
+                    itemIDsInInventory.Remove(itemID);
+                    itemAmount.Remove(itemID);
+                    onInventoryItemRemoved?.Invoke(itemID);
+                }
+                RemoveInventoryWeight(itemID, amountToRemove);
+                onInventoryWeightChanged?.Invoke();
             }
         }
         else
@@ -90,6 +106,17 @@ public class PlayerInventoryManager : MonoBehaviour
             Debug.LogWarning("Tried to remove an item that does not exist in player inventory.");
         }
     }
+    public void AddInventoryWeight(int itemID, int itemAmount)
+    {
+        float itemWeight = GameItemDictionary.instance.gameItemWeights[itemID];
+        totalWeight += itemWeight * itemAmount;
+    }
+    public void RemoveInventoryWeight(int itemID, int itemAmount)
+    {
+        float itemWeight = GameItemDictionary.instance.gameItemWeights[itemID];
+        totalWeight -= itemWeight * itemAmount;
+    }
+    //SORTING
     public void ChangeSortMode(string desiredSortMode)
     {
         if(desiredSortMode == "Value")

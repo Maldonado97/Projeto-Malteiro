@@ -10,6 +10,7 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
     [HideInInspector] public List<int> itemIDsInInventory = new List<int>();
 
     private string sortMode = "Name";
+    [HideInInspector] public int storeCash;
 
     public event Action<int> onInventoryChanged;
     public event Action onInventoryItemAdded;

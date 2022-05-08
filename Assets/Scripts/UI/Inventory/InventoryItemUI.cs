@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 
 public class InventoryItemUI : CustomButton
 {
-    [HideInInspector] public PlayerMenuInventoryScreenManager inventoryScreenManager;
+    [HideInInspector] public PlayerInventoryScreenManager inventoryScreenManager;
     [HideInInspector] public PlayerInventoryManager inventoryManager;
     [HideInInspector] public GameItemDictionary gameItemDictionary;
     [SerializeField] Color highlightedCellColor;
@@ -21,7 +21,7 @@ public class InventoryItemUI : CustomButton
     [HideInInspector] public bool itemSelected;
     private void Start()
     {
-        inventoryScreenManager = PlayerMenuInventoryScreenManager.instance;
+        inventoryScreenManager = PlayerInventoryScreenManager.instance;
         inventoryManager = PlayerInventoryManager.instance;
         gameItemDictionary = GameItemDictionary.instance;
 

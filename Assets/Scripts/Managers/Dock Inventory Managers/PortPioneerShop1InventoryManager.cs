@@ -9,5 +9,6 @@ public class PortPioneerShop1InventoryManager : GeneralDockInventoryManager
     public void Awake() //Should be set to awake, otherwise screen manager can't find its instance
     {
         instance = this;
+        storeCash = 8200;
     }
 }
