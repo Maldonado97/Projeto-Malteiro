@@ -19,7 +19,7 @@ public class InventoryItemUI : CustomButton
     private int orderInList;
     [HideInInspector] public int myitemID;
     [HideInInspector] public bool itemSelected;
-    private void Start()
+    private void Awake()
     {
         inventoryScreenManager = PlayerInventoryScreenManager.instance;
         inventoryManager = PlayerInventoryManager.instance;

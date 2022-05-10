@@ -6,22 +6,20 @@ public class DockZone : MonoBehaviour
 {
     public string dockID;
     public GameObject dockedShipSpot;
-    public GameObject mainDockMenu;
+    [SerializeField] protected DockUIManager dockUIManager;
     [HideInInspector] public bool playerInZone = false;
     private GameObject player = null;
 
     private void Start()
     {
         FindPlayerGameObject();
-
-        mainDockMenu.SetActive(false);
     }
     private void Update()
     {
         if(playerInZone && Input.GetKeyDown(KeyCode.V))
         {
             DockShip(player);
-            OpenDockMenu();
+            dockUIManager.OnPlayerDocked();
         }
     }
     private void FindPlayerGameObject()
@@ -31,7 +29,6 @@ public class DockZone : MonoBehaviour
     public void DockShip(GameObject shipToDock) //Undock method is exectued by PlayerControl script
     {
         var playerRB = player.GetComponent<Rigidbody2D>();
-        //FindPlayerGameObject();
         player.transform.position = dockedShipSpot.transform.position;
         player.transform.rotation = dockedShipSpot.transform.rotation;
         playerRB.velocity = Vector2.zero;
@@ -40,11 +37,7 @@ public class DockZone : MonoBehaviour
         UIManager.instance.rightEngineSlider.value = 0;
         PlayerControl.instance.playerDocked = true;
     }
-    public void OpenDockMenu()
-    {
-        UIManager.instance.HUD.SetActive(false);
-        mainDockMenu.SetActive(true);
-    }
+    //COLLIDER TRIGGERS
     public void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))

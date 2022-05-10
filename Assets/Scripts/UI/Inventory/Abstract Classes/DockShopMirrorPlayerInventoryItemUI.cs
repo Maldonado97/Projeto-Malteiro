@@ -26,6 +26,8 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : DockShopInventoryIte
         myItemName = gameItemDictionary.gameItemNames[myItemID];
         myItemValue = gameItemDictionary.gameItemValues[myItemID];
         myItemWeight = gameItemDictionary.gameItemWeights[myItemID];
+        //MODIFIED ITEM VALUE
+        myModifiedItemValue = myItemValue + myItemValue * (baseValueModification + itemValueModifications[myItemName]);
     }
     public override void TransferSingleItem()
     {
@@ -33,8 +35,8 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : DockShopInventoryIte
         playerInventoryManager.RemoveItemFromInventory(myItemID, 1);
         shopInventoryManager.AddItemToInventory(myItemID, 1);
         //CASH TRANSFER
-        playerInventoryManager.playerCash += myItemValue;
-        shopInventoryManager.storeCash -= myItemValue;
+        playerInventoryManager.playerCash += myModifiedItemValue;
+        shopInventoryManager.storeCash -= myModifiedItemValue;
         //EVEN TRIGGER
         playerInventoryManager.OnInventoryCashChanged();
         shopInventoryManager.OnInventoryCashChanged();
@@ -47,8 +49,8 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : DockShopInventoryIte
             playerInventoryManager.RemoveItemFromInventory(myItemID, amountToTransfer);
             shopInventoryManager.AddItemToInventory(myItemID, amountToTransfer);
             //CASH TRANSFER
-            playerInventoryManager.playerCash += myItemValue * amountToTransfer;
-            shopInventoryManager.storeCash -= myItemValue * amountToTransfer;
+            playerInventoryManager.playerCash += myModifiedItemValue * amountToTransfer;
+            shopInventoryManager.storeCash -= myModifiedItemValue * amountToTransfer;
             //EVENT TRIGGER
             playerInventoryManager.OnInventoryCashChanged();
             shopInventoryManager.OnInventoryCashChanged();

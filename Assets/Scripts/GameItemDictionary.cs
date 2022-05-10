@@ -14,6 +14,8 @@ public class GameItemDictionary : MonoBehaviour
     [HideInInspector] public List<int> gameItemsByValue = new List<int>();
     private void Start()
     {
+        //ID:0 -> Box of Steaks //ID:1 -> Cake //ID:2 -> Contraband //ID:3 -> Empty Crate // ID:4 -> Medicine Box
+        //ID:5 -> Scrap Metal
         instance = this;
         //ID:0, Box of Steaks, value 250, weight: 100
         gameItemNames.Add("Box of Steaks");

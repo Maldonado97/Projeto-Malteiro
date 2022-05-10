@@ -22,7 +22,7 @@ public class UIManager : MonoBehaviour
     [Header("Pause Menu")]
     [SerializeField] GameObject pauseMenu;
     [Header("Player Menu")]
-    [SerializeField] GameObject playerMenu;
+    public GameObject playerMenu;
 
     private bool pauseMenuOpen = false;
     private bool playerMenuOpen = false;

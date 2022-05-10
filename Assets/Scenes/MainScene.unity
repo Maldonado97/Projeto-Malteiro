@@ -1581,6 +1581,52 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &119631099
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 119631100}
+  - component: {fileID: 119631101}
+  m_Layer: 0
+  m_Name: Hope City
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &119631100
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 119631099}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2009218074}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &119631101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 119631099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ebf1efafce9ba14baa39387ba83b0e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dockMenu: {fileID: 1070525229}
+  dockShopScreenManagers:
+  - {fileID: 711729745}
 --- !u!1 &134643958
 GameObject:
   m_ObjectHideFlags: 0
@@ -8287,7 +8333,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dockID: Hope City
   dockedShipSpot: {fileID: 1362265119}
-  mainDockMenu: {fileID: 1070525229}
+  dockUIManager: {fileID: 119631101}
   playerInZone: 0
 --- !u!61 &589239101
 BoxCollider2D:
@@ -9624,7 +9670,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dockID: Port Pioneer
   dockedShipSpot: {fileID: 1103628777}
-  mainDockMenu: {fileID: 455760839}
+  dockUIManager: {fileID: 2036831715}
   playerInZone: 0
 --- !u!1 &696325145
 GameObject:
@@ -10050,6 +10096,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventoryItemUI: {fileID: 7867830620947026663, guid: 77e1922ff36ee5d418888d063c9e81d7, type: 3}
   mirrorPlayerInventoryItemUI: {fileID: 815033616253983588, guid: e9310731289699942ae6053fb1e9ec58, type: 3}
+  storeScreen: {fileID: 807295438}
   ownInventoryPanel: {fileID: 624243226}
   mirrorPlayerInventoryPanel: {fileID: 2110410823}
   playerCashTM: {fileID: 2105294360}
@@ -16913,6 +16960,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventoryItemUI: {fileID: 8770456598744789927, guid: 6831c9e838e63bb46813dbf319b496bd, type: 3}
   mirrorPlayerInventoryItemUI: {fileID: 5663196649720982692, guid: 0f9fc9a3a8abfbd47a30cca588c46e4e, type: 3}
+  storeScreen: {fileID: 473672520}
   ownInventoryPanel: {fileID: 1173878290}
   mirrorPlayerInventoryPanel: {fileID: 1559249698}
   playerCashTM: {fileID: 647505245}
@@ -22919,6 +22967,7 @@ Transform:
   - {fileID: 1382569758}
   - {fileID: 2045228215}
   - {fileID: 1254135703}
+  - {fileID: 2009218074}
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -29408,6 +29457,38 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1988084220}
   m_CullTransparentMesh: 1
+--- !u!1 &2009218073
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2009218074}
+  m_Layer: 0
+  m_Name: Dock UI Manages
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2009218074
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2009218073}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 2036831714}
+  - {fileID: 119631100}
+  m_Father: {fileID: 1539320419}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2010316584
 GameObject:
   m_ObjectHideFlags: 0
@@ -29922,6 +30003,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2034190351}
   m_CullTransparentMesh: 1
+--- !u!1 &2036831713
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2036831714}
+  - component: {fileID: 2036831715}
+  m_Layer: 0
+  m_Name: Port Pioneer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2036831714
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2036831713}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2009218074}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2036831715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2036831713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4ed40442a2ed6b4a9cdbb00c024296c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dockMenu: {fileID: 455760839}
+  dockShopScreenManagers:
+  - {fileID: 1102235639}
 --- !u!1 &2041196926
 GameObject:
   m_ObjectHideFlags: 0
@@ -31907,6 +32034,14 @@ PrefabInstance:
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1102235639}
+    - target: {fileID: 8265475277878199236, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8265475278014747944, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8265475278615833860, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
       propertyPath: onPointerClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -31918,6 +32053,10 @@ PrefabInstance:
     - target: {fileID: 8265475279276867601, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
       propertyPath: m_Name
       value: Transfer Amount Selector
+      objectReference: {fileID: 0}
+    - target: {fileID: 8265475279276867601, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8265475279276867614, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
       propertyPath: m_Pivot.x

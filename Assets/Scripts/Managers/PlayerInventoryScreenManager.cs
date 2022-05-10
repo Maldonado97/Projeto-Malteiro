@@ -38,6 +38,15 @@ public class PlayerInventoryScreenManager : MonoBehaviour
     public void CreateItemUI()
     {
         Instantiate(inventoryItemUI, inventoryItemUIParent.transform);
+        FlashInventoryScreen();
+    }
+    public void FlashInventoryScreen()
+    {
+        if (!UIManager.instance.playerMenu.activeSelf)
+        {
+            UIManager.instance.playerMenu.SetActive(true);
+            UIManager.instance.playerMenu.SetActive(false);
+        }
     }
     public void DisplayItemDescription(string itemDescription, float itemWeight, float itemValue)
     {

@@ -12,6 +12,8 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     [SerializeField] GameObject inventoryItemUI;
     [SerializeField] GameObject mirrorPlayerInventoryItemUI;
     [Header("Item UI Parents")]
+    [Tooltip("The store's screen.")]
+    public GameObject storeScreen;
     [Tooltip("Where own inventoryItemUI should spawn.")]
     [SerializeField] GameObject ownInventoryPanel;
     [Tooltip("Where the mirror player inventory item UI should spawn.")]
@@ -33,6 +35,7 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     private float transferingItemValue;
 
     public event Action<int> onInventoryItemUIRemoved;
+    public event Action<GeneralDockShopScreenManager> onIventoryItemUICreated;
     public event Action<int> onMirrorPlayerInventoryItemUIRemoved;
     public event Action<int> onItemTransferConfirmed;
     public event Action onItemTransferCanceled;
@@ -67,10 +70,12 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     public void CreateItemUI()
     {
         Instantiate(inventoryItemUI, ownInventoryPanel.transform);
+        onIventoryItemUICreated?.Invoke(this);
     }
     public void CreateMirrorPlayerInventoryItemUI()
     {
         Instantiate(mirrorPlayerInventoryItemUI, mirrorPlayerInventoryPanel.transform);
+        onIventoryItemUICreated?.Invoke(this);
     }
     //INVENTORY INFORMATION
     public void UpdatePlayerCarryCapacityText()
@@ -109,7 +114,7 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     public void UpdateTransferAmountSelectorText()
     {
         selectorText.text = ("Choose Amount: " + selectorSlider.value);
-        transactionValueTM.text = ($"Value: {selectorSlider.value * transferingItemValue}");
+        transactionValueTM.text = ($"Value: {Mathf.RoundToInt(selectorSlider.value * transferingItemValue)}");
     }
     public void ConfirmItemTransfer()
     {

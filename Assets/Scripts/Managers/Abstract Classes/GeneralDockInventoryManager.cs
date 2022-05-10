@@ -174,7 +174,6 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
     {
         var gameItemDictionary = GameItemDictionary.instance;
         int randomItemID = UnityEngine.Random.Range(0, gameItemDictionary.gameItemNames.Count);
-        Debug.Log(gameItemDictionary.gameItemNames.Count - 1);
         int randomAmount = UnityEngine.Random.Range(1, 10);
         RemoveItemFromInventory(randomItemID, randomAmount);
         Debug.Log("Removed " + randomAmount + " " + GameItemDictionary.instance.gameItemNames[randomItemID] +
