@@ -43,9 +43,11 @@ public abstract class DockShopInventoryItemUI : CustomButton
 
         cell = gameObject.GetComponent<Image>();
         orderInList = transform.GetSiblingIndex();
+        //Debug.Log($"Adding {gameItemDictionary.gameItemNames[myItemID]} item UI.");
 
         SubscribeToEvents();
         SetItemValueModifications();
+        GetItemID();
         GetItemInformation();
         SetUIInformation();
     }
@@ -61,9 +63,12 @@ public abstract class DockShopInventoryItemUI : CustomButton
         shopScreenManager.onItemTransferCanceled += CancelItemTransfer;
     }
     protected abstract void SetItemValueModifications();
-    public virtual void GetItemInformation()
+    public virtual void GetItemID() //Leave this separate please...
     {
         myItemID = shopInventoryManager.itemIDsInInventory[orderInList];
+    }
+    public virtual void GetItemInformation()
+    {
         myItemAmount = shopInventoryManager.itemAmount[myItemID];
         myItemName = gameItemDictionary.gameItemNames[myItemID];
         myItemValue = gameItemDictionary.gameItemValues[myItemID];
@@ -130,6 +135,7 @@ public abstract class DockShopInventoryItemUI : CustomButton
     }
     public void OnInventoryItemAdded()
     {
+        GetItemID();
         GetItemInformation();
         SetUIInformation();
     }
@@ -137,6 +143,7 @@ public abstract class DockShopInventoryItemUI : CustomButton
     {
         if (removedItemID == myItemID)
         {
+            //Debug.Log($"Destroying {gameItemDictionary.gameItemNames[myItemID]} itemUI");
             Destroy(gameObject);
         }
     }
@@ -149,6 +156,7 @@ public abstract class DockShopInventoryItemUI : CustomButton
     }
     public void OnSortModeChanged()
     {
+        GetItemID();
         GetItemInformation();
         SetUIInformation();
     }
@@ -187,6 +195,7 @@ public abstract class DockShopInventoryItemUI : CustomButton
     {
         base.OnPointerEnter(eventData);
         HighlightCell();
+        //Debug.Log($"My order in list is {orderInList} and my item is {myItemName}");
     }
     public override void OnPointerExit(PointerEventData eventData)
     {

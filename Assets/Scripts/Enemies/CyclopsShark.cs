@@ -173,12 +173,12 @@ public class CyclopsShark : MonoBehaviour
         }
         if (inSharkZone)
         {
-            Debug.Log($"Shark is in zone. Setting shark target Heading to {targetHeading}, current " +
-                $"shark heading is {sharkHeading}. Shark zone is at {GetSharkZoneBearing()}");
+            //Debug.Log($"Shark is in zone. Setting shark target Heading to {targetHeading}, current " +
+                //$"shark heading is {sharkHeading}. Shark zone is at {GetSharkZoneBearing()}");
         }else
         {
-            Debug.Log($"Shark is outside of zone. Setting shark target Heading to {targetHeading}, current " +
-                $"shark heading is {sharkHeading}. Shark zone is at {GetSharkZoneBearing()}");
+            //Debug.Log($"Shark is outside of zone. Setting shark target Heading to {targetHeading}, current " +
+                //$"shark heading is {sharkHeading}. Shark zone is at {GetSharkZoneBearing()}");
         }
 
         yield return new WaitForSeconds(timeBetweenTurns);

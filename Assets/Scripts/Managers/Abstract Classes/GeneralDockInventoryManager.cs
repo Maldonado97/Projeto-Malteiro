@@ -17,7 +17,13 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
     public event Action<int> onInventoryItemRemoved;
     public event Action onInventoryCashChanged;
     public event Action onSortModeChanged;
-    private void Update()
+
+    public bool canShuffleInventory = true;
+    public void Start()
+    {
+        //StartCoroutine(StartInventoryShuffleCounter(1));
+    }
+    protected void Update()
     {
         if (Input.GetKeyDown(KeyCode.K))
         {
@@ -55,6 +61,7 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
             itemAmount.Add(itemID, amountToAdd);
             onInventoryItemAdded?.Invoke();
         }
+        Debug.Log($"{amountToAdd} {GameItemDictionary.instance.gameItemNames[itemID]}(s) added.");
     }
     public void RemoveItemFromInventory(int itemID, int amountToRemove)
     {
@@ -77,6 +84,7 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
                     GameItemDictionary.instance.gameItemNames[itemID] + "(s) from " + shopId + " inventory " +
                     "but there are only " + itemAmount[itemID] + " to remove.");
             }
+            Debug.Log($"{amountToRemove} {GameItemDictionary.instance.gameItemNames[itemID]}(s) removed.");
         }
         else
         {
@@ -159,6 +167,8 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
             itemIDsInInventory[i] = bufferInventory[i];
         }
     }
+    //COROUTINES
+    
     //TESTING METHODS
     public void AddTestItem() //Adds random amount of random item to player inventory
     {

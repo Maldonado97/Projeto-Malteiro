@@ -4691,10 +4691,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sharkZone: {fileID: 653016502}
-  sharkSpeed: 2.5
-  turnTorque: 18
-  timeBetweenTurns: 10
-  turnTime: 2
 --- !u!50 &309068014
 Rigidbody2D:
   serializedVersion: 4
@@ -10586,6 +10582,9 @@ MonoBehaviour:
   shopId: Hope City
   itemIDsInInventory: 
   storeCash: 0
+  canShuffleInventory: 1
+  canAddItems: 1
+  canRemoveItems: 1
 --- !u!1 &718864815
 GameObject:
   m_ObjectHideFlags: 0
@@ -17436,6 +17435,7 @@ MonoBehaviour:
   shopId: Port Pioneer Shop 1
   itemIDsInInventory: 
   storeCash: 0
+  canShuffleInventory: 1
 --- !u!1 &1103628777
 GameObject:
   m_ObjectHideFlags: 0

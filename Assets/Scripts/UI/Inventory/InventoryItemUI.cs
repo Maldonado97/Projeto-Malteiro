@@ -134,7 +134,7 @@ public class InventoryItemUI : CustomButton
     {
         base.OnPointerClick(eventData);
         inventoryScreenManager.OnInventoryItemSelected(this);
-        Debug.Log("My order in list is: " + orderInList + " and my item is " + gameItemDictionary.gameItemNames[myitemID]);
+        //Debug.Log("My order in list is: " + orderInList + " and my item is " + gameItemDictionary.gameItemNames[myitemID]);
     }
     public override void OnPointerEnter(PointerEventData eventData)
     {

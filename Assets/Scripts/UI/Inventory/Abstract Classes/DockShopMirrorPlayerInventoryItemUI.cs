@@ -19,9 +19,12 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : DockShopInventoryIte
         shopScreenManager.onItemTransferConfirmed += TransferMultipleItems;
         shopScreenManager.onItemTransferCanceled += CancelItemTransfer;
     }
-    public override void GetItemInformation()
+    public override void GetItemID()
     {
         myItemID = playerInventoryManager.itemIDsInInventory[orderInList];
+    }
+    public override void GetItemInformation()
+    {
         myItemAmount = playerInventoryManager.itemAmount[myItemID];
         myItemName = gameItemDictionary.gameItemNames[myItemID];
         myItemValue = gameItemDictionary.gameItemValues[myItemID];
