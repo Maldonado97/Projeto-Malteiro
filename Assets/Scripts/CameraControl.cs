@@ -16,6 +16,12 @@ public class CameraControl : MonoBehaviour
     [Tooltip("Determines the minimum target speed that will trigger the camera zoom distortion.")]
     [SerializeField] float zoomDistortionTriggerSpeed;
 
+    [Header("Camera Dynamic Offset Settings")]
+    [Tooltip("Set to zoomDistortionTriggerSpeed for best results.")]
+    [SerializeField] float cameraOffsetTriggerSpeed;
+    [Tooltip("How much the camera moves in front of the player with speed.")]
+    [SerializeField] float cameraOffsetIntensity;
+
     [Header("Camera Movement Deadzone settings")]
     [Tooltip("Determines max distance between the target and the camera before the camera begins" +
         " moving.")]
@@ -24,6 +30,7 @@ public class CameraControl : MonoBehaviour
     [SerializeField] float positionDeadZoneMin; //Ideal = 0.2
     [SerializeField] float rotationDeadZoneMax; //Ideal = 20
     [SerializeField] float rotationDeadZoneMin; //Ideal = 1
+
     [Header("Lerp settings")]
     [Tooltip("Determines how fast the camera will follow the player.")]
     [SerializeField] float positionLerpAlfa; //Ideal = 0.015f
@@ -31,9 +38,11 @@ public class CameraControl : MonoBehaviour
     [SerializeField] float rotationLerpAlfa; //Ideal = 0.009f
 
     private Vector3 cameraPos;
+    private Vector3 cameraPosOffset;
     private Camera cameraComponent;
-    private float targetXPos;
-    private float targetYPos;
+    //private float targetXPos;
+    //private float targetYPos;
+    private Vector3 targetPos;
     private float cameraHeading;
     private float targetHeading;
     private bool positionDeadZoneEnabled;
@@ -46,6 +55,8 @@ public class CameraControl : MonoBehaviour
     }
     void FixedUpdate()
     {
+        GetCameraHeading();
+        GetTargetHeading();
         GetTargetPosition();
         SetCameraDestination();
         MoveAndRotateCamera();
@@ -53,17 +64,29 @@ public class CameraControl : MonoBehaviour
     }
     void GetTargetPosition()
     {
-        targetXPos = target.transform.position.x;
-        targetYPos = target.transform.position.y;
+        float targetXPos = target.transform.position.x;
+        float targetYPos = target.transform.position.y;
+        targetPos = new Vector3(targetXPos, targetYPos, -10);
     }
     void SetCameraDestination()
     {
-        cameraPos = new Vector3(targetXPos, targetYPos, -10);
+        if (GetTargetSpeed() >= cameraOffsetTriggerSpeed)
+        {
+            float rawOffset = cameraOffsetIntensity * (GetTargetSpeed() - cameraOffsetTriggerSpeed);
+            float offsetX = rawOffset * Mathf.Sin(Mathf.Deg2Rad * targetHeading);
+            float offsetY = rawOffset * Mathf.Cos(Mathf.Deg2Rad * targetHeading);
+            cameraPosOffset = new Vector3(offsetX, offsetY, -10);
+        }
+        else
+        {
+            cameraPosOffset = Vector3.zero;
+        }
+        cameraPos = targetPos + cameraPosOffset;
     }
     void MoveAndRotateCamera()
     {
         PositionDeadZoneCheck();
-        if (!PositionDeadZoneCheck())
+        if (!PositionDeadZoneCheck() || GetTargetSpeed() >= cameraOffsetTriggerSpeed)
         {
             transform.position = Vector3.Lerp(transform.position, cameraPos, positionLerpAlfa);
         }
@@ -122,14 +145,20 @@ public class CameraControl : MonoBehaviour
     {
         float angularDistance;
 
-        cameraHeading = 360 - transform.eulerAngles.z;
-        targetHeading = 360 - target.transform.eulerAngles.z;
         angularDistance = Mathf.Abs(cameraHeading - targetHeading);
         if(angularDistance > 180)
         {
             angularDistance = 360 - angularDistance;
         }
         return angularDistance;
+    }
+    public void GetTargetHeading()
+    {
+        targetHeading = 360 - target.transform.eulerAngles.z;
+    }
+    public void GetCameraHeading()
+    {
+        cameraHeading = 360 - transform.eulerAngles.z;
     }
     public float GetTargetSpeed()
     {

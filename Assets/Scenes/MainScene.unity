@@ -7468,6 +7468,8 @@ MonoBehaviour:
   zoomDistortionIntensity: 1.5
   zoomDistortionSensitivity: 0.008
   zoomDistortionTriggerSpeed: 0.7
+  cameraOffsetTriggerSpeed: 0.7
+  cameraOffsetIntensity: 3
   positionDeadZoneMax: 0.2
   positionDeadZoneMin: 0.05
   rotationDeadZoneMax: 20
