@@ -31,9 +31,6 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     //[SerializeField] GameObject selectedAmountTM;
     //[SerializeField] TextMeshProUGUI transactionValueTM;
     //private float transferingItemValue;
-    [Header("Insufficient Cash Warning")]
-    //[SerializeField] GameObject insufficientCashWarning;
-    //[SerializeField] TextMeshProUGUI insufficientCashWarningText;
 
     protected GeneralDockInventoryManager ownInventory;
     //private Slider selectorSlider; REMOVE THIS
@@ -159,5 +156,13 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
         onItemTransferCanceled?.Invoke();
         //dockUIManager.selectorSlider.value = 1;
         //CloseTransferAmountSelector();
+    }
+    public void OpenInsufficientPlayerFundsWarning()
+    {
+        dockUIManager.OpenInsufficientPlayerFundsWarning();
+    }
+    public void OpenInsufficientStoreFundsWarning()
+    {
+        dockUIManager.OpenInsufficientStoreFundsWarning();
     }
 }

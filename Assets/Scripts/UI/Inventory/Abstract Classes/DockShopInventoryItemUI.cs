@@ -93,15 +93,23 @@ public abstract class DockShopInventoryItemUI : CustomButton
     }
     public virtual void TransferSingleItem()
     {
-        //ITEM TRANSFER
-        shopInventoryManager.RemoveItemFromInventory(myItemID, 1);
-        playerInventoryManager.AddItemToInventory(myItemID, 1);
-        //CASH TRANSFER
-        shopInventoryManager.storeCash += myModifiedItemValue;
-        playerInventoryManager.playerCash -= myModifiedItemValue;
-        //EVEN TRIGGER
-        playerInventoryManager.OnInventoryCashChanged();
-        shopInventoryManager.OnInventoryCashChanged();
+        if (playerInventoryManager.playerCash >= myModifiedItemValue)
+        {
+            //ITEM TRANSFER
+            shopInventoryManager.RemoveItemFromInventory(myItemID, 1);
+            playerInventoryManager.AddItemToInventory(myItemID, 1);
+            //CASH TRANSFER
+            shopInventoryManager.storeCash += myModifiedItemValue;
+            playerInventoryManager.playerCash -= myModifiedItemValue;
+            //EVEN TRIGGER
+            playerInventoryManager.OnInventoryCashChanged();
+            shopInventoryManager.OnInventoryCashChanged();
+        }
+        else
+        {
+            shopScreenManager.OpenInsufficientPlayerFundsWarning();
+            Debug.LogWarning($"You don't have enough cash to complete this transaction!");
+        }
     }
     public virtual void TransferMultipleItems(int amountToTransfer)
     {
@@ -122,6 +130,7 @@ public abstract class DockShopInventoryItemUI : CustomButton
                 playerInventoryManager.OnInventoryCashChanged();
             }else
             {
+                shopScreenManager.OpenInsufficientPlayerFundsWarning();
                 Debug.LogWarning($"You don't have enough cash to complete this transaction!");
             }
 

@@ -15,6 +15,9 @@ public abstract class DockUIManager : MonoBehaviour
     public TextMeshProUGUI selectedAmountTM;
     public TextMeshProUGUI transactionValueTM;
     [HideInInspector] public float transferingItemValue;
+    [Header("Insufficient Cash Warning")]
+    [SerializeField] GameObject insufficientFundsWarning;
+    [SerializeField] TextMeshProUGUI insufficientFundsWarningText;
 
     public void Start()
     {
@@ -78,5 +81,16 @@ public abstract class DockUIManager : MonoBehaviour
         transferingDockShop.OnItemTransferCanceled();
         selectorSlider.value = 1;
         CloseTransferAmountSelector();
+    }
+    //INSUFFICIENT FUNDS WARNING
+    public void OpenInsufficientPlayerFundsWarning()
+    {
+        insufficientFundsWarningText.text= $"You don't have enough funds to complete this transaction!";
+        insufficientFundsWarning.SetActive(true);
+    }
+    public void OpenInsufficientStoreFundsWarning()
+    {
+        insufficientFundsWarningText.text = $"Store doesn't have enough funds to complete this transaction!";
+        insufficientFundsWarning.SetActive(true);
     }
 }

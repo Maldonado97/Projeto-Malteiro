@@ -34,15 +34,23 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : DockShopInventoryIte
     }
     public override void TransferSingleItem()
     {
-        //ITEM TRANSFER
-        playerInventoryManager.RemoveItemFromInventory(myItemID, 1);
-        shopInventoryManager.AddItemToInventory(myItemID, 1);
-        //CASH TRANSFER
-        playerInventoryManager.playerCash += myModifiedItemValue;
-        shopInventoryManager.storeCash -= myModifiedItemValue;
-        //EVEN TRIGGER
-        playerInventoryManager.OnInventoryCashChanged();
-        shopInventoryManager.OnInventoryCashChanged();
+        if(shopInventoryManager.storeCash >= myModifiedItemValue)
+        {
+            //ITEM TRANSFER
+            playerInventoryManager.RemoveItemFromInventory(myItemID, 1);
+            shopInventoryManager.AddItemToInventory(myItemID, 1);
+            //CASH TRANSFER
+            playerInventoryManager.playerCash += myModifiedItemValue;
+            shopInventoryManager.storeCash -= myModifiedItemValue;
+            //EVEN TRIGGER
+            playerInventoryManager.OnInventoryCashChanged();
+            shopInventoryManager.OnInventoryCashChanged();
+        }
+        else
+        {
+            shopScreenManager.OpenInsufficientStoreFundsWarning();
+            Debug.LogWarning($"Store doesn't have enough cash to complete this transaction!");
+        }
     }
     public override void TransferMultipleItems(int amountToTransfer)
     {
@@ -61,6 +69,7 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : DockShopInventoryIte
                 shopInventoryManager.OnInventoryCashChanged();
             }else
             {
+                shopScreenManager.OpenInsufficientStoreFundsWarning();
                 Debug.LogWarning($"Store doesn't have enough cash to complete this transaction!");
             }
 
