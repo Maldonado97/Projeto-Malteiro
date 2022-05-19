@@ -1625,8 +1625,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dockMenu: {fileID: 1070525229}
-  dockShopScreenManagers:
-  - {fileID: 711729745}
+  transferAmountSelector: {fileID: 900125704}
+  selectorSlider: {fileID: 1138648896}
+  selectedAmountTM: {fileID: 546434450}
+  transactionValueTM: {fileID: 1270676462}
+  transferingItemValue: 0
 --- !u!1 &134643958
 GameObject:
   m_ObjectHideFlags: 0
@@ -6084,11 +6087,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 434352462}
   m_CullTransparentMesh: 1
---- !u!1 &442533399 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8265475277817174081, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
+--- !u!114 &442533401 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8265475277817174095, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
   m_PrefabInstance: {fileID: 8265475277924097622}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &444572449 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 579899514923405843, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
@@ -7434,11 +7443,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &527531498 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8265475277900030908, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
+--- !u!114 &527531500 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8265475277900030906, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
   m_PrefabInstance: {fileID: 8265475277924097622}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &527725559
 GameObject:
   m_ObjectHideFlags: 0
@@ -7648,11 +7663,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 538807242}
   m_CullTransparentMesh: 1
---- !u!1 &546434449 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8265475277900030908, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
+--- !u!114 &546434450 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8265475277900030906, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
   m_PrefabInstance: {fileID: 6423679361786376985}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &546727291 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9195044468439516844, guid: ce9fcc8af97538248a0925e55df3f437, type: 3}
@@ -10541,6 +10562,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a965ab58a45c6b841b8611d6106ea111, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dockUIManager: {fileID: 119631101}
   inventoryItemUI: {fileID: 7867830620947026663, guid: 77e1922ff36ee5d418888d063c9e81d7, type: 3}
   mirrorPlayerInventoryItemUI: {fileID: 815033616253983588, guid: e9310731289699942ae6053fb1e9ec58, type: 3}
   storeScreen: {fileID: 807295438}
@@ -10549,10 +10571,6 @@ MonoBehaviour:
   playerCashTM: {fileID: 2105294360}
   playerCarryCapacityTM: {fileID: 458277672}
   storeCashTM: {fileID: 959743010}
-  transferAmountSelector: {fileID: 900125704}
-  selectorSliderTM: {fileID: 1138648895}
-  selectedAmountTM: {fileID: 546434449}
-  transactionValueTM: {fileID: 1270676462}
 --- !u!4 &711729746
 Transform:
   m_ObjectHideFlags: 0
@@ -10583,8 +10601,6 @@ MonoBehaviour:
   itemIDsInInventory: 
   storeCash: 0
   canShuffleInventory: 1
-  canAddItems: 1
-  canRemoveItems: 1
 --- !u!1 &718864815
 GameObject:
   m_ObjectHideFlags: 0
@@ -17408,6 +17424,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c198aab985dca448b10a60c4e4f69db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dockUIManager: {fileID: 2036831715}
   inventoryItemUI: {fileID: 8770456598744789927, guid: 6831c9e838e63bb46813dbf319b496bd, type: 3}
   mirrorPlayerInventoryItemUI: {fileID: 5663196649720982692, guid: 0f9fc9a3a8abfbd47a30cca588c46e4e, type: 3}
   storeScreen: {fileID: 473672520}
@@ -17416,10 +17433,6 @@ MonoBehaviour:
   playerCashTM: {fileID: 647505245}
   playerCarryCapacityTM: {fileID: 11974792}
   storeCashTM: {fileID: 171295479}
-  transferAmountSelector: {fileID: 1902272071}
-  selectorSliderTM: {fileID: 442533399}
-  selectedAmountTM: {fileID: 527531498}
-  transactionValueTM: {fileID: 444572449}
 --- !u!114 &1102235640
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18316,11 +18329,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1125596677}
   m_CullTransparentMesh: 1
---- !u!1 &1138648895 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8265475277817174081, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
+--- !u!114 &1138648896 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8265475277817174095, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
   m_PrefabInstance: {fileID: 6423679361786376985}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1143777549
 GameObject:
   m_ObjectHideFlags: 0
@@ -30498,8 +30517,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dockMenu: {fileID: 455760839}
-  dockShopScreenManagers:
-  - {fileID: 1102235639}
+  transferAmountSelector: {fileID: 1902272071}
+  selectorSlider: {fileID: 442533401}
+  selectedAmountTM: {fileID: 527531500}
+  transactionValueTM: {fileID: 444572449}
+  transferingItemValue: 0
 --- !u!1 &2041196926
 GameObject:
   m_ObjectHideFlags: 0
@@ -32284,7 +32306,15 @@ PrefabInstance:
     - target: {fileID: 8265475277817174095, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 711729745}
+      objectReference: {fileID: 119631101}
+    - target: {fileID: 8265475277817174095, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: UpdateTransferAmountSelectorText
+      objectReference: {fileID: 0}
+    - target: {fileID: 8265475277817174095, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: DockUIManager, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 8265475277878199236, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -32296,11 +32326,27 @@ PrefabInstance:
     - target: {fileID: 8265475278615833860, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
       propertyPath: onPointerClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 711729745}
+      objectReference: {fileID: 119631101}
+    - target: {fileID: 8265475278615833860, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
+      propertyPath: onPointerClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CancelItemTransfer
+      objectReference: {fileID: 0}
+    - target: {fileID: 8265475278615833860, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
+      propertyPath: onPointerClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: DockUIManager, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 8265475278939524565, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
       propertyPath: onPointerClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 711729745}
+      objectReference: {fileID: 119631101}
+    - target: {fileID: 8265475278939524565, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
+      propertyPath: onPointerClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ConfirmItemTransfer
+      objectReference: {fileID: 0}
+    - target: {fileID: 8265475278939524565, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
+      propertyPath: onPointerClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: DockUIManager, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 8265475279276867601, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
       propertyPath: m_Name
       value: Transfer Amount Selector (1)
@@ -32484,7 +32530,15 @@ PrefabInstance:
     - target: {fileID: 8265475277817174095, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1102235639}
+      objectReference: {fileID: 2036831715}
+    - target: {fileID: 8265475277817174095, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: UpdateTransferAmountSelectorText
+      objectReference: {fileID: 0}
+    - target: {fileID: 8265475277817174095, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: DockUIManager, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 8265475277878199236, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -32496,11 +32550,27 @@ PrefabInstance:
     - target: {fileID: 8265475278615833860, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
       propertyPath: onPointerClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1102235639}
+      objectReference: {fileID: 2036831715}
+    - target: {fileID: 8265475278615833860, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
+      propertyPath: onPointerClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CancelItemTransfer
+      objectReference: {fileID: 0}
+    - target: {fileID: 8265475278615833860, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
+      propertyPath: onPointerClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: DockUIManager, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 8265475278939524565, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
       propertyPath: onPointerClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1102235639}
+      objectReference: {fileID: 2036831715}
+    - target: {fileID: 8265475278939524565, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
+      propertyPath: onPointerClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ConfirmItemTransfer
+      objectReference: {fileID: 0}
+    - target: {fileID: 8265475278939524565, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
+      propertyPath: onPointerClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: DockUIManager, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 8265475279276867601, guid: 9841533ec85ceb3479c219e9f74b01d9, type: 3}
       propertyPath: m_Name
       value: Transfer Amount Selector

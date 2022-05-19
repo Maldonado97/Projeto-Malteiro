@@ -105,17 +105,25 @@ public abstract class DockShopInventoryItemUI : CustomButton
     }
     public virtual void TransferMultipleItems(int amountToTransfer)
     {
-        if(transferingItem == true)
+        //All itemUIs are subscribed to onItemTransferConfirmed. This first IF avoids having them all send their items
+        //to the player inventory at once.
+        if (transferingItem == true)
         {
-            //ITEM TRANSFER
-            shopInventoryManager.RemoveItemFromInventory(myItemID, amountToTransfer);
-            playerInventoryManager.AddItemToInventory(myItemID, amountToTransfer);
-            //CASH TRANSFER
-            shopInventoryManager.storeCash += myModifiedItemValue * amountToTransfer;
-            playerInventoryManager.playerCash -= myModifiedItemValue * amountToTransfer;
-            //EVENT TRIGGER
-            shopInventoryManager.OnInventoryCashChanged();
-            playerInventoryManager.OnInventoryCashChanged();
+            if(playerInventoryManager.playerCash >= myModifiedItemValue * amountToTransfer)
+            {
+                //ITEM TRANSFER
+                shopInventoryManager.RemoveItemFromInventory(myItemID, amountToTransfer);
+                playerInventoryManager.AddItemToInventory(myItemID, amountToTransfer);
+                //CASH TRANSFER
+                shopInventoryManager.storeCash += myModifiedItemValue * amountToTransfer;
+                playerInventoryManager.playerCash -= myModifiedItemValue * amountToTransfer;
+                //EVENT TRIGGER
+                shopInventoryManager.OnInventoryCashChanged();
+                playerInventoryManager.OnInventoryCashChanged();
+            }else
+            {
+                Debug.LogWarning($"You don't have enough cash to complete this transaction!");
+            }
 
             transferingItem = false;
         }

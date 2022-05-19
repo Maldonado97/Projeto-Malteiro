@@ -61,7 +61,7 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
             itemAmount.Add(itemID, amountToAdd);
             onInventoryItemAdded?.Invoke();
         }
-        Debug.Log($"{amountToAdd} {GameItemDictionary.instance.gameItemNames[itemID]}(s) added.");
+        //Debug.Log($"{amountToAdd} {GameItemDictionary.instance.gameItemNames[itemID]}(s) added.");
     }
     public void RemoveItemFromInventory(int itemID, int amountToRemove)
     {
@@ -84,7 +84,7 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
                     GameItemDictionary.instance.gameItemNames[itemID] + "(s) from " + shopId + " inventory " +
                     "but there are only " + itemAmount[itemID] + " to remove.");
             }
-            Debug.Log($"{amountToRemove} {GameItemDictionary.instance.gameItemNames[itemID]}(s) removed.");
+            //Debug.Log($"{amountToRemove} {GameItemDictionary.instance.gameItemNames[itemID]}(s) removed.");
         }
         else
         {

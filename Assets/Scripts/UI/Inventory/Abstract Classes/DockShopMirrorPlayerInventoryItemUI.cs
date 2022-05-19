@@ -48,15 +48,21 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : DockShopInventoryIte
     {
         if(transferingItem == true)
         {
-            //ITEM TRANSFER
-            playerInventoryManager.RemoveItemFromInventory(myItemID, amountToTransfer);
-            shopInventoryManager.AddItemToInventory(myItemID, amountToTransfer);
-            //CASH TRANSFER
-            playerInventoryManager.playerCash += myModifiedItemValue * amountToTransfer;
-            shopInventoryManager.storeCash -= myModifiedItemValue * amountToTransfer;
-            //EVENT TRIGGER
-            playerInventoryManager.OnInventoryCashChanged();
-            shopInventoryManager.OnInventoryCashChanged();
+            if(shopInventoryManager.storeCash >= myModifiedItemValue * amountToTransfer)
+            {
+                //ITEM TRANSFER
+                playerInventoryManager.RemoveItemFromInventory(myItemID, amountToTransfer);
+                shopInventoryManager.AddItemToInventory(myItemID, amountToTransfer);
+                //CASH TRANSFER
+                playerInventoryManager.playerCash += myModifiedItemValue * amountToTransfer;
+                shopInventoryManager.storeCash -= myModifiedItemValue * amountToTransfer;
+                //EVENT TRIGGER
+                playerInventoryManager.OnInventoryCashChanged();
+                shopInventoryManager.OnInventoryCashChanged();
+            }else
+            {
+                Debug.LogWarning($"Store doesn't have enough cash to complete this transaction!");
+            }
 
             transferingItem = false;
         }

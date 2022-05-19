@@ -8,6 +8,8 @@ using UnityEngine.Events;
 
 public abstract class GeneralDockShopScreenManager : MonoBehaviour
 {
+    [Header("Dock UI Manager")]
+    [SerializeField] DockUIManager dockUIManager;
     [Header("Item UIs")]
     [SerializeField] GameObject inventoryItemUI;
     [SerializeField] GameObject mirrorPlayerInventoryItemUI;
@@ -23,17 +25,20 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI playerCarryCapacityTM;
     [Header("Store Information")]
     [SerializeField] TextMeshProUGUI storeCashTM;
-    [Header("Item Transfer Amount Selector")]
-    [SerializeField] GameObject transferAmountSelector;
-    [SerializeField] GameObject selectorSliderTM;
-    [SerializeField] GameObject selectedAmountTM;
-    [SerializeField] TextMeshProUGUI transactionValueTM;
+    //[Header("Item Transfer Amount Selector")] REMOVE ALL THIS
+    //[SerializeField] GameObject transferAmountSelector;
+    //[SerializeField] GameObject selectorSliderTM;
+    //[SerializeField] GameObject selectedAmountTM;
+    //[SerializeField] TextMeshProUGUI transactionValueTM;
+    //private float transferingItemValue;
+    [Header("Insufficient Cash Warning")]
+    //[SerializeField] GameObject insufficientCashWarning;
+    //[SerializeField] TextMeshProUGUI insufficientCashWarningText;
 
     protected GeneralDockInventoryManager ownInventory;
-    private Slider selectorSlider;
-    private TextMeshProUGUI selectorText;
-    private float transferingItemValue;
-
+    //private Slider selectorSlider; REMOVE THIS
+    //private TextMeshProUGUI selectorText; REMOVE THIS
+     
     public event Action<int> onInventoryItemUIRemoved;
     public event Action<GeneralDockShopScreenManager> onIventoryItemUICreated;
     public event Action<int> onMirrorPlayerInventoryItemUIRemoved;
@@ -45,13 +50,13 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
         SetInstance();
         SetOwnInventoryReference();
         SubscribeToEvents();
-        GetTransferAmountSelectorComponents();
+        //GetTransferAmountSelectorComponents(); REMOVE THIS
 
         UpdatePlayerCarryCapacityText();
         UpdatePlayerCashText();
         UpdateStoreCashText();
 
-        CloseTransferAmountSelector();
+        //CloseTransferAmountSelector();
     }
     public void Update()
     {
@@ -73,20 +78,22 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
         PlayerInventoryManager.instance.onInventoryCashChanged += UpdatePlayerCashText;
         ownInventory.onInventoryCashChanged += UpdateStoreCashText;
     }
-    public void GetTransferAmountSelectorComponents()
+    public void GetTransferAmountSelectorComponents() //REMOVE THIS
     {
-        selectorSlider = selectorSliderTM.GetComponent<Slider>();
-        selectorText = selectedAmountTM.GetComponent<TextMeshProUGUI>();
+        //selectorSlider = selectorSliderTM.GetComponent<Slider>();
+        //selectorText = selectedAmountTM.GetComponent<TextMeshProUGUI>();
     }
     public void CreateItemUI()
     {
         Instantiate(inventoryItemUI, ownInventoryPanel.transform);
-        onIventoryItemUICreated?.Invoke(this);
+        OnInventoryItemUICreated();
+        //onIventoryItemUICreated?.Invoke(this);
     }
     public void CreateMirrorPlayerInventoryItemUI()
     {
         Instantiate(mirrorPlayerInventoryItemUI, mirrorPlayerInventoryPanel.transform);
-        onIventoryItemUICreated?.Invoke(this);
+        OnMirrorInventoryItemUICreated();
+        //onIventoryItemUICreated?.Invoke(this); REMOVE THIS
     }
     //INVENTORY INFORMATION
     public void UpdatePlayerCarryCapacityText()
@@ -95,13 +102,21 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     }
     public void UpdatePlayerCashText()
     {
-        playerCashTM.text = $"Cash: {PlayerInventoryManager.instance.playerCash}";
+        playerCashTM.text = $"Cash: {Mathf.RoundToInt(PlayerInventoryManager.instance.playerCash)}";
     }
     public void UpdateStoreCashText()
     {
-        storeCashTM.text = $"Store Cash: {ownInventory.storeCash}";
+        storeCashTM.text = $"Store Cash: {Mathf.RoundToInt(ownInventory.storeCash)}";
     }
     //EVENT METHODS
+    public void OnInventoryItemUICreated()
+    {
+        dockUIManager.FlashStoreScreen(this);
+    }
+    public void OnMirrorInventoryItemUICreated()
+    {
+        dockUIManager.FlashStoreScreen(this);
+    }
     public void OnInventoryItemUIRemoved(int removedItemUIOrderInList)
     {
         onInventoryItemUIRemoved?.Invoke(removedItemUIOrderInList);
@@ -113,30 +128,36 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     //TRANSFER AMOUNT SELECTOR
     public void OpenTransferAmountSelector(int itemAmount, float itemValue)
     {
-        selectorSlider.maxValue = itemAmount;
-        transferingItemValue = itemValue;
-        UpdateTransferAmountSelectorText();
-        transferAmountSelector.SetActive(true);
+        //selectorSlider.maxValue = itemAmount;
+        //transferingItemValue = itemValue;
+        //UpdateTransferAmountSelectorText();
+        //transferAmountSelector.SetActive(true);
+
+        //this has to be here because ItemUIs need this method, but they can only access it through the shop screen
+        //manager.
+        dockUIManager.OpenTransferAmountSelector(itemAmount, itemValue, this);
     }
-    public void CloseTransferAmountSelector()
+    //public void CloseTransferAmountSelector() REMOVE THIS
+    //{
+        //transferAmountSelector.SetActive(false);
+        //this is here just for consistancy. The Open method is here, so why not leave the close method.
+        //dockUIManager.CloseTransferAmountSelector();
+    //}
+    //public void UpdateTransferAmountSelectorText() //REMOVE THIS
+    //{
+        //selectorText.text = ("Choose Amount: " + selectorSlider.value);
+        //transactionValueTM.text = ($"Value: {Mathf.RoundToInt(selectorSlider.value * transferingItemValue)}");
+    //}
+    public void OnItemTransferConfirmed()
     {
-        transferAmountSelector.SetActive(false);
+        onItemTransferConfirmed?.Invoke(Mathf.RoundToInt(dockUIManager.selectorSlider.value));
+        //dockUIManager.selectorSlider.value = 1;
+        //CloseTransferAmountSelector();
     }
-    public void UpdateTransferAmountSelectorText()
-    {
-        selectorText.text = ("Choose Amount: " + selectorSlider.value);
-        transactionValueTM.text = ($"Value: {Mathf.RoundToInt(selectorSlider.value * transferingItemValue)}");
-    }
-    public void ConfirmItemTransfer()
-    {
-        onItemTransferConfirmed?.Invoke(Mathf.RoundToInt(selectorSlider.value));
-        selectorSlider.value = 1;
-        CloseTransferAmountSelector();
-    }
-    public void CancelItemTransfer()
+    public void OnItemTransferCanceled()
     {
         onItemTransferCanceled?.Invoke();
-        selectorSlider.value = 1;
-        CloseTransferAmountSelector();
+        //dockUIManager.selectorSlider.value = 1;
+        //CloseTransferAmountSelector();
     }
 }
