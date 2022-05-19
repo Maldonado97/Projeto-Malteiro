@@ -21,7 +21,7 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
     public bool canShuffleInventory = true;
     public void Start()
     {
-        //StartCoroutine(StartInventoryShuffleCounter(1));
+        StartCoroutine(StartInventoryShuffleCounter(1));
     }
     protected void Update()
     {
@@ -90,6 +90,64 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
         {
             Debug.LogWarning("Tried to remove an item that does not exist in " + shopId + " inventory.");
         }
+    }
+    public void ShuffleInventory()
+    {
+        int itemsToRemove;
+        int itemsToAdd;
+        int itemToRemove;
+        int itemToAdd;
+        int amountToRemove;
+        int amountToAdd;
+
+        itemsToRemove = UnityEngine.Random.Range(1, itemIDsInInventory.Count / 2 + 1);
+        itemsToAdd = UnityEngine.Random.Range(1, 4);
+        if (canShuffleInventory)
+        {
+            //Debug.Log($"SHUFFLER IS ADDING {itemsToAdd} ITEMS TO INVENTORY");
+            for (int i = 0; i < itemsToAdd; i++)
+            {
+                itemToAdd = UnityEngine.Random.Range(0, GameItemDictionary.instance.gameItemNames.Count);
+                amountToAdd = UnityEngine.Random.Range(1, 6);
+                //Debug.Log($"Shuffler will add {amountToAdd} of " +
+                //$"item ID {itemToAdd}: {GameItemDictionary.instance.gameItemNames[itemToAdd]}");
+                AddItemToInventory(itemToAdd, amountToAdd);
+            }
+            if (itemIDsInInventory.Count > 2)
+            {
+                //Debug.Log($"SHUFFLER IS REMOVING {itemsToRemove} ITEMS FROM INVENTORY");
+                for (int i = 0; i < itemsToRemove; i++)
+                {
+                    itemToRemove = itemIDsInInventory[UnityEngine.Random.Range(0, itemIDsInInventory.Count)];
+                    amountToRemove = UnityEngine.Random.Range(1, itemAmount[itemToRemove] + 1);
+                    //Debug.Log($"Shuffler will remove {amountToRemove} of " +
+                    //$"item ID {itemToRemove}: {GameItemDictionary.instance.gameItemNames[itemToRemove]}");
+                    RemoveItemFromInventory(itemToRemove, amountToRemove);
+                }
+            }
+            if(storeCash >= 20000)
+            {
+                storeCash += UnityEngine.Random.Range(-3000, 501);
+                OnInventoryCashChanged();
+            }
+            if(storeCash >= 5000 && storeCash < 20000)
+            {
+                storeCash += UnityEngine.Random.Range(-2000, 2001);
+                OnInventoryCashChanged();
+            }
+            if (storeCash < 5000 && storeCash >= 1000)
+            {
+                storeCash += UnityEngine.Random.Range(-500, 3001);
+                OnInventoryCashChanged();
+            }
+            if(storeCash < 1000)
+            {
+                storeCash += UnityEngine.Random.Range(2000, 5001);
+                OnInventoryCashChanged();
+            }
+        }
+        StartCoroutine(StartInventoryShuffleCounter(UnityEngine.Random.Range(180, 301))); //3(180) to 5(300) minutes.
+        //StartCoroutine(StartInventoryShuffleCounter(1));
     }
     public void OnInventoryCashChanged()
     {
@@ -168,7 +226,11 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
         }
     }
     //COROUTINES
-    
+    public IEnumerator StartInventoryShuffleCounter(int timeToWait)
+    {
+        yield return new WaitForSeconds(timeToWait);
+        ShuffleInventory();
+    }
     //TESTING METHODS
     public void AddTestItem() //Adds random amount of random item to player inventory
     {

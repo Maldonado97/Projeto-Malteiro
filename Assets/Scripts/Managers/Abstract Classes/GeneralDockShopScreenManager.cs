@@ -53,6 +53,17 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
 
         CloseTransferAmountSelector();
     }
+    public void Update()
+    {
+        if (storeScreen.activeSelf)
+        {
+            ownInventory.canShuffleInventory = false;
+        }
+        else
+        {
+            ownInventory.canShuffleInventory = true;
+        }
+    }
     public abstract void SetInstance();
     public abstract void SetOwnInventoryReference();
     public virtual void SubscribeToEvents()
