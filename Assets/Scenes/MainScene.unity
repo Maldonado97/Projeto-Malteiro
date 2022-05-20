@@ -4867,7 +4867,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 309068009}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -8.111966, y: 1.6526743, z: 0}
+  m_LocalPosition: {x: -3.64, y: 3.42, z: 0}
   m_LocalScale: {x: 2.6654875, y: 2.724189, z: 1}
   m_Children: []
   m_Father: {fileID: 653016506}
@@ -4886,8 +4886,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sharkZone: {fileID: 653016502}
-  sharkFieldOfView: 90
-  sightRange: 7
+  sharkFieldOfView: 80
+  sightRange: 10
+  closeRange: 3.5
+  biteForce: 4
+  biteCooldownTime: 4
 --- !u!50 &309068014
 Rigidbody2D:
   serializedVersion: 4
@@ -8104,11 +8107,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4259773667461880348, guid: 99c12cf6e092b524a84b5a9b4ce8047a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -24.2
+      value: -23.59
       objectReference: {fileID: 0}
     - target: {fileID: 4259773667461880348, guid: 99c12cf6e092b524a84b5a9b4ce8047a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 33.74
+      value: 25.73
       objectReference: {fileID: 0}
     - target: {fileID: 4259773667461880348, guid: 99c12cf6e092b524a84b5a9b4ce8047a, type: 3}
       propertyPath: m_LocalPosition.z
@@ -33160,11 +33163,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4259773667461880348, guid: 99c12cf6e092b524a84b5a9b4ce8047a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -27.78
+      value: -22.14
       objectReference: {fileID: 0}
     - target: {fileID: 4259773667461880348, guid: 99c12cf6e092b524a84b5a9b4ce8047a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 32.16
+      value: 36.13
       objectReference: {fileID: 0}
     - target: {fileID: 4259773667461880348, guid: 99c12cf6e092b524a84b5a9b4ce8047a, type: 3}
       propertyPath: m_LocalPosition.z

@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Cyclops Shark_Fast Swim
+  m_Name: Cyclops Shark_Stunned Swim
   serializedVersion: 6
   m_Legacy: 0
   m_Compressed: 0
@@ -21,19 +21,19 @@ AnimationClip:
   - curve:
     - time: 0
       value: {fileID: 21300000, guid: 5723935cb217dc54a9cd5cfa7959dde1, type: 3}
-    - time: 0.06666667
+    - time: 0.18333334
       value: {fileID: 21300000, guid: fa39e67728c9df646823efca754357d4, type: 3}
-    - time: 0.15
+    - time: 0.36666667
       value: {fileID: 21300000, guid: 1c20cec808e73574394beb3c3424d5a7, type: 3}
-    - time: 0.21666667
+    - time: 0.55
       value: {fileID: 21300000, guid: 53798985ae1cff24bb78f4ed83476d75, type: 3}
-    - time: 0.28333333
+    - time: 0.7
       value: {fileID: 21300000, guid: ca69840d53079614b8f7dedb0b5d35ac, type: 3}
-    - time: 0.35
+    - time: 0.8833333
       value: {fileID: 21300000, guid: 72b6ff3cee0f73c499639df3429757d5, type: 3}
-    - time: 0.43333334
+    - time: 1.0666667
       value: {fileID: 21300000, guid: f0f426a542fd2d7499b282e3dfe4cde0, type: 3}
-    - time: 0.5
+    - time: 1.25
       value: {fileID: 21300000, guid: d426657c74bc31247a902a3fa438b3db, type: 3}
     attribute: m_Sprite
     path: 
@@ -67,7 +67,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.51666665
+    m_StopTime: 1.2666667
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
