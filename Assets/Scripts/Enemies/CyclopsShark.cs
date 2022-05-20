@@ -2,14 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 public class CyclopsShark : MonoBehaviour
 {
     [SerializeField] GameObject sharkZone;
+    [Header("Hunting")]
+    [SerializeField] GameObject target;
+    [Tooltip("In degrees.")]
+    [SerializeField] int sharkFieldOfView;
+    [SerializeField] float sightRange;
 
     private Rigidbody2D sharkRB;
     private Collider2D sharkZoneCollider;
-    private float sharkSpeed = 1.5f;
-    private float turnTorque = 18;
+    private float sharkSpeed = 0; //1.5
+    private float turnTorque = 0; //18
     private int timeBetweenTurns = 5;
     private float sharkHeading;
     private float inverseSharkHeading;
@@ -23,13 +32,14 @@ public class CyclopsShark : MonoBehaviour
         sharkRB = gameObject.GetComponent<Rigidbody2D>();
         sharkZoneCollider = sharkZone.GetComponent<Collider2D>();
 
-        StartCoroutine(ChangeTargetHeading(timeBetweenTurns));
+        StartCoroutine(SelectRandomTargetHeading(timeBetweenTurns));
     }
     private void Update()
     {
         GetSharkHeading();
         //Debug.Log($"{GetSharkZoneBearing()}");
         MoveInArea();
+        LookForTarget();
     }
     public void MoveInArea()
     {
@@ -84,6 +94,72 @@ public class CyclopsShark : MonoBehaviour
     {
         sharkRB.AddTorque(-turnTorque * Time.deltaTime);
     }
+    public void LookForTarget()
+    {
+        float fieldOfViewBearing1 = sharkHeading - (sharkFieldOfView / 2);
+        float fieldOfViewBearing2 = sharkHeading + (sharkFieldOfView / 2);
+        if(fieldOfViewBearing1 < 0)
+        {
+            fieldOfViewBearing1 += 360;
+        }
+        if (fieldOfViewBearing2 >= 360)
+        {
+            fieldOfViewBearing2 -= 360;
+        }
+        if(fieldOfViewBearing1 > fieldOfViewBearing2)
+        {
+            if(GetTargetBearing(target) > fieldOfViewBearing1 || GetTargetBearing(target) < fieldOfViewBearing2)
+            {
+                Debug.Log("TARGET IN SIGHT!");
+            }
+            else
+            {
+                Debug.Log("NO TARGET!");
+            }
+        }
+        else if (GetTargetBearing(target) > fieldOfViewBearing1 && GetTargetBearing(target) < fieldOfViewBearing2)
+        {
+            Debug.Log("TARGET IN SIGHT!");
+        }
+        else
+        {
+            Debug.Log("NO TARGET!");
+        }
+    }
+    private void OnDrawGizmos()
+    {
+        GetSharkHeading();
+        Gizmos.color = new Color(1, 0, 0, .15f);
+        Gizmos.DrawSphere(transform.position, 3);
+
+        //LINE 1
+        float radius = sightRange;
+        float line1X = radius * Mathf.Sin(Mathf.Deg2Rad * (sharkHeading + (sharkFieldOfView/2)));
+        float line1y = radius * Mathf.Cos(Mathf.Deg2Rad * (sharkHeading + (sharkFieldOfView / 2)));
+        Vector3 line1EndPoint = new Vector3(line1X, line1y);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(transform.position, transform.position + line1EndPoint);
+
+        //LINE 2
+        float line2X = radius * Mathf.Sin(Mathf.Deg2Rad * (sharkHeading - (sharkFieldOfView / 2)));
+        float line2y = radius * Mathf.Cos(Mathf.Deg2Rad * (sharkHeading - (sharkFieldOfView / 2)));
+        Vector3 line2EndPoint = new Vector3(line2X, line2y);
+        Gizmos.DrawLine(transform.position, transform.position + line2EndPoint);
+
+        //ARC
+        List<Vector3> arcPoints = new List<Vector3>();
+        for (int i = (-sharkFieldOfView / 2); i < sharkFieldOfView / 2; i += 10)
+        {
+            float pointX = radius * Mathf.Sin(Mathf.Deg2Rad * (sharkHeading + i));
+            float pointY = radius * Mathf.Cos(Mathf.Deg2Rad * (sharkHeading + i));
+            arcPoints.Add(new Vector3(pointX, pointY));
+        }
+        for(int i = 0; i < (arcPoints.Count - 1); i++)
+        {
+            Gizmos.DrawLine(transform.position + arcPoints[i], transform.position + arcPoints[i + 1]);
+        }
+        Gizmos.DrawLine(transform.position + arcPoints[arcPoints.Count - 1], transform.position + line1EndPoint);
+    }
     void GetSharkHeading()
     {
         sharkHeading = 360 - transform.eulerAngles.z;
@@ -96,31 +172,31 @@ public class CyclopsShark : MonoBehaviour
             inverseSharkHeading = sharkHeading + 180;
         }
     }
-    float GetSharkZoneBearing()
+    float GetTargetBearing(GameObject target)
     {
         float areaRawBearing;
-        float sharkZoneBearing;
-        Vector2 sharkZone2DPosition;
+        float targetBearing;
+        Vector2 target2DPosition;
         Vector2 shark2DPosition;
-        Vector2 areaVector;
+        Vector2 targetVector;
 
-        sharkZone2DPosition = new Vector2(sharkZone.transform.position.x, sharkZone.transform.position.y);
+        target2DPosition = new Vector2(target.transform.position.x, target.transform.position.y);
         shark2DPosition = new Vector2(transform.position.x, transform.position.y);
-        areaVector = shark2DPosition - sharkZone2DPosition;
-        areaRawBearing = Mathf.Atan2(areaVector.y, areaVector.x) * Mathf.Rad2Deg;
+        targetVector = shark2DPosition - target2DPosition;
+        areaRawBearing = Mathf.Atan2(targetVector.y, targetVector.x) * Mathf.Rad2Deg;
         if(areaRawBearing < 0)
         {
             areaRawBearing += 360;
         }
-        sharkZoneBearing = 360 - areaRawBearing - 90;
-        if(sharkZoneBearing < 0)
+        targetBearing = 360 - areaRawBearing - 90;
+        if(targetBearing < 0)
         {
-            sharkZoneBearing += 360;
+            targetBearing += 360;
         }
 
-        return sharkZoneBearing;
+        return targetBearing;
     }
-    public IEnumerator ChangeTargetHeading(int timeBetweenTurns)
+    public IEnumerator SelectRandomTargetHeading(int timeBetweenTurns)
     {
         if (inSharkZone)
         {
@@ -131,7 +207,7 @@ public class CyclopsShark : MonoBehaviour
         {
             if(sharkHeading <= 180)
             {
-                if(GetSharkZoneBearing() >= sharkHeading || GetSharkZoneBearing() <= inverseSharkHeading)
+                if(GetTargetBearing(sharkZone) >= sharkHeading || GetTargetBearing(sharkZone) <= inverseSharkHeading)
                 {
                     targetHeading = sharkHeading + Random.Range(120f, 180f);
                 }
@@ -142,7 +218,7 @@ public class CyclopsShark : MonoBehaviour
             }
             else
             {
-                if (GetSharkZoneBearing() >= inverseSharkHeading || GetSharkZoneBearing() <= sharkHeading)
+                if (GetTargetBearing(sharkZone) >= inverseSharkHeading || GetTargetBearing(sharkZone) <= sharkHeading)
                 {
                     targetHeading = sharkHeading - Random.Range(120f, 180f);
                 }
@@ -154,7 +230,7 @@ public class CyclopsShark : MonoBehaviour
             outOfBoundsCounter += 1;
         }else if(!inSharkZone && outOfBoundsCounter != 0)
         {
-            targetHeading = GetSharkZoneBearing();
+            targetHeading = GetTargetBearing(sharkZone);
         }
         if(targetHeading >= 360)
         {
@@ -182,7 +258,7 @@ public class CyclopsShark : MonoBehaviour
         }
 
         yield return new WaitForSeconds(timeBetweenTurns);
-        StartCoroutine(ChangeTargetHeading(timeBetweenTurns));
+        StartCoroutine(SelectRandomTargetHeading(timeBetweenTurns));
     }
     public void OnTriggerEnter2D(Collider2D other)
     {
