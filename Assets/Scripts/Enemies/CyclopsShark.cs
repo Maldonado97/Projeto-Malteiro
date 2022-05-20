@@ -9,39 +9,44 @@ using UnityEditor;
 public class CyclopsShark : MonoBehaviour
 {
     [SerializeField] GameObject sharkZone;
-    [Header("Hunting")]
-    [SerializeField] GameObject target;
     [Tooltip("In degrees.")]
     [SerializeField] int sharkFieldOfView;
     [SerializeField] float sightRange;
 
     private Rigidbody2D sharkRB;
     private Collider2D sharkZoneCollider;
-    private float sharkSpeed = 0; //1.5
-    private float turnTorque = 0; //18
+    private float sharkSpeed; //1.5
+    private float chaseSpeed = 2.1f;
+    private float normalSpeed = 1.5f; //1.5
+    private float turnTorque = 18; //18
     private int timeBetweenTurns = 5;
+    //HEADING
     private float sharkHeading;
     private float inverseSharkHeading;
     private float inverseTargetHeading;
     private float targetHeading;
+    //NAVIGATION
+    private GameObject target;
+    private float distanceToTarget;
     private bool inSharkZone = false;
+    private bool chasingTarget = false;
     private int outOfBoundsCounter = 0;
 
     public void Start()
     {
         sharkRB = gameObject.GetComponent<Rigidbody2D>();
         sharkZoneCollider = sharkZone.GetComponent<Collider2D>();
-
+        timeBetweenTurns = 5;
         StartCoroutine(SelectRandomTargetHeading(timeBetweenTurns));
     }
     private void Update()
     {
         GetSharkHeading();
         //Debug.Log($"{GetSharkZoneBearing()}");
-        MoveInArea();
         LookForTarget();
+        MoveInTargetHeading();
     }
-    public void MoveInArea()
+    public void MoveInTargetHeading()
     {
         bool shouldTurnLeft = false;
         bool shouldTurnRight = false;
@@ -84,6 +89,14 @@ public class CyclopsShark : MonoBehaviour
     }
     public void MoveForwards()
     {
+        if (chasingTarget)
+        {
+            sharkSpeed = chaseSpeed;
+        }
+        else
+        {
+            sharkSpeed = normalSpeed;
+        }
         sharkRB.AddRelativeForce(Vector2.up * sharkSpeed * Time.deltaTime, ForceMode2D.Impulse);
     }
     public void TurnLeft()
@@ -94,10 +107,48 @@ public class CyclopsShark : MonoBehaviour
     {
         sharkRB.AddTorque(-turnTorque * Time.deltaTime);
     }
+    public void GetClosestTarget()
+    {
+        GameObject closestTarget = null;
+        List<GameObject> possibleTargets = new List<GameObject>();
+        float closestTargetDistance = 0;
+        float possibleTargetDistance = 0;
+        foreach (GameObject possibleTarget in GameObject.FindGameObjectsWithTag("Player"))
+        {
+            possibleTargets.Add(possibleTarget);
+        }
+        foreach (GameObject possibleTarget in GameObject.FindGameObjectsWithTag("Ship"))
+        {
+            possibleTargets.Add(possibleTarget);
+        }
+        foreach (GameObject possibleTarget in GameObject.FindGameObjectsWithTag("Fish"))
+        {
+            possibleTargets.Add(possibleTarget);
+        }
+        for(int i = 0; i < possibleTargets.Count; i++)
+        {
+            if (i == 0)
+            {
+                closestTarget = possibleTargets[0];
+            }
+            closestTargetDistance = Vector3.Distance(closestTarget.transform.position, transform.position);
+            possibleTargetDistance = Vector3.Distance(possibleTargets[i].transform.position, transform.position);
+            if (closestTargetDistance > possibleTargetDistance)
+            {
+                closestTarget = possibleTargets[i];
+                closestTargetDistance = possibleTargetDistance;
+            }
+        }
+        target = closestTarget;
+        distanceToTarget = closestTargetDistance;
+        Debug.Log($"Closest target is: {closestTarget.name}, at a distance of {closestTargetDistance}");
+    }
     public void LookForTarget()
     {
+        GetClosestTarget();
         float fieldOfViewBearing1 = sharkHeading - (sharkFieldOfView / 2);
         float fieldOfViewBearing2 = sharkHeading + (sharkFieldOfView / 2);
+        float distanceToTarget = Vector3.Distance(transform.position, target.transform.position);
         if(fieldOfViewBearing1 < 0)
         {
             fieldOfViewBearing1 += 360;
@@ -106,25 +157,40 @@ public class CyclopsShark : MonoBehaviour
         {
             fieldOfViewBearing2 -= 360;
         }
-        if(fieldOfViewBearing1 > fieldOfViewBearing2)
+        if(distanceToTarget <= sightRange)
         {
-            if(GetTargetBearing(target) > fieldOfViewBearing1 || GetTargetBearing(target) < fieldOfViewBearing2)
+            if (fieldOfViewBearing1 > fieldOfViewBearing2)
             {
-                Debug.Log("TARGET IN SIGHT!");
+                if (GetTargetBearing(target) > fieldOfViewBearing1 || GetTargetBearing(target) < fieldOfViewBearing2)
+                {
+                    chasingTarget = true;
+                    SetTargetHeading(GetTargetBearing(target));
+                    //Debug.Log("TARGET IN SIGHT!");
+                }
+                else
+                {
+                    chasingTarget = false;
+                    //Debug.Log("NO TARGET!");
+                }
+            }
+            else if (GetTargetBearing(target) > fieldOfViewBearing1 && GetTargetBearing(target) < fieldOfViewBearing2)
+            {
+                chasingTarget = true;
+                SetTargetHeading(GetTargetBearing(target));
+                //Debug.Log("TARGET IN SIGHT!");
             }
             else
             {
-                Debug.Log("NO TARGET!");
+                chasingTarget = false;
+                //Debug.Log("NO TARGET!");
             }
-        }
-        else if (GetTargetBearing(target) > fieldOfViewBearing1 && GetTargetBearing(target) < fieldOfViewBearing2)
-        {
-            Debug.Log("TARGET IN SIGHT!");
         }
         else
         {
-            Debug.Log("NO TARGET!");
+            chasingTarget = false;
+            //Debug.Log("NO TARGET!");
         }
+        
     }
     private void OnDrawGizmos()
     {
@@ -198,67 +264,88 @@ public class CyclopsShark : MonoBehaviour
     }
     public IEnumerator SelectRandomTargetHeading(int timeBetweenTurns)
     {
-        if (inSharkZone)
+        if (!chasingTarget)
         {
-            targetHeading = sharkHeading + Random.Range(-100f, 100f);
-            outOfBoundsCounter = 0;
-        }
-        if (!inSharkZone && outOfBoundsCounter == 0)
-        {
-            if(sharkHeading <= 180)
+            //RANDOM MOVE MODE
+            if (inSharkZone)
             {
-                if(GetTargetBearing(sharkZone) >= sharkHeading || GetTargetBearing(sharkZone) <= inverseSharkHeading)
+                SetTargetHeading(sharkHeading + Random.Range(-100f, 100f));
+                //targetHeading = sharkHeading + Random.Range(-100f, 100f);
+                outOfBoundsCounter = 0;
+            }
+            //RETURN TO AREA MODE
+            if (!inSharkZone && outOfBoundsCounter == 0)
+            {
+                if (sharkHeading <= 180)
                 {
-                    targetHeading = sharkHeading + Random.Range(120f, 180f);
+                    if (GetTargetBearing(sharkZone) >= sharkHeading || GetTargetBearing(sharkZone) <= inverseSharkHeading)
+                    {
+                        SetTargetHeading(sharkHeading + Random.Range(120f, 180f));
+                        //targetHeading = sharkHeading + Random.Range(120f, 180f);
+                    }
+                    else
+                    {
+                        SetTargetHeading(sharkHeading - Random.Range(120f, 180f));
+                        //targetHeading = sharkHeading - Random.Range(120f, 180f);
+                    }
                 }
                 else
                 {
-                    targetHeading = sharkHeading - Random.Range(120f, 180f);
+                    if (GetTargetBearing(sharkZone) >= inverseSharkHeading || GetTargetBearing(sharkZone) <= sharkHeading)
+                    {
+                        SetTargetHeading(sharkHeading - Random.Range(120f, 180f));
+                        //targetHeading = sharkHeading - Random.Range(120f, 180f);
+                    }
+                    else
+                    {
+                        SetTargetHeading(sharkHeading + Random.Range(120f, 180f));
+                        //targetHeading = sharkHeading + Random.Range(120f, 180f);
+                    }
                 }
+                outOfBoundsCounter += 1;
             }
-            else
+            else if (!inSharkZone && outOfBoundsCounter != 0)
             {
-                if (GetTargetBearing(sharkZone) >= inverseSharkHeading || GetTargetBearing(sharkZone) <= sharkHeading)
-                {
-                    targetHeading = sharkHeading - Random.Range(120f, 180f);
-                }
-                else
-                {
-                    targetHeading = sharkHeading + Random.Range(120f, 180f);
-                }
+                SetTargetHeading(GetTargetBearing(sharkZone));
+                //targetHeading = GetTargetBearing(sharkZone);
             }
-            outOfBoundsCounter += 1;
-        }else if(!inSharkZone && outOfBoundsCounter != 0)
-        {
-            targetHeading = GetTargetBearing(sharkZone);
         }
-        if(targetHeading >= 360)
-        {
-            targetHeading -= 360;
-        }
-        if(targetHeading < 0)
-        {
-            targetHeading = 360 + targetHeading;
-        }
-        if (targetHeading >= 180)
-        {
-            inverseTargetHeading = targetHeading - 180;
-        }else
-        {
-            inverseTargetHeading = targetHeading + 180;
-        }
-        if (inSharkZone)
-        {
+        //if (inSharkZone) DON'T REMOVE THIS
+        //{
             //Debug.Log($"Shark is in zone. Setting shark target Heading to {targetHeading}, current " +
                 //$"shark heading is {sharkHeading}. Shark zone is at {GetSharkZoneBearing()}");
-        }else
-        {
+        //}else
+        //{
             //Debug.Log($"Shark is outside of zone. Setting shark target Heading to {targetHeading}, current " +
                 //$"shark heading is {sharkHeading}. Shark zone is at {GetSharkZoneBearing()}");
-        }
+        //}
 
         yield return new WaitForSeconds(timeBetweenTurns);
         StartCoroutine(SelectRandomTargetHeading(timeBetweenTurns));
+    }
+    public void SetTargetHeading(float rawAngle)
+    {
+        if (rawAngle >= 360)
+        {
+            targetHeading = rawAngle - 360;
+        }else if (rawAngle < 0)
+        {
+            targetHeading = 360 + rawAngle;
+        }
+        else
+        {
+            targetHeading = rawAngle;
+        }
+        //Debug.Log($"{targetHeading}");
+        //INVERSE TARGET HEADING
+        if (targetHeading >= 180)
+        {
+            inverseTargetHeading = targetHeading - 180;
+        }
+        else
+        {
+            inverseTargetHeading = targetHeading + 180;
+        }
     }
     public void OnTriggerEnter2D(Collider2D other)
     {
