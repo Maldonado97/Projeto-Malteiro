@@ -4890,7 +4890,7 @@ MonoBehaviour:
   sightRange: 10
   closeRange: 3.5
   biteForce: 4
-  biteCooldownTime: 4
+  biteCooldownTime: 2
 --- !u!50 &309068014
 Rigidbody2D:
   serializedVersion: 4
@@ -8095,7 +8095,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4259773667461880344, guid: 99c12cf6e092b524a84b5a9b4ce8047a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4259773667461880344, guid: 99c12cf6e092b524a84b5a9b4ce8047a, type: 3}
       propertyPath: m_TagString
@@ -8107,11 +8107,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4259773667461880348, guid: 99c12cf6e092b524a84b5a9b4ce8047a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -23.59
+      value: -23.05
       objectReference: {fileID: 0}
     - target: {fileID: 4259773667461880348, guid: 99c12cf6e092b524a84b5a9b4ce8047a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 25.73
+      value: 24.53
       objectReference: {fileID: 0}
     - target: {fileID: 4259773667461880348, guid: 99c12cf6e092b524a84b5a9b4ce8047a, type: 3}
       propertyPath: m_LocalPosition.z
@@ -33163,11 +33163,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4259773667461880348, guid: 99c12cf6e092b524a84b5a9b4ce8047a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -22.14
+      value: -21.98
       objectReference: {fileID: 0}
     - target: {fileID: 4259773667461880348, guid: 99c12cf6e092b524a84b5a9b4ce8047a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 36.13
+      value: 35.26
       objectReference: {fileID: 0}
     - target: {fileID: 4259773667461880348, guid: 99c12cf6e092b524a84b5a9b4ce8047a, type: 3}
       propertyPath: m_LocalPosition.z

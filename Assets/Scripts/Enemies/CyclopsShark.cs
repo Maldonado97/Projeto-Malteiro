@@ -22,8 +22,8 @@ public class CyclopsShark : MonoBehaviour
     private Collider2D sharkZoneCollider;
     private float sharkSpeed; //1.5
     private float chaseSpeed = 2.1f; //2.1f
-    private float normalSpeed = 0f; //1.5
-    private float coolDownSpeed = 1;
+    private float normalSpeed = 1.5f; //1.5
+    private float coolDownSpeed = 0.5f;
     private float turnTorque = 18; //18
     private int timeBetweenTurns = 5;
     //HEADING
@@ -36,7 +36,8 @@ public class CyclopsShark : MonoBehaviour
     private int outOfBoundsCounter = 0;
     //ATTACK
     private float distanceToTarget;
-    private bool targetInView = false;
+    //private bool targetInView = false;
+    private bool targetAquired = false;
     private bool chasingTarget = false;
     private bool targetAtCloseRange = false;
     [SerializeField] private float biteForce = 4;
@@ -54,8 +55,8 @@ public class CyclopsShark : MonoBehaviour
     {
         GetSharkHeading();
         //Debug.Log($"{GetSharkZoneBearing()}");
-        CheckIfTargetInView();
-        if (targetInView)
+        GetClosestTarget();
+        if (targetAquired)
         {
             ChaseTarget();
             chasingTarget = true;
@@ -64,7 +65,7 @@ public class CyclopsShark : MonoBehaviour
         {
             chasingTarget = false;
         }
-        MoveInTargetHeading();
+        MoveInDesiredHeading();
         UpdateAnimatorParameters();
     }
     void GetSharkHeading()
@@ -79,7 +80,7 @@ public class CyclopsShark : MonoBehaviour
             inverseSharkHeading = sharkHeading + 180;
         }
     }
-    float GetTargetBearing(GameObject target)
+    float GetGameObjectBearing(GameObject target)
     {
         float areaRawBearing;
         float targetBearing;
@@ -102,6 +103,14 @@ public class CyclopsShark : MonoBehaviour
         }
 
         return targetBearing;
+    }
+    float GetGameObjectDistance(GameObject target)
+    {
+        float distance;
+
+        distance = Vector3.Distance(target.transform.position, transform.position);
+
+        return distance;
     }
     public void MoveForwards()
     {
@@ -132,41 +141,79 @@ public class CyclopsShark : MonoBehaviour
         List<GameObject> possibleTargets = new List<GameObject>();
         float closestTargetDistance = 0;
         float possibleTargetDistance = 0;
-        foreach (GameObject possibleTarget in GameObject.FindGameObjectsWithTag("Player"))
+        if(GameObject.FindGameObjectsWithTag("Player").Length != 0)
         {
-            possibleTargets.Add(possibleTarget);
-        }
-        foreach (GameObject possibleTarget in GameObject.FindGameObjectsWithTag("Ship"))
-        {
-            possibleTargets.Add(possibleTarget);
-        }
-        foreach (GameObject possibleTarget in GameObject.FindGameObjectsWithTag("Fish"))
-        {
-            possibleTargets.Add(possibleTarget);
-        }
-        for (int i = 0; i < possibleTargets.Count; i++)
-        {
-            if (i == 0)
+            foreach (GameObject possibleTarget in GameObject.FindGameObjectsWithTag("Player"))
             {
-                closestTarget = possibleTargets[0];
-            }
-            closestTargetDistance = Vector3.Distance(closestTarget.transform.position, transform.position);
-            possibleTargetDistance = Vector3.Distance(possibleTargets[i].transform.position, transform.position);
-            if (closestTargetDistance > possibleTargetDistance)
-            {
-                closestTarget = possibleTargets[i];
-                closestTargetDistance = possibleTargetDistance;
+                if (GetGameObjectDistance(possibleTarget) <= sightRange)
+                {
+                    if (CheckIfTargetInView(possibleTarget))
+                    {
+                        possibleTargets.Add(possibleTarget);
+                    }
+                }
             }
         }
-        target = closestTarget;
-        targetRB = target.GetComponent<Rigidbody2D>();
-        targetCollider = target.GetComponent<Collider2D>();
-        distanceToTarget = closestTargetDistance;
-        Debug.Log($"Closest target is: {closestTarget.name}, at a distance of {closestTargetDistance}");
+        if (GameObject.FindGameObjectsWithTag("Ship").Length != 0)
+        {
+            foreach (GameObject possibleTarget in GameObject.FindGameObjectsWithTag("Ship"))
+            {
+                if (GetGameObjectDistance(possibleTarget) <= sightRange)
+                {
+                    if (CheckIfTargetInView(possibleTarget))
+                    {
+                        possibleTargets.Add(possibleTarget);
+                    }
+                }
+            }
+        }
+        if (GameObject.FindGameObjectsWithTag("Fish").Length != 0)
+        {
+            foreach (GameObject possibleTarget in GameObject.FindGameObjectsWithTag("Fish"))
+            {
+                if (GetGameObjectDistance(possibleTarget) <= sightRange)
+                {
+                    if (CheckIfTargetInView(possibleTarget))
+                    {
+                        possibleTargets.Add(possibleTarget);
+                    }
+                }
+            }
+        }
+        if(possibleTargets.Count > 0)
+        {
+            targetAquired = true;
+
+            for (int i = 0; i < possibleTargets.Count; i++)
+            {
+                if (i == 0)
+                {
+                    closestTarget = possibleTargets[0];
+                }
+                closestTargetDistance = Vector3.Distance(closestTarget.transform.position, transform.position);
+                possibleTargetDistance = Vector3.Distance(possibleTargets[i].transform.position, transform.position);
+                if (closestTargetDistance > possibleTargetDistance)
+                {
+                    closestTarget = possibleTargets[i];
+                    closestTargetDistance = possibleTargetDistance;
+                }
+            }
+            target = closestTarget;
+            targetRB = target.GetComponent<Rigidbody2D>();
+            targetCollider = target.GetComponent<Collider2D>();
+            distanceToTarget = closestTargetDistance;
+            Debug.Log($"Closest target is: {closestTarget.name}, at a distance of {closestTargetDistance}");
+        }
+        else
+        {
+            targetAquired = false;
+        }
+        CheckIfTargetInCloseRange();
     }
-    public void CheckIfTargetInView()
+    public bool CheckIfTargetInView(GameObject possibleTarget)
     {
-        GetClosestTarget();
+        bool targetInView;
+        //GetClosestTarget();
         float fieldOfViewBearing1 = sharkHeading - (sharkFieldOfView / 2);
         float fieldOfViewBearing2 = sharkHeading + (sharkFieldOfView / 2);
         //float distanceToTarget = Vector3.Distance(transform.position, target.transform.position);
@@ -178,47 +225,32 @@ public class CyclopsShark : MonoBehaviour
         {
             fieldOfViewBearing2 -= 360;
         }
-        if (distanceToTarget <= sightRange)
+        if (fieldOfViewBearing1 > fieldOfViewBearing2)
         {
-            if (fieldOfViewBearing1 > fieldOfViewBearing2)
+            if (GetGameObjectBearing(possibleTarget) > fieldOfViewBearing1 || GetGameObjectBearing(possibleTarget) < fieldOfViewBearing2)
             {
-                if (GetTargetBearing(target) > fieldOfViewBearing1 || GetTargetBearing(target) < fieldOfViewBearing2)
-                {
-                    //chasingTarget = true;
-                    //SetTargetHeading(GetTargetBearing(target));
-                    targetInView = true;
-                    //Debug.Log("TARGET IN SIGHT!");
-                }
-                else
-                {
-                    //chasingTarget = false;
-                    targetInView = false;
-                    //Debug.Log("NO TARGET!");
-                }
-            }
-            else if (GetTargetBearing(target) > fieldOfViewBearing1 && GetTargetBearing(target) < fieldOfViewBearing2)
-            {
-                //chasingTarget = true;
-                //SetTargetHeading(GetTargetBearing(target));
                 targetInView = true;
                 //Debug.Log("TARGET IN SIGHT!");
             }
             else
             {
-                //chasingTarget = false;
                 targetInView = false;
                 //Debug.Log("NO TARGET!");
             }
         }
+        else if (GetGameObjectBearing(possibleTarget) > fieldOfViewBearing1 && GetGameObjectBearing(possibleTarget) < fieldOfViewBearing2)
+        {
+            targetInView = true;
+            //Debug.Log("TARGET IN SIGHT!");
+        }
         else
         {
-            //chasingTarget = false;
             targetInView = false;
             //Debug.Log("NO TARGET!");
         }
-        CheckIfTargetInRange();
+        return targetInView;
     }
-    public void CheckIfTargetInRange() //In LookForTarget method
+    public void CheckIfTargetInCloseRange() //In LookForTarget method
     {
         if(chasingTarget && distanceToTarget <= closeRange)
         {
@@ -231,7 +263,7 @@ public class CyclopsShark : MonoBehaviour
     }
     public void ChaseTarget()
     {
-        SetTargetHeading(GetTargetBearing(target));
+        SetDesiredHeading(GetGameObjectBearing(target));
     }
     public void BiteTarget()
     {
@@ -244,7 +276,7 @@ public class CyclopsShark : MonoBehaviour
             StartCoroutine(BiteCooldown(biteCooldownTime));
         }
     }
-    public void SetTargetHeading(float rawAngle)
+    public void SetDesiredHeading(float rawAngle)
     {
         if (rawAngle >= 360)
         {
@@ -269,7 +301,7 @@ public class CyclopsShark : MonoBehaviour
             inverseTargetHeading = targetHeading + 180;
         }
     }
-    public void MoveInTargetHeading()
+    public void MoveInDesiredHeading()
     {
         bool shouldTurnLeft = false;
         bool shouldTurnRight = false;
@@ -337,7 +369,7 @@ public class CyclopsShark : MonoBehaviour
             //RANDOM MOVE MODE
             if (inSharkZone)
             {
-                SetTargetHeading(sharkHeading + Random.Range(-100f, 100f));
+                SetDesiredHeading(sharkHeading + Random.Range(-100f, 100f));
                 //targetHeading = sharkHeading + Random.Range(-100f, 100f);
                 outOfBoundsCounter = 0;
             }
@@ -346,27 +378,27 @@ public class CyclopsShark : MonoBehaviour
             {
                 if (sharkHeading <= 180)
                 {
-                    if (GetTargetBearing(sharkZone) >= sharkHeading || GetTargetBearing(sharkZone) <= inverseSharkHeading)
+                    if (GetGameObjectBearing(sharkZone) >= sharkHeading || GetGameObjectBearing(sharkZone) <= inverseSharkHeading)
                     {
-                        SetTargetHeading(sharkHeading + Random.Range(120f, 180f));
+                        SetDesiredHeading(sharkHeading + Random.Range(120f, 180f));
                         //targetHeading = sharkHeading + Random.Range(120f, 180f);
                     }
                     else
                     {
-                        SetTargetHeading(sharkHeading - Random.Range(120f, 180f));
+                        SetDesiredHeading(sharkHeading - Random.Range(120f, 180f));
                         //targetHeading = sharkHeading - Random.Range(120f, 180f);
                     }
                 }
                 else
                 {
-                    if (GetTargetBearing(sharkZone) >= inverseSharkHeading || GetTargetBearing(sharkZone) <= sharkHeading)
+                    if (GetGameObjectBearing(sharkZone) >= inverseSharkHeading || GetGameObjectBearing(sharkZone) <= sharkHeading)
                     {
-                        SetTargetHeading(sharkHeading - Random.Range(120f, 180f));
+                        SetDesiredHeading(sharkHeading - Random.Range(120f, 180f));
                         //targetHeading = sharkHeading - Random.Range(120f, 180f);
                     }
                     else
                     {
-                        SetTargetHeading(sharkHeading + Random.Range(120f, 180f));
+                        SetDesiredHeading(sharkHeading + Random.Range(120f, 180f));
                         //targetHeading = sharkHeading + Random.Range(120f, 180f);
                     }
                 }
@@ -374,7 +406,7 @@ public class CyclopsShark : MonoBehaviour
             }
             else if (!inSharkZone && outOfBoundsCounter != 0)
             {
-                SetTargetHeading(GetTargetBearing(sharkZone));
+                SetDesiredHeading(GetGameObjectBearing(sharkZone));
                 //targetHeading = GetTargetBearing(sharkZone);
             }
         }
