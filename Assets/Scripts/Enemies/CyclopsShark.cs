@@ -9,6 +9,7 @@ using UnityEditor;
 public class CyclopsShark : MonoBehaviour
 {
     [SerializeField] GameObject sharkZone;
+    [SerializeField] GameObject woodBurstParticle;
     [Tooltip("In degrees.")]
     [SerializeField] int sharkFieldOfView;
     [SerializeField] float sightRange;
@@ -24,7 +25,9 @@ public class CyclopsShark : MonoBehaviour
     private float chaseSpeed = 2.1f; //2.1f
     private float normalSpeed = 1.5f; //1.5
     private float coolDownSpeed = 0.5f;
-    private float turnTorque = 18; //18
+    private float turnTorque; //18
+    private float normalTurnTorque = 18;
+    private float closeRangeTurnTorque = 13;
     private int timeBetweenTurns = 5;
     //HEADING
     private float sharkHeading;
@@ -135,6 +138,46 @@ public class CyclopsShark : MonoBehaviour
     {
         sharkRB.AddTorque(-turnTorque * Time.deltaTime);
     }
+    public bool CheckIfTargetInView(GameObject possibleTarget)
+    {
+        bool targetInView;
+        //GetClosestTarget();
+        float fieldOfViewBearing1 = sharkHeading - (sharkFieldOfView / 2);
+        float fieldOfViewBearing2 = sharkHeading + (sharkFieldOfView / 2);
+        //float distanceToTarget = Vector3.Distance(transform.position, target.transform.position);
+        if (fieldOfViewBearing1 < 0)
+        {
+            fieldOfViewBearing1 += 360;
+        }
+        if (fieldOfViewBearing2 >= 360)
+        {
+            fieldOfViewBearing2 -= 360;
+        }
+        if (fieldOfViewBearing1 > fieldOfViewBearing2)
+        {
+            if (GetGameObjectBearing(possibleTarget) > fieldOfViewBearing1 || GetGameObjectBearing(possibleTarget) < fieldOfViewBearing2)
+            {
+                targetInView = true;
+                //Debug.Log("TARGET IN SIGHT!");
+            }
+            else
+            {
+                targetInView = false;
+                //Debug.Log("NO TARGET!");
+            }
+        }
+        else if (GetGameObjectBearing(possibleTarget) > fieldOfViewBearing1 && GetGameObjectBearing(possibleTarget) < fieldOfViewBearing2)
+        {
+            targetInView = true;
+            //Debug.Log("TARGET IN SIGHT!");
+        }
+        else
+        {
+            targetInView = false;
+            //Debug.Log("NO TARGET!");
+        }
+        return targetInView;
+    }
     public void GetClosestTarget()
     {
         GameObject closestTarget = null;
@@ -202,53 +245,13 @@ public class CyclopsShark : MonoBehaviour
             targetRB = target.GetComponent<Rigidbody2D>();
             targetCollider = target.GetComponent<Collider2D>();
             distanceToTarget = closestTargetDistance;
-            Debug.Log($"Closest target is: {closestTarget.name}, at a distance of {closestTargetDistance}");
+            //Debug.Log($"Closest target is: {closestTarget.name}, at a distance of {closestTargetDistance}");
         }
         else
         {
             targetAquired = false;
         }
         CheckIfTargetInCloseRange();
-    }
-    public bool CheckIfTargetInView(GameObject possibleTarget)
-    {
-        bool targetInView;
-        //GetClosestTarget();
-        float fieldOfViewBearing1 = sharkHeading - (sharkFieldOfView / 2);
-        float fieldOfViewBearing2 = sharkHeading + (sharkFieldOfView / 2);
-        //float distanceToTarget = Vector3.Distance(transform.position, target.transform.position);
-        if (fieldOfViewBearing1 < 0)
-        {
-            fieldOfViewBearing1 += 360;
-        }
-        if (fieldOfViewBearing2 >= 360)
-        {
-            fieldOfViewBearing2 -= 360;
-        }
-        if (fieldOfViewBearing1 > fieldOfViewBearing2)
-        {
-            if (GetGameObjectBearing(possibleTarget) > fieldOfViewBearing1 || GetGameObjectBearing(possibleTarget) < fieldOfViewBearing2)
-            {
-                targetInView = true;
-                //Debug.Log("TARGET IN SIGHT!");
-            }
-            else
-            {
-                targetInView = false;
-                //Debug.Log("NO TARGET!");
-            }
-        }
-        else if (GetGameObjectBearing(possibleTarget) > fieldOfViewBearing1 && GetGameObjectBearing(possibleTarget) < fieldOfViewBearing2)
-        {
-            targetInView = true;
-            //Debug.Log("TARGET IN SIGHT!");
-        }
-        else
-        {
-            targetInView = false;
-            //Debug.Log("NO TARGET!");
-        }
-        return targetInView;
     }
     public void CheckIfTargetInCloseRange() //In LookForTarget method
     {
@@ -260,6 +263,14 @@ public class CyclopsShark : MonoBehaviour
         {
             targetAtCloseRange = false;
         }
+        if (targetAtCloseRange)
+        {
+            turnTorque = closeRangeTurnTorque;
+        }
+        else
+        {
+            turnTorque = normalTurnTorque;
+        }
     }
     public void ChaseTarget()
     {
@@ -267,14 +278,19 @@ public class CyclopsShark : MonoBehaviour
     }
     public void BiteTarget()
     {
-        if (!inBiteCooldown)
-        {
-            Vector3 forceVector = target.transform.position - transform.position;
-            Vector2 forceVector2D = new Vector2(forceVector.x, forceVector.y);
-            targetRB.AddForce(forceVector2D * biteForce, ForceMode2D.Impulse);
-            inBiteCooldown = true;
-            StartCoroutine(BiteCooldown(biteCooldownTime));
-        }
+        //FORCE
+        Vector3 forceVector = target.transform.position - transform.position;
+        Vector2 forceVector2D = new Vector2(forceVector.x, forceVector.y);
+        targetRB.AddForce(forceVector2D * biteForce, ForceMode2D.Impulse);
+
+        //PARTICLE
+        float particleOffset = 3;
+        float offsetX = particleOffset * Mathf.Sin(Mathf.Deg2Rad * sharkHeading);
+        float offsetY = particleOffset * Mathf.Cos(Mathf.Deg2Rad * sharkHeading);
+        Vector3 particleSpawnPosition = transform.position + new Vector3(offsetX, offsetY);
+        Instantiate(woodBurstParticle, transform.position + forceVector / 2, new Quaternion(0, 0, 0, 0));
+        inBiteCooldown = true;
+        StartCoroutine(BiteCooldown(biteCooldownTime));
     }
     public void SetDesiredHeading(float rawAngle)
     {
@@ -439,8 +455,9 @@ public class CyclopsShark : MonoBehaviour
     public void OnCollisionEnter2D(Collision2D other)
     {
         var otherCollider = other.collider;
-        if(otherCollider = targetCollider)
+        if(otherCollider == targetCollider)
         {
+            Debug.Log($"Biting target: {otherCollider.gameObject.name}");
             BiteTarget();
         }
     }
