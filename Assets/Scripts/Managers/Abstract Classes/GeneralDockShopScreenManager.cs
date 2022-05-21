@@ -37,7 +37,7 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     //private TextMeshProUGUI selectorText; REMOVE THIS
      
     public event Action<int> onInventoryItemUIRemoved;
-    public event Action<GeneralDockShopScreenManager> onIventoryItemUICreated;
+    //public event Action<GeneralDockShopScreenManager> onIventoryItemUICreated;
     public event Action<int> onMirrorPlayerInventoryItemUIRemoved;
     public event Action<int> onItemTransferConfirmed;
     public event Action onItemTransferCanceled;

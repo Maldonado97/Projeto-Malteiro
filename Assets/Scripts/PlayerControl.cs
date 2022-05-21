@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerControl : MonoBehaviour
+public class PlayerControl : EntityController
 {
     public static PlayerControl instance;
 
@@ -12,14 +12,15 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] float engineForce = 2;
     [SerializeField] float turnTorque = .15f;
     [SerializeField] float engineTurnTorque = .1f;
-
     [HideInInspector] public bool playerDocked = false;
     //[HideInInspector] public bool playerInDockZone;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         instance = this;
         playerRB = gameObject.GetComponent<Rigidbody2D>();
+        //Health = 100;
+        Debug.Log(Health);
     }
 
     // Update is called once per frame

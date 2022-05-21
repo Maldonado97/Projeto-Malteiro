@@ -9,6 +9,7 @@ using UnityEditor;
 public class CyclopsShark : MonoBehaviour
 {
     [SerializeField] GameObject sharkZone;
+    [SerializeField] GameObject ownInterface;
     [SerializeField] GameObject woodBurstParticle;
     [Tooltip("In degrees.")]
     [SerializeField] int sharkFieldOfView = 80;
@@ -16,12 +17,8 @@ public class CyclopsShark : MonoBehaviour
     [SerializeField] float hearingRange = 4;
     [SerializeField] float closeRange = 3.5f;
 
+    //MOVEMENT
     private Rigidbody2D sharkRB;
-    private GameObject target;
-    private Rigidbody2D targetRB;
-    private Collider2D targetCollider;
-    private Animator animator;
-    private Collider2D sharkZoneCollider;
     private float sharkSpeed; //1.5
     private float chaseSpeed = 2.1f; //2.1f
     private float normalSpeed = 1.5f; //1.5
@@ -29,48 +26,76 @@ public class CyclopsShark : MonoBehaviour
     private float turnTorque; //18
     private float normalTurnTorque = 18;
     private float closeRangeTurnTorque = 13;
-    private int timeBetweenTurns = 5;
     //HEADING
     private float sharkHeading;
     private float inverseSharkHeading;
     private float inverseTargetHeading;
     private float targetHeading;
     //NAVIGATION
+    private Collider2D sharkZoneCollider;
     private bool inSharkZone = false;
+    private int timeBetweenTurns = 5;
     private int outOfBoundsCounter = 0;
     //ATTACK
+    private GameObject target;
+    private Rigidbody2D targetRB;
+    private Collider2D targetCollider;
+    private EntityController targetEntityController;
     private float distanceToTarget;
     private bool targetAquired = false;
     private bool targetIsSound = false;
     private bool chasingTarget = false;
     private bool targetAtCloseRange = false;
+    private float damageVariation = .2f; //Percentage of how much base damage can vary
+    private float biteDamage = 10;
     private float biteForce = 2;
     private float biteCooldownTime = 3;
     private bool inBiteCooldown = false;
+    //ANIMATION
+    private Animator animator;
+    //OPTIMIZATION
+    private GameObject player;
+    private bool inStandby;
+    [SerializeField] private float activationRadius;
     public void Start()
     {
         sharkRB = gameObject.GetComponent<Rigidbody2D>();
-        animator = gameObject.GetComponent<Animator>();
+        //animator = gameObject.GetComponent<Animator>();
+        animator = ownInterface.GetComponent<Animator>();
         sharkZoneCollider = sharkZone.GetComponent<Collider2D>();
+        player = PlayerControl.instance.gameObject;
         timeBetweenTurns = 5;
         StartCoroutine(SelectRandomTargetHeading(timeBetweenTurns));
     }
     private void Update()
     {
-        GetSharkHeading();
-        //Debug.Log($"{GetSharkZoneBearing()}");
-        GetClosestTarget();
-        if (targetAquired)
+        if(GetGameObjectDistance(player) > activationRadius)
         {
-            ChaseTarget();
-            chasingTarget = true;
+            inStandby = true;
+            ownInterface.SetActive(false);
         }
         else
         {
-            chasingTarget = false;
+            inStandby = false;
+            ownInterface.SetActive(true);
         }
-        MoveInDesiredHeading();
-        UpdateAnimatorParameters();
+        if (!inStandby)
+        {
+            GetSharkHeading();
+            //Debug.Log($"{GetSharkZoneBearing()}");
+            GetClosestTarget();
+            if (targetAquired)
+            {
+                ChaseTarget();
+                chasingTarget = true;
+            }
+            else
+            {
+                chasingTarget = false;
+            }
+            MoveInDesiredHeading();
+            UpdateAnimatorParameters();
+        }
     }
     void GetSharkHeading()
     {
@@ -279,6 +304,7 @@ public class CyclopsShark : MonoBehaviour
             target = closestTarget;
             targetRB = target.GetComponent<Rigidbody2D>();
             targetCollider = target.GetComponent<Collider2D>();
+            targetEntityController = target.GetComponent<EntityController>();
             distanceToTarget = closestTargetDistance;
             //Debug.Log($"Closest target is: {closestTarget.name}, at a distance of {closestTargetDistance}");
         }
@@ -314,6 +340,10 @@ public class CyclopsShark : MonoBehaviour
     }
     public void BiteTarget()
     {
+        //DAMAGE
+        float minimumBiteDamage = biteDamage * (1 - damageVariation);
+        float maximumBiteDamage = biteDamage * (1 + damageVariation);
+        targetEntityController.DamageEntity(Mathf.RoundToInt(Random.Range(minimumBiteDamage, maximumBiteDamage)));
         //FORCE
         Vector3 forceVector = target.transform.position - transform.position;
         Vector2 forceVector2D = new Vector2(forceVector.x, forceVector.y);
@@ -416,7 +446,7 @@ public class CyclopsShark : MonoBehaviour
     //IENUMERATORS
     public IEnumerator SelectRandomTargetHeading(int timeBetweenTurns)
     {
-        if (!chasingTarget)
+        if (!chasingTarget && !inStandby)
         {
             //RANDOM MOVE MODE
             if (inSharkZone)
@@ -493,7 +523,7 @@ public class CyclopsShark : MonoBehaviour
         var otherCollider = other.collider;
         if(otherCollider == targetCollider)
         {
-            Debug.Log($"Biting target: {otherCollider.gameObject.name}");
+            //Debug.Log($"Biting target: {otherCollider.gameObject.name}");
             BiteTarget();
         }
     }
@@ -509,11 +539,13 @@ public class CyclopsShark : MonoBehaviour
         GetSharkHeading();
 
         //SIGHT RANGE
-        DrawCircleSection(sightRange, sharkFieldOfView, sharkHeading, Color.green);
+        DrawCircleSection(sightRange, sharkFieldOfView, sharkHeading, Color.yellow);
         //CLOSE RANGE
-        DrawCircleSection(closeRange, sharkFieldOfView, sharkHeading, Color.yellow);
+        DrawCircleSection(closeRange, sharkFieldOfView, sharkHeading, Color.red);
         //HEARING RANGE
-        DrawCircle(hearingRange, Color.cyan);
+        DrawCircle(hearingRange, Color.green);
+        //ACTIVATION RADIUS
+        DrawCircle(activationRadius, Color.cyan);
     }
     public void DrawCircleSection(float radius, float arcAperture, float arcCenter, Color color)
     {

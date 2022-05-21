@@ -191,7 +191,7 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Tried to sort " + shopId + " inventory, but inventory does not have enough items to be sorted");
+            //Debug.LogWarning("Tried to sort " + shopId + " inventory, but inventory does not have enough items to be sorted");
         }
     }
     public void SortByValue()

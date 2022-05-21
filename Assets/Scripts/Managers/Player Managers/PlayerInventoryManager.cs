@@ -26,7 +26,7 @@ public class PlayerInventoryManager : MonoBehaviour
         instance = this;
         maxWeight = 25000;
         //playerCash = 12000;
-        Debug.Log($"Player inventory Max Weight is: {maxWeight}");
+        //Debug.Log($"Player inventory Max Weight is: {maxWeight}");
     }
     private void Update()
     {
