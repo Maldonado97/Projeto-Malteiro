@@ -9,11 +9,9 @@ public class PlayerControl : MonoBehaviour
     private Rigidbody2D playerRB;
     [HideInInspector] public float shipHeading;
     [SerializeField] [Range(0, 10)] int engineControlSensitivity;
-    [SerializeField] float engineForce;
-    [SerializeField] float turnTorque;
-    [SerializeField] float engineTurnTorque;
-    [Tooltip("Change this before running the game.")]
-    [SerializeField] Vector2 centerOfMass;
+    [SerializeField] float engineForce = 2;
+    [SerializeField] float turnTorque = .15f;
+    [SerializeField] float engineTurnTorque = .1f;
 
     [HideInInspector] public bool playerDocked = false;
     //[HideInInspector] public bool playerInDockZone;
@@ -22,7 +20,6 @@ public class PlayerControl : MonoBehaviour
     {
         instance = this;
         playerRB = gameObject.GetComponent<Rigidbody2D>();
-        playerRB.centerOfMass = centerOfMass;
     }
 
     // Update is called once per frame
@@ -80,14 +77,6 @@ public class PlayerControl : MonoBehaviour
         var leftEngineSliderValue = UIManager.instance.leftEngineSlider.value;
         var rightEngineSliderValue = UIManager.instance.rightEngineSlider.value;
 
-        if (Input.GetKey(KeyCode.W))
-        {
-            //playerRB.AddRelativeForce(Vector2.up * engineForce * Time.deltaTime, ForceMode2D.Impulse);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            //playerRB.AddRelativeForce(-Vector2.up * (engineForce / 2) * Time.deltaTime, ForceMode2D.Impulse);
-        }
         //LEFT ENGINE
         playerRB.AddRelativeForce(Vector2.up * engineForce / 2 * leftEngineSliderValue * Time.deltaTime, ForceMode2D.Impulse);
         playerRB.AddTorque(-engineTurnTorque * leftEngineSliderValue * Time.deltaTime, ForceMode2D.Impulse);
