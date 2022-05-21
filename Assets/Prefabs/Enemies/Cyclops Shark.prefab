@@ -28,9 +28,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2310774290458920703}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -22.296812, y: 27.166258, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 1}
+  m_LocalScale: {x: 2.9879398, y: 3.0123258, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -142,6 +142,7 @@ MonoBehaviour:
   woodBurstParticle: {fileID: 1770124588953283597, guid: e61ebd5bd49306f4b96ecb0573eded83, type: 3}
   sharkFieldOfView: 80
   sightRange: 10
+  hearingRange: 4
   closeRange: 3.5
   biteForce: 2
   biteCooldownTime: 3

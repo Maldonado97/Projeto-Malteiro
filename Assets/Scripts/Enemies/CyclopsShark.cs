@@ -11,9 +11,10 @@ public class CyclopsShark : MonoBehaviour
     [SerializeField] GameObject sharkZone;
     [SerializeField] GameObject woodBurstParticle;
     [Tooltip("In degrees.")]
-    [SerializeField] int sharkFieldOfView;
-    [SerializeField] float sightRange;
-    [SerializeField] float closeRange;
+    [SerializeField] int sharkFieldOfView = 80;
+    [SerializeField] float sightRange = 10;
+    [SerializeField] float hearingRange = 4;
+    [SerializeField] float closeRange = 3.5f;
 
     private Rigidbody2D sharkRB;
     private GameObject target;
@@ -39,12 +40,12 @@ public class CyclopsShark : MonoBehaviour
     private int outOfBoundsCounter = 0;
     //ATTACK
     private float distanceToTarget;
-    //private bool targetInView = false;
     private bool targetAquired = false;
+    private bool targetIsSound = false;
     private bool chasingTarget = false;
     private bool targetAtCloseRange = false;
-    [SerializeField] private float biteForce = 4;
-    [SerializeField] private float biteCooldownTime = 4;
+    private float biteForce = 2;
+    private float biteCooldownTime = 3;
     private bool inBiteCooldown = false;
     public void Start()
     {
@@ -117,7 +118,7 @@ public class CyclopsShark : MonoBehaviour
     }
     public void MoveForwards()
     {
-        if (chasingTarget)
+        if (chasingTarget && !targetIsSound)
         {
             sharkSpeed = chaseSpeed;
         }
@@ -181,7 +182,8 @@ public class CyclopsShark : MonoBehaviour
     public void GetClosestTarget()
     {
         GameObject closestTarget = null;
-        List<GameObject> possibleTargets = new List<GameObject>();
+        List<GameObject> possibleVisualTargets = new List<GameObject>();
+        List<GameObject> possibleAuditiveTargets = new List<GameObject>();
         float closestTargetDistance = 0;
         float possibleTargetDistance = 0;
         if(GameObject.FindGameObjectsWithTag("Player").Length != 0)
@@ -192,7 +194,10 @@ public class CyclopsShark : MonoBehaviour
                 {
                     if (CheckIfTargetInView(possibleTarget))
                     {
-                        possibleTargets.Add(possibleTarget);
+                        possibleVisualTargets.Add(possibleTarget);
+                    }else if(GetGameObjectDistance(possibleTarget) <= hearingRange)
+                    {
+                        possibleAuditiveTargets.Add(possibleTarget);
                     }
                 }
             }
@@ -205,7 +210,11 @@ public class CyclopsShark : MonoBehaviour
                 {
                     if (CheckIfTargetInView(possibleTarget))
                     {
-                        possibleTargets.Add(possibleTarget);
+                        possibleVisualTargets.Add(possibleTarget);
+                    }
+                    else if (GetGameObjectDistance(possibleTarget) <= hearingRange)
+                    {
+                        possibleAuditiveTargets.Add(possibleTarget);
                     }
                 }
             }
@@ -218,27 +227,53 @@ public class CyclopsShark : MonoBehaviour
                 {
                     if (CheckIfTargetInView(possibleTarget))
                     {
-                        possibleTargets.Add(possibleTarget);
+                        possibleVisualTargets.Add(possibleTarget);
+                    }
+                    else if (GetGameObjectDistance(possibleTarget) <= hearingRange)
+                    {
+                        possibleAuditiveTargets.Add(possibleTarget);
                     }
                 }
             }
         }
-        if(possibleTargets.Count > 0)
+        if(possibleVisualTargets.Count > 0 || possibleAuditiveTargets.Count > 0)
         {
             targetAquired = true;
 
-            for (int i = 0; i < possibleTargets.Count; i++)
+            if(possibleVisualTargets.Count > 0) //VISUAL TARGETS HAVE PRIORITY OVER AUDITIVE TARGETS
             {
-                if (i == 0)
+                targetIsSound = false;
+                for (int i = 0; i < possibleVisualTargets.Count; i++)
                 {
-                    closestTarget = possibleTargets[0];
+                    if (i == 0)
+                    {
+                        closestTarget = possibleVisualTargets[0];
+                    }
+                    closestTargetDistance = Vector3.Distance(closestTarget.transform.position, transform.position);
+                    possibleTargetDistance = Vector3.Distance(possibleVisualTargets[i].transform.position, transform.position);
+                    if (closestTargetDistance > possibleTargetDistance)
+                    {
+                        closestTarget = possibleVisualTargets[i];
+                        closestTargetDistance = possibleTargetDistance;
+                    }
                 }
-                closestTargetDistance = Vector3.Distance(closestTarget.transform.position, transform.position);
-                possibleTargetDistance = Vector3.Distance(possibleTargets[i].transform.position, transform.position);
-                if (closestTargetDistance > possibleTargetDistance)
+            }
+            else //AUDITIVE TARGETS
+            {
+                targetIsSound = true;
+                for (int i = 0; i < possibleAuditiveTargets.Count; i++)
                 {
-                    closestTarget = possibleTargets[i];
-                    closestTargetDistance = possibleTargetDistance;
+                    if (i == 0)
+                    {
+                        closestTarget = possibleAuditiveTargets[0];
+                    }
+                    closestTargetDistance = Vector3.Distance(closestTarget.transform.position, transform.position);
+                    possibleTargetDistance = Vector3.Distance(possibleAuditiveTargets[i].transform.position, transform.position);
+                    if (closestTargetDistance > possibleTargetDistance)
+                    {
+                        closestTarget = possibleAuditiveTargets[i];
+                        closestTargetDistance = possibleTargetDistance;
+                    }
                 }
             }
             target = closestTarget;
@@ -250,6 +285,7 @@ public class CyclopsShark : MonoBehaviour
         else
         {
             targetAquired = false;
+            targetIsSound = false;
         }
         CheckIfTargetInCloseRange();
     }
@@ -471,15 +507,13 @@ public class CyclopsShark : MonoBehaviour
     private void OnDrawGizmos()
     {
         GetSharkHeading();
-        Gizmos.color = new Color(1, 0, 0, .15f);
-        Gizmos.DrawSphere(transform.position, 3);
 
         //SIGHT RANGE
         DrawCircleSection(sightRange, sharkFieldOfView, sharkHeading, Color.green);
         //CLOSE RANGE
         DrawCircleSection(closeRange, sharkFieldOfView, sharkHeading, Color.yellow);
-        //BITE RANGE
-        //DrawCircleSection(biteRange, sharkFieldOfView, sharkHeading, Color.red);
+        //HEARING RANGE
+        DrawCircle(hearingRange, Color.cyan);
     }
     public void DrawCircleSection(float radius, float arcAperture, float arcCenter, Color color)
     {
@@ -507,5 +541,22 @@ public class CyclopsShark : MonoBehaviour
             Gizmos.DrawLine(transform.position + arcPoints[i], transform.position + arcPoints[i + 1]);
         }
         Gizmos.DrawLine(transform.position + arcPoints[arcPoints.Count - 1], transform.position + line2EndPoint);
+    }
+    public void DrawCircle(float radius, Color color)
+    {
+        Gizmos.color = color;
+        //ARC
+        List<Vector3> arcPoints = new List<Vector3>();
+        for (int i = 0; i <= 360; i += 10)
+        {
+            float pointX = radius * Mathf.Sin(Mathf.Deg2Rad * i);
+            float pointY = radius * Mathf.Cos(Mathf.Deg2Rad * i);
+            arcPoints.Add(new Vector3(pointX, pointY));
+        }
+        for (int i = 0; i < (arcPoints.Count - 1); i++)
+        {
+            Gizmos.DrawLine(transform.position + arcPoints[i], transform.position + arcPoints[i + 1]);
+        }
+        Gizmos.DrawLine(transform.position + arcPoints[arcPoints.Count - 1], transform.position + arcPoints[0]);
     }
 }
