@@ -26,6 +26,7 @@ public class CyclopsShark : MonoBehaviour
     private float turnTorque; //18
     private float normalTurnTorque = 18;
     private float closeRangeTurnTorque = 13;
+    private float chasingSoundTurnTorque = 20;
     //HEADING
     private float sharkHeading;
     private float inverseSharkHeading;
@@ -317,7 +318,7 @@ public class CyclopsShark : MonoBehaviour
     }
     public void CheckIfTargetInCloseRange() //In LookForTarget method
     {
-        if(chasingTarget && distanceToTarget <= closeRange)
+        if(targetAquired && !targetIsSound && distanceToTarget <= closeRange)
         {
             targetAtCloseRange = true;
         }
@@ -328,10 +329,16 @@ public class CyclopsShark : MonoBehaviour
         if (targetAtCloseRange)
         {
             turnTorque = closeRangeTurnTorque;
+            Debug.Log($"Turn Torque is closeRangeTurnTorque");
+        }else if (targetIsSound)
+        {
+            turnTorque = chasingSoundTurnTorque;
+            Debug.Log($"Turn Torque is chasingSoundTurnTorque");
         }
         else
         {
             turnTorque = normalTurnTorque;
+            Debug.Log($"Turn Torque is normalTurnTorque");
         }
     }
     public void ChaseTarget()
