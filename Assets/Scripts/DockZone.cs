@@ -6,25 +6,13 @@ public class DockZone : MonoBehaviour
 {
     public string dockID;
     public GameObject dockedShipSpot;
-    [SerializeField] protected DockUIManager dockUIManager;
+    public DockUIManager dockUIManager;
     [HideInInspector] public bool playerInZone = false;
     private GameObject player = null;
 
     private void Start()
     {
-        FindPlayerGameObject();
-    }
-    private void Update()
-    {
-        if(playerInZone && Input.GetKeyDown(KeyCode.V))
-        {
-            DockShip(player);
-            dockUIManager.OnPlayerDocked();
-        }
-    }
-    private void FindPlayerGameObject()
-    {
-        player = GameObject.FindGameObjectWithTag("Player");
+        player = PlayerControl.instance.gameObject;
     }
     public void DockShip(GameObject shipToDock) //Undock method is exectued by PlayerControl script
     {
@@ -45,6 +33,9 @@ public class DockZone : MonoBehaviour
             Debug.Log("Ship entered " + dockID);
             playerInZone = true;
             UIManager.instance.ActivateDockPrompt();
+
+            PlayerControl.instance.currentDockZone = this;
+            PlayerControl.instance.playerInDockZone = true;
         }
     }
     public void OnTriggerExit2D(Collider2D collision)
@@ -54,6 +45,9 @@ public class DockZone : MonoBehaviour
             Debug.Log("Ship exited " + dockID);
             playerInZone = false;
             UIManager.instance.DeactivateDockPrompt();
+
+            PlayerControl.instance.currentDockZone = null;
+            PlayerControl.instance.playerInDockZone = false;
         }
     }
 }

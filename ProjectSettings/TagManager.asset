@@ -7,6 +7,7 @@ TagManager:
   - Ship
   - Fish
   - Cyclops Shark
+  - Dead Player
   layers:
   - Default
   - TransparentFX
