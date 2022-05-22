@@ -157,6 +157,7 @@ public class UIManager : MonoBehaviour
     public void OnPlayerDeath()
     {
         deathScreenActive = true;
+        HUD.SetActive(false);
     }
     public void OnPlayerRespawn()
     {
@@ -164,5 +165,6 @@ public class UIManager : MonoBehaviour
         rightEngineSlider.value = 0;
         UpdateHealthBar();
         DeactivateDeathScreen();
+        HUD.SetActive(true);
     }
 }
