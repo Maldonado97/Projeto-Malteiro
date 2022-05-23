@@ -12,7 +12,10 @@ public class UIManager : MonoBehaviour
     public GameObject HUD;
     [SerializeField] Image healthBar;
     [Tooltip("Place in descending order")]
-    [SerializeField] List<Sprite> healthBarSprites; 
+    [SerializeField] List<Sprite> healthBarSprites;
+    [SerializeField] Image fuelBar;
+    [Tooltip("Place in descending order")]
+    [SerializeField] List<Sprite> fuelBarSprites;
     [SerializeField] GameObject headingIndicator;
     [SerializeField] GameObject speedIndicator;
     [SerializeField] GameObject dockPrompt;
@@ -90,8 +93,24 @@ public class UIManager : MonoBehaviour
         {
             int i = Mathf.RoundToInt(PlayerControl.instance.Health / 10);
             healthBar.sprite = healthBarSprites[10 - i];
-            Debug.Log($"Player health is: {PlayerControl.instance.Health}");
+            //Debug.Log($"Player health is: {PlayerControl.instance.Health}");
         }
+    }
+    public void UpdateFuelBar(float currentFuel, float maxFuel)
+    {
+        float fuelPercentage = currentFuel / maxFuel;
+        int i = Mathf.RoundToInt(10 * fuelPercentage);
+
+        if (currentFuel <= 0)
+        {
+            fuelBar.sprite = fuelBarSprites[10];
+        }
+        else
+        {
+            fuelBar.sprite = fuelBarSprites[10 - i];
+            Debug.Log($"Fuel is at: {fuelPercentage}%");
+        }
+
     }
     public void TogglePauseMenu()
     {

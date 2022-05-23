@@ -7,11 +7,15 @@ public class PlayerInventoryManager : MonoBehaviour
 {
     public static PlayerInventoryManager instance;
 
+    [Header("TESTING")]
+    [SerializeField] bool testingModeActive = false;
     [HideInInspector] public Dictionary<int, int> itemAmount = new Dictionary<int, int>();
     [HideInInspector] public List<int> itemIDsInInventory = new List<int>();
     [HideInInspector] public float playerCash;
     [HideInInspector] public float totalWeight = 0;
     [HideInInspector] public float maxWeight = 1000; //Initialization isn't working for some reason, so i'm setting the value on the awake method.
+    [HideInInspector] public float maxFuel = 2500; //Consumed by player control script
+    [HideInInspector] public float fuel = 0;
 
     private string sortMode = "Name";
 
@@ -25,34 +29,43 @@ public class PlayerInventoryManager : MonoBehaviour
     {
         instance = this;
         maxWeight = 25000;
-        //playerCash = 12000;
+        maxFuel = 2500;
+        fuel = 2500;
+        playerCash = 2000;
         //Debug.Log($"Player inventory Max Weight is: {maxWeight}");
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K))
+        if (testingModeActive)
         {
-            AddTestItem();
-        }
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            RemoveTestItem();
-        }
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            ListInventoryItems();
-        }
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            if(sortMode == "Name")
+            if (Input.GetKeyDown(KeyCode.K))
             {
-                ChangeSortMode("Value");
-                Debug.Log("Sorting inventory by value.");
+                //AddTestItem();
+                if(fuel + 300 !> maxFuel)
+                {
+                    fuel += 300;
+                }
             }
-            else
+            if (Input.GetKeyDown(KeyCode.M))
             {
-                ChangeSortMode("Name");
-                Debug.Log("Sorting inventory by name.");
+                RemoveTestItem();
+            }
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                ListInventoryItems();
+            }
+            if (Input.GetKeyDown(KeyCode.J))
+            {
+                if (sortMode == "Name")
+                {
+                    ChangeSortMode("Value");
+                    Debug.Log("Sorting inventory by value.");
+                }
+                else
+                {
+                    ChangeSortMode("Name");
+                    Debug.Log("Sorting inventory by name.");
+                }
             }
         }
     }

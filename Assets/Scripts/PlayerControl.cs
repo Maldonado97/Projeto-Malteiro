@@ -15,6 +15,10 @@ public class PlayerControl : EntityController
     [SerializeField] float engineForce = 2;
     [SerializeField] float turnTorque = .15f;
     [SerializeField] float engineTurnTorque = .1f;
+    private float reverseDampner = 0.5f;
+    [HideInInspector] public float maxFuelConsumption = 15; //Liters per second in maxThrottle
+    [HideInInspector] public float currentFuelConsumption;
+    private bool outOfFuel;
     [HideInInspector] public float shipHeading;
     //DOCKING
     [HideInInspector] public DockZone currentDockZone = null;
@@ -120,9 +124,25 @@ public class PlayerControl : EntityController
         var rightEngineSliderValue = UIManager.instance.rightEngineSlider.value;
 
         //LEFT ENGINE
+        if (outOfFuel)
+        {
+            leftEngineSliderValue *= .1f;
+        }
+        if(leftEngineSliderValue < 0)
+        {
+            leftEngineSliderValue *= reverseDampner;
+        }
         playerRB.AddRelativeForce(Vector2.up * engineForce / 2 * leftEngineSliderValue * Time.deltaTime, ForceMode2D.Impulse);
         playerRB.AddTorque(-engineTurnTorque * leftEngineSliderValue * Time.deltaTime, ForceMode2D.Impulse);
         //RIGHT ENGINE
+        if (outOfFuel)
+        {
+            rightEngineSliderValue *= .1f;
+        }
+        if (rightEngineSliderValue < 0)
+        {
+            rightEngineSliderValue *= reverseDampner;
+        }
         playerRB.AddRelativeForce(Vector2.up * engineForce / 2 * rightEngineSliderValue * Time.deltaTime, ForceMode2D.Impulse);
         playerRB.AddTorque(engineTurnTorque * rightEngineSliderValue * Time.deltaTime, ForceMode2D.Impulse);
         //RUDDER
@@ -133,6 +153,49 @@ public class PlayerControl : EntityController
         if (Input.GetKey(KeyCode.A))
         {
             playerRB.AddTorque(turnTorque * GetShipSpeed() * Time.deltaTime, ForceMode2D.Impulse);
+        }
+        ConsumeFuel(leftEngineSliderValue);
+        ConsumeFuel(rightEngineSliderValue);
+    }
+    void ConsumeFuel(float EngineSliderValue)
+    {
+        float highSpeedMultiplier = 1.2f;
+        float economicMultiplier = .8f;
+        float lowSpeedMultiplier = 1.2f;
+        //var fuel = PlayerInventoryManager.instance.fuel;
+
+        currentFuelConsumption = (Mathf.Abs(EngineSliderValue) * maxFuelConsumption) / 2;
+
+        if (Mathf.Abs(EngineSliderValue) < .1)
+        {
+            currentFuelConsumption = .75f;
+        }
+        if (Mathf.Abs(EngineSliderValue) < .4)
+        {
+            currentFuelConsumption *= lowSpeedMultiplier;
+        }
+        if (Mathf.Abs(EngineSliderValue) < .8)
+        {
+            currentFuelConsumption *= economicMultiplier;
+        }
+        if (Mathf.Abs(EngineSliderValue) >= .8)
+        {
+            currentFuelConsumption *= highSpeedMultiplier;
+        }
+        if(EngineSliderValue < 0)
+        {
+            currentFuelConsumption *= reverseDampner;
+        }
+        if(PlayerInventoryManager.instance.fuel > 0)
+        {
+            PlayerInventoryManager.instance.fuel -= currentFuelConsumption * Time.deltaTime;
+            Debug.Log($"Fuel: {PlayerInventoryManager.instance.fuel}/{PlayerInventoryManager.instance.maxFuel}");
+            UIManager.instance.UpdateFuelBar(PlayerInventoryManager.instance.fuel, PlayerInventoryManager.instance.maxFuel);
+            outOfFuel = false;
+        }
+        else
+        {
+            outOfFuel = true;
         }
     }
     public void DockShip()
@@ -154,7 +217,7 @@ public class PlayerControl : EntityController
     {
         playerIsDead = true;
         Debug.Log("Player Dead");
-        gameObject.tag = "Dead Player"; //Will this inhibit sharks from attacking?
+        gameObject.tag = "Dead Player";
         playerCollider.enabled = false;
         onPlayerDeath?.Invoke();
         StartCoroutine(Respawn());
