@@ -70,7 +70,7 @@ public class CyclopsShark : MonoBehaviour
     }
     private void Update()
     {
-        if(GetGameObjectDistance(player) > activationRadius)
+        if(GetGameObjectDistance(player) > activationRadius && inSharkZone)
         {
             inStandby = true;
             ownInterface.SetActive(false);
@@ -84,15 +84,24 @@ public class CyclopsShark : MonoBehaviour
         {
             GetSharkHeading();
             //Debug.Log($"{GetSharkZoneBearing()}");
-            GetClosestTarget();
-            if (targetAquired)
+            if (inSharkZone)
             {
-                ChaseTarget();
-                chasingTarget = true;
+                GetClosestTarget();
+                if (targetAquired)
+                {
+                    ChaseTarget();
+                    chasingTarget = true;
+                }
+                else
+                {
+                    chasingTarget = false;
+                }
             }
             else
             {
+                targetAquired = false;
                 chasingTarget = false;
+                targetIsSound = false;
             }
             MoveInDesiredHeading();
             UpdateAnimatorParameters();
@@ -528,7 +537,7 @@ public class CyclopsShark : MonoBehaviour
     public void OnCollisionEnter2D(Collision2D other)
     {
         var otherCollider = other.collider;
-        if(otherCollider == targetCollider)
+        if(otherCollider == targetCollider && chasingTarget)
         {
             //Debug.Log($"Biting target: {otherCollider.gameObject.name}");
             BiteTarget();

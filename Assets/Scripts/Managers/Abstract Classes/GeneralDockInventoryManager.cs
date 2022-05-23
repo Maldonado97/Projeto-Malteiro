@@ -11,17 +11,22 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
 
     private string sortMode = "Name";
     [HideInInspector] public float storeCash;
+    public bool canShuffleInventory = true;
+    [HideInInspector] public bool startingNewGame = true;
+    private int desiredInventoryItems = 3;
 
     public event Action<int> onInventoryChanged;
     public event Action onInventoryItemAdded;
     public event Action<int> onInventoryItemRemoved;
     public event Action onInventoryCashChanged;
     public event Action onSortModeChanged;
-
-    public bool canShuffleInventory = true;
     public void Start()
     {
-        StartCoroutine(StartInventoryShuffleCounter(1));
+        StartCoroutine(StartInventoryShuffleCounter(180));
+        if (startingNewGame)
+        {
+            AddInitialItems();
+        }
     }
     protected void Update()
     {
@@ -91,6 +96,15 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
             Debug.LogWarning("Tried to remove an item that does not exist in " + shopId + " inventory.");
         }
     }
+    public void AddInitialItems()
+    {
+        for(int i = 0; i <= desiredInventoryItems; i++)
+        {
+            int itemToAdd = UnityEngine.Random.Range(0, GameItemDictionary.instance.gameItemNames.Count);
+            int amountToAdd = UnityEngine.Random.Range(1, 8);
+            AddItemToInventory(itemToAdd, amountToAdd);
+        }
+    }
     public void ShuffleInventory()
     {
         int itemsToRemove;
@@ -101,19 +115,22 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
         int amountToAdd;
 
         itemsToRemove = UnityEngine.Random.Range(1, itemIDsInInventory.Count / 2 + 1);
-        itemsToAdd = UnityEngine.Random.Range(1, 4);
+        itemsToAdd = UnityEngine.Random.Range(1, itemIDsInInventory.Count / 2 + 1);
         if (canShuffleInventory)
         {
-            //Debug.Log($"SHUFFLER IS ADDING {itemsToAdd} ITEMS TO INVENTORY");
-            for (int i = 0; i < itemsToAdd; i++)
+            if(itemIDsInInventory.Count <= desiredInventoryItems + 2)
             {
-                itemToAdd = UnityEngine.Random.Range(0, GameItemDictionary.instance.gameItemNames.Count);
-                amountToAdd = UnityEngine.Random.Range(1, 6);
-                //Debug.Log($"Shuffler will add {amountToAdd} of " +
-                //$"item ID {itemToAdd}: {GameItemDictionary.instance.gameItemNames[itemToAdd]}");
-                AddItemToInventory(itemToAdd, amountToAdd);
+                //Debug.Log($"SHUFFLER IS ADDING {itemsToAdd} ITEMS TO INVENTORY");
+                for (int i = 0; i < itemsToAdd; i++)
+                {
+                    itemToAdd = UnityEngine.Random.Range(0, GameItemDictionary.instance.gameItemNames.Count);
+                    amountToAdd = UnityEngine.Random.Range(1, 6);
+                    //Debug.Log($"Shuffler will add {amountToAdd} of " +
+                    //$"item ID {itemToAdd}: {GameItemDictionary.instance.gameItemNames[itemToAdd]}");
+                    AddItemToInventory(itemToAdd, amountToAdd);
+                }
             }
-            if (itemIDsInInventory.Count > 2)
+            if (itemIDsInInventory.Count > desiredInventoryItems - 1)
             {
                 //Debug.Log($"SHUFFLER IS REMOVING {itemsToRemove} ITEMS FROM INVENTORY");
                 for (int i = 0; i < itemsToRemove; i++)

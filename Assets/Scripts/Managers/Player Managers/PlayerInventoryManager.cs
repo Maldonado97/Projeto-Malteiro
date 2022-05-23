@@ -14,7 +14,7 @@ public class PlayerInventoryManager : MonoBehaviour
     [HideInInspector] public float playerCash;
     [HideInInspector] public float totalWeight = 0;
     [HideInInspector] public float maxWeight = 1000; //Initialization isn't working for some reason, so i'm setting the value on the awake method.
-    [HideInInspector] public float maxFuel = 2500; //Consumed by player control script
+    [HideInInspector] public float maxFuel = 900; //Consumed by player control script
     [HideInInspector] public float fuel = 0;
 
     private string sortMode = "Name";
@@ -29,8 +29,8 @@ public class PlayerInventoryManager : MonoBehaviour
     {
         instance = this;
         maxWeight = 25000;
-        maxFuel = 2500;
-        fuel = 2500;
+        maxFuel = 900;
+        fuel = 900;
         playerCash = 2000;
         //Debug.Log($"Player inventory Max Weight is: {maxWeight}");
     }

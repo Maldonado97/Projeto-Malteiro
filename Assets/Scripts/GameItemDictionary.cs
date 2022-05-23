@@ -7,12 +7,14 @@ public class GameItemDictionary : MonoBehaviour
     public static GameItemDictionary instance;
 
     [HideInInspector] public List<string> gameItemNames = new List<string>();
+    //[HideInInspector] public List<string> gameItemTypes = new List<string>(); => for future use.
     [HideInInspector] public List<string> gameItemDescriptions = new List<string>();
     [HideInInspector] public List<float> gameItemValues = new List<float>();
     [HideInInspector] public List<float> gameItemWeights = new List<float>();
 
     [HideInInspector] public List<int> gameItemsByValue = new List<int>();
-    private void Start()
+    [HideInInspector] public Dictionary<string, List<int>> gameItemsByType = new Dictionary<string, List<int>>();
+    private void Awake()
     {
         //ID:0 -> Box of Steaks //ID:1 -> Cake //ID:2 -> Contraband //ID:3 -> Empty Crate // ID:4 -> Medicine Box
         //ID:5 -> Scrap Metal

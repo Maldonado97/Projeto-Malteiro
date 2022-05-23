@@ -16,7 +16,7 @@ public class PlayerControl : EntityController
     [SerializeField] float turnTorque = .15f;
     [SerializeField] float engineTurnTorque = .1f;
     private float reverseDampner = 0.5f;
-    [HideInInspector] public float maxFuelConsumption = 15; //Liters per second in maxThrottle
+    [HideInInspector] public float AverageFuelConsumption = 2.65f; //Liters per second in maxThrottle
     [HideInInspector] public float currentFuelConsumption;
     private bool outOfFuel;
     [HideInInspector] public float shipHeading;
@@ -164,11 +164,11 @@ public class PlayerControl : EntityController
         float lowSpeedMultiplier = 1.2f;
         //var fuel = PlayerInventoryManager.instance.fuel;
 
-        currentFuelConsumption = (Mathf.Abs(EngineSliderValue) * maxFuelConsumption) / 2;
+        currentFuelConsumption = (Mathf.Abs(EngineSliderValue) * AverageFuelConsumption) / 2;
 
         if (Mathf.Abs(EngineSliderValue) < .1)
         {
-            currentFuelConsumption = .75f;
+            currentFuelConsumption = (.1f * AverageFuelConsumption)/2;
         }
         if (Mathf.Abs(EngineSliderValue) < .4)
         {
@@ -232,6 +232,7 @@ public class PlayerControl : EntityController
         //UIManager.instance.leftEngineSlider.value = 0;
         //UIManager.instance.rightEngineSlider.value = 0;
         Health = 100;
+        PlayerInventoryManager.instance.fuel = PlayerInventoryManager.instance.maxFuel;
         //UIManager.instance.UpdateHealthBar();
         playerIsDead = false;
         gameObject.tag = "Player";
