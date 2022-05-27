@@ -41,6 +41,7 @@ public abstract class DockUIManager : MonoBehaviour
         //located.
         if (!dockMenu.activeSelf)
         {
+            //Debug.Log("Flashing store screen");
             dockMenu.SetActive(true);
             dockShopScreenManager.storeScreen.SetActive(true);
             dockShopScreenManager.storeScreen.SetActive(false);

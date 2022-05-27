@@ -108,7 +108,7 @@ public class UIManager : MonoBehaviour
         else
         {
             fuelBar.sprite = fuelBarSprites[10 - i];
-            Debug.Log($"Fuel is at: {fuelPercentage}%");
+            //Debug.Log($"Fuel is at: {fuelPercentage}%");
         }
 
     }

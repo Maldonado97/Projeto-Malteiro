@@ -71,14 +71,6 @@ public class PlayerInventoryScreenManager : MonoBehaviour
         playerCashTM.text = $"Cash: {PlayerInventoryManager.instance.playerCash}";
     }
     //EVENT METHODS
-    public void OnInventoryItemEnter(InventoryItemUI inventoryItem)
-    {
-
-    }
-    public void OnInventoryItemExit(InventoryItemUI inventoryItem)
-    {
-
-    }
     public void OnInventoryItemSelected(InventoryItemUI inventoryItem)
     {
         var inventoryItemUIScript = inventoryItem.GetComponent<InventoryItemUI>();

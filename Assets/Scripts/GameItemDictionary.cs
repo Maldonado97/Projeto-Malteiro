@@ -7,7 +7,7 @@ public class GameItemDictionary : MonoBehaviour
     public static GameItemDictionary instance;
 
     [HideInInspector] public List<string> gameItemNames = new List<string>();
-    //[HideInInspector] public List<string> gameItemTypes = new List<string>(); => for future use.
+    [HideInInspector] public List<string> gameItemTypes = new List<string>();
     [HideInInspector] public List<string> gameItemDescriptions = new List<string>();
     [HideInInspector] public List<float> gameItemValues = new List<float>();
     [HideInInspector] public List<float> gameItemWeights = new List<float>();
@@ -21,33 +21,45 @@ public class GameItemDictionary : MonoBehaviour
         instance = this;
         //ID:0, Box of Steaks, value 250, weight: 100
         gameItemNames.Add("Box of Steaks");
+        gameItemTypes.Add("Food");
         gameItemDescriptions.Add("A box of succulent pieces of meat. Good for everyone that consumes these " +
-            "delicacies, bad for the animals that became them. Tira o olho Monteiro, você não pode O_o.");
-        gameItemValues.Add(250f);
+            "delicacies, bad for the animals that became them.");
+        gameItemValues.Add(120f);
         gameItemWeights.Add(100f);
         //ID:1, Cake, value: 10, weight: 1.5
         gameItemNames.Add("Cake");
+        gameItemTypes.Add("Food");
         gameItemDescriptions.Add("Probably just a lie.");
         gameItemValues.Add(10f);
         gameItemWeights.Add(1.5f);
         //ID:2, Contraband, value: 50, weight: 17
         gameItemNames.Add("Contraband");
+        gameItemTypes.Add("Contraband");
         gameItemDescriptions.Add("Worth a lot for some reason, just try not to ask too many questions, " +
             "and definitely don't get caught with it.");
         gameItemValues.Add(50f);
         gameItemWeights.Add(17f);
         //ID:3, Empty Crate, value: 5, weight: 5
         gameItemNames.Add("Empty Crate");
+        gameItemTypes.Add("Misc");
         gameItemDescriptions.Add("Well, what can I say? It's just an empty crate");
         gameItemValues.Add(5f);
         gameItemWeights.Add(5f);
-        //ID:4, Medicine Box, value: 60, weight: 16
+        //ID:4, Fuel Drum, value: 100, weight: 170
+        gameItemNames.Add("Fuel Barrel");
+        gameItemTypes.Add("Fuel");
+        gameItemDescriptions.Add("55 Gallon drum of fuel. Can be used to refuel 200 liters.");
+        gameItemValues.Add(100f);
+        gameItemWeights.Add(170f);
+        //ID:5, Medicine Box, value: 60, weight: 16
         gameItemNames.Add("Medicine Box");
+        gameItemTypes.Add("Aid");
         gameItemDescriptions.Add("Vital for curing diseases and conducting life saving medical procedures.");
         gameItemValues.Add(60f);
         gameItemWeights.Add(16f);
-        //ID:5, Scrap Metal, value: 25, weight: 25
+        //ID:6, Scrap Metal, value: 25, weight: 25
         gameItemNames.Add("Scrap Metal");
+        gameItemTypes.Add("Misc");
         gameItemDescriptions.Add("Once part of something greater, now just a husk of its former glory. " +
             "It's almost like a foreshadowing of what destiny has in store for you.");
         gameItemValues.Add(25f);

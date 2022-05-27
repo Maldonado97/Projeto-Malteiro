@@ -9,34 +9,35 @@ using UnityEngine.EventSystems;
 public abstract class DockShopMirrorPlayerInventoryItemUI : DockShopInventoryItemUI
 {
     protected override abstract void SetParentSingletonReferences();
+    protected override void SubscribeToItemUIList()
+    {
+        shopScreenManager.SubscribeMirrorItemUI(this);
+    }
     protected override void SubscribeToEvents()
     {
-        playerInventoryManager.onInventoryChanged += OnInventoryChanged;
-        playerInventoryManager.onInventoryItemAdded += OnInventoryItemAdded;
-        playerInventoryManager.onInventoryItemRemoved += OnInventoryItemRemoved;
-        playerInventoryManager.onSortModeChanged += OnSortModeChanged;
-        shopScreenManager.onMirrorPlayerInventoryItemUIRemoved += OnInventoryItemUIRemoved;
         shopScreenManager.onItemTransferConfirmed += TransferMultipleItems;
         shopScreenManager.onItemTransferCanceled += CancelItemTransfer;
     }
     public override void GetItemID()
     {
-        myItemID = playerInventoryManager.itemIDsInInventory[orderInList];
+        shopScreenManager.GetMirrorItemUIItemID(this);
     }
     public override void GetItemInformation()
     {
-        myItemAmount = playerInventoryManager.itemAmount[myItemID];
-        myItemName = gameItemDictionary.gameItemNames[myItemID];
-        myItemValue = gameItemDictionary.gameItemValues[myItemID];
-        myItemWeight = gameItemDictionary.gameItemWeights[myItemID];
+        myItemAmount = PlayerInventoryManager.instance.itemAmount[myItemID];
+        myItemName = GameItemDictionary.instance.gameItemNames[myItemID];
+        myItemValue = GameItemDictionary.instance.gameItemValues[myItemID];
+        myItemWeight = GameItemDictionary.instance.gameItemWeights[myItemID];
         //MODIFIED ITEM VALUE
         myModifiedItemValue = myItemValue + myItemValue * (baseValueModification + itemValueModifications[myItemName]);
     }
     public override void TransferSingleItem()
     {
-        if(shopInventoryManager.storeCash >= myModifiedItemValue)
+        var playerInventoryManager = PlayerInventoryManager.instance;
+        if (shopInventoryManager.storeCash >= myModifiedItemValue)
         {
             //ITEM TRANSFER
+            Debug.Log($"Removing {GameItemDictionary.instance.gameItemNames[myItemID]} from inventory");
             playerInventoryManager.RemoveItemFromInventory(myItemID, 1);
             shopInventoryManager.AddItemToInventory(myItemID, 1);
             //CASH TRANSFER
@@ -54,7 +55,8 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : DockShopInventoryIte
     }
     public override void TransferMultipleItems(int amountToTransfer)
     {
-        if(transferingItem == true)
+        var playerInventoryManager = PlayerInventoryManager.instance;
+        if (transferingItem == true)
         {
             if(shopInventoryManager.storeCash >= myModifiedItemValue * amountToTransfer)
             {
@@ -78,16 +80,10 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : DockShopInventoryIte
     }
     protected override void OnDestroy()
     {
-        shopScreenManager.OnMirrorPlayerInventoryItemUIRemoved(orderInList);
         UnsubscribeFromAllEvents();
     }
     protected override void UnsubscribeFromAllEvents()
     {
-        playerInventoryManager.onInventoryChanged -= OnInventoryChanged;
-        playerInventoryManager.onInventoryItemAdded -= OnInventoryItemAdded;
-        playerInventoryManager.onInventoryItemRemoved -= OnInventoryItemRemoved;
-        playerInventoryManager.onSortModeChanged -= OnSortModeChanged;
-        shopScreenManager.onMirrorPlayerInventoryItemUIRemoved -= OnInventoryItemUIRemoved;
         shopScreenManager.onItemTransferConfirmed -= TransferMultipleItems;
         shopScreenManager.onItemTransferCanceled -= CancelItemTransfer;
     }

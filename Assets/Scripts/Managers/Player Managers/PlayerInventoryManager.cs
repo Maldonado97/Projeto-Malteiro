@@ -11,6 +11,7 @@ public class PlayerInventoryManager : MonoBehaviour
     [SerializeField] bool testingModeActive = false;
     [HideInInspector] public Dictionary<int, int> itemAmount = new Dictionary<int, int>();
     [HideInInspector] public List<int> itemIDsInInventory = new List<int>();
+    [HideInInspector] public List<int> fuelItemsInInventory = new List<int>();
     [HideInInspector] public float playerCash;
     [HideInInspector] public float totalWeight = 0;
     [HideInInspector] public float maxWeight = 1000; //Initialization isn't working for some reason, so i'm setting the value on the awake method.
@@ -40,11 +41,11 @@ public class PlayerInventoryManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.K))
             {
-                //AddTestItem();
-                if(fuel + 300 !> maxFuel)
-                {
-                    fuel += 300;
-                }
+                AddTestItem();
+                //if(fuel + 300 !> maxFuel)
+                //{
+                    //fuel += 300;
+                //}
             }
             if (Input.GetKeyDown(KeyCode.M))
             {
@@ -59,12 +60,12 @@ public class PlayerInventoryManager : MonoBehaviour
                 if (sortMode == "Name")
                 {
                     ChangeSortMode("Value");
-                    Debug.Log("Sorting inventory by value.");
+                    //Debug.Log("Sorting inventory by value.");
                 }
                 else
                 {
                     ChangeSortMode("Name");
-                    Debug.Log("Sorting inventory by name.");
+                    //Debug.Log("Sorting inventory by name.");
                 }
             }
         }
@@ -80,6 +81,10 @@ public class PlayerInventoryManager : MonoBehaviour
         else
         {
             itemIDsInInventory.Add(itemID);
+            if (GameItemDictionary.instance.gameItemTypes[itemID] == "Fuel")
+            {
+                fuelItemsInInventory.Add(itemID);
+            }
             SortInventory();
             itemAmount.Add(itemID, amountToAdd);
             onInventoryItemAdded?.Invoke();
@@ -108,6 +113,10 @@ public class PlayerInventoryManager : MonoBehaviour
                 else if (itemAmount[itemID] == amountToRemove)
                 {
                     itemIDsInInventory.Remove(itemID);
+                    if (GameItemDictionary.instance.gameItemTypes[itemID] == "Fuel")
+                    {
+                        fuelItemsInInventory.Remove(itemID);
+                    }
                     itemAmount.Remove(itemID);
                     onInventoryItemRemoved?.Invoke(itemID);
                 }
@@ -172,7 +181,7 @@ public class PlayerInventoryManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Tried to sort inventory, but inventory does not have enough items to be sorted");
+            //Debug.LogWarning("Tried to sort inventory, but inventory does not have enough items to be sorted");
         }
     }
     public void SortByValue()

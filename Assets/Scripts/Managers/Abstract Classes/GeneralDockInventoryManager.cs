@@ -6,8 +6,10 @@ using UnityEngine;
 public abstract class GeneralDockInventoryManager : MonoBehaviour
 {
     public string shopId;
+    public bool testingModeActive = false;
     [HideInInspector] public Dictionary<int, int> itemAmount = new Dictionary<int, int>();
     [HideInInspector] public List<int> itemIDsInInventory = new List<int>();
+    [HideInInspector] public List<int> fuelItemsInInventory = new List<int>();
 
     private string sortMode = "Name";
     [HideInInspector] public float storeCash;
@@ -30,25 +32,29 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
     }
     protected void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K))
+        if (testingModeActive)
         {
-            AddTestItem();
-        }
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            RemoveTestItem();
-        }
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            if (sortMode == "Name")
+            if (Input.GetKeyDown(KeyCode.K))
             {
-                ChangeSortMode("Value");
-                Debug.Log("Sorting inventory by value.");
+                AddTestItem();
             }
-            else
+            if (Input.GetKeyDown(KeyCode.M))
             {
-                ChangeSortMode("Name");
-                Debug.Log("Sorting inventory by name.");
+                RemoveTestItem();
+            }
+            if (Input.GetKeyDown(KeyCode.J))
+            {
+                Debug.Log($"Changing {shopId} sortmode");
+                if (sortMode == "Name")
+                {
+                    ChangeSortMode("Value");
+                    Debug.Log("Sorting inventory by value.");
+                }
+                else
+                {
+                    ChangeSortMode("Name");
+                    Debug.Log("Sorting inventory by name.");
+                }
             }
         }
     }
@@ -62,6 +68,10 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
         else
         {
             itemIDsInInventory.Add(itemID);
+            if(GameItemDictionary.instance.gameItemTypes[itemID] == "Fuel")
+            {
+                fuelItemsInInventory.Add(itemID);
+            }
             SortInventory();
             itemAmount.Add(itemID, amountToAdd);
             onInventoryItemAdded?.Invoke();
@@ -80,6 +90,10 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
             else if (itemAmount[itemID] == amountToRemove)
             {
                 itemIDsInInventory.Remove(itemID);
+                if (GameItemDictionary.instance.gameItemTypes[itemID] == "Fuel")
+                {
+                    fuelItemsInInventory.Remove(itemID);
+                }
                 itemAmount.Remove(itemID);
                 onInventoryItemRemoved?.Invoke(itemID);
             }
@@ -177,21 +191,19 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
         {
             sortMode = "Value";
             SortInventory();
-            onSortModeChanged?.Invoke();
         }
         else if (desiredSortMode == "Name")
         {
             sortMode = "Name";
             SortInventory();
-            onSortModeChanged?.Invoke();
         }
         else
         {
             Debug.LogWarning("Desired sort mode does not exist. Sorting by default.");
             sortMode = "Name";
             itemIDsInInventory.Sort();
-            onSortModeChanged?.Invoke();
         }
+        onSortModeChanged?.Invoke();
     }
     public void SortInventory()
     {
@@ -199,7 +211,7 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
         {
             if (sortMode == "Value")
             {
-                SortByValue();
+                SortByValue();                
             }
             else
             {
@@ -225,10 +237,12 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
                 if (bufferInventory.Contains(buffer) || !itemIDsInInventory.Contains(buffer))
                 {
                     buffer = itemID;
+                    //Debug.Log(GameItemDictionary.instance.gameItemNames[itemID]);
                 }
                 if (GameItemDictionary.instance.gameItemValues[itemID] > GameItemDictionary.instance.gameItemValues[buffer])
                 {
                     buffer = itemID;
+                    //Debug.Log(GameItemDictionary.instance.gameItemNames[itemID]);
                 }
             }
             bufferInventory.Add(buffer);

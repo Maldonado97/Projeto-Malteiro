@@ -13,7 +13,7 @@ public class PortPioneerShop1InventoryItemUI : DockShopInventoryItemUI
     {
         baseValueModification = .125f;
         //DEFAULT VALUE MODIFICATIONS
-        foreach (string itemName in gameItemDictionary.gameItemNames)
+        foreach (string itemName in GameItemDictionary.instance.gameItemNames)
         {
             itemValueModifications.Add(itemName, 0);
         }

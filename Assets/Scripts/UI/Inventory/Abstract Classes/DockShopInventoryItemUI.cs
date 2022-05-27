@@ -10,8 +10,6 @@ public abstract class DockShopInventoryItemUI : CustomButton
 {
     [HideInInspector] public GeneralDockShopScreenManager shopScreenManager;
     [HideInInspector] public GeneralDockInventoryManager shopInventoryManager;
-    [HideInInspector] public PlayerInventoryManager playerInventoryManager;
-    [HideInInspector] public GameItemDictionary gameItemDictionary;
     [Header("UI Elements")]
     [SerializeField] protected Color highlightedCellColor;
     [SerializeField] protected Color defaultCellColor;
@@ -21,13 +19,13 @@ public abstract class DockShopInventoryItemUI : CustomButton
     [SerializeField] protected TextMeshProUGUI itemWeightTM;
 
     protected Image cell;
-    protected int orderInList;
-    [HideInInspector] public int myItemID;
-    [HideInInspector] public string myItemName;
-    [HideInInspector] public int myItemAmount;
+    public int orderInList;
+    public int myItemID;
+    public string myItemName;
+    public int myItemAmount;
     [HideInInspector] public float myItemValue;
-    [HideInInspector] public float myModifiedItemValue;
-    [HideInInspector] public float myItemWeight;
+    public float myModifiedItemValue;
+    public float myItemWeight;
 
     //protected List<float> itemValueModifications = new List<float>();
     protected Dictionary<string, float> itemValueModifications = new Dictionary<string, float>();
@@ -35,44 +33,43 @@ public abstract class DockShopInventoryItemUI : CustomButton
     
     protected bool transferingItem = false;
 
-    protected void Awake()
+    protected virtual void Awake()
     {
         SetParentSingletonReferences();
-        playerInventoryManager = PlayerInventoryManager.instance;
-        gameItemDictionary = GameItemDictionary.instance;
 
+        
         cell = gameObject.GetComponent<Image>();
         orderInList = transform.GetSiblingIndex();
-        //Debug.Log($"Adding {gameItemDictionary.gameItemNames[myItemID]} item UI.");
 
         SubscribeToEvents();
         SetItemValueModifications();
         GetItemID();
         GetItemInformation();
         SetUIInformation();
+        SubscribeToItemUIList();
     }
     protected abstract void SetParentSingletonReferences();
+    protected virtual void SubscribeToItemUIList()
+    {
+        shopScreenManager.SubscribeItemUI(this);
+    }
     protected virtual void SubscribeToEvents()
     {
-        shopInventoryManager.onInventoryChanged += OnInventoryChanged;
-        shopInventoryManager.onInventoryItemAdded += OnInventoryItemAdded;
-        shopInventoryManager.onInventoryItemRemoved += OnInventoryItemRemoved;
-        shopInventoryManager.onSortModeChanged += OnSortModeChanged;
-        shopScreenManager.onInventoryItemUIRemoved += OnInventoryItemUIRemoved;
         shopScreenManager.onItemTransferConfirmed += TransferMultipleItems;
         shopScreenManager.onItemTransferCanceled += CancelItemTransfer;
     }
     protected abstract void SetItemValueModifications();
     public virtual void GetItemID() //Leave this separate please...
     {
-        myItemID = shopInventoryManager.itemIDsInInventory[orderInList];
+        shopScreenManager.GetItemUIItemID(this);
+        //Debug.Log($"My order in list is {orderInList}, and my itemID is {myItemID}");
     }
     public virtual void GetItemInformation()
     {
         myItemAmount = shopInventoryManager.itemAmount[myItemID];
-        myItemName = gameItemDictionary.gameItemNames[myItemID];
-        myItemValue = gameItemDictionary.gameItemValues[myItemID];
-        myItemWeight = gameItemDictionary.gameItemWeights[myItemID];
+        myItemName = GameItemDictionary.instance.gameItemNames[myItemID];
+        myItemValue = GameItemDictionary.instance.gameItemValues[myItemID];
+        myItemWeight = GameItemDictionary.instance.gameItemWeights[myItemID];
         //MODIFIED ITEM VALUE
         myModifiedItemValue = myItemValue + myItemValue * (baseValueModification + itemValueModifications[myItemName]);
     }
@@ -93,6 +90,7 @@ public abstract class DockShopInventoryItemUI : CustomButton
     }
     public virtual void TransferSingleItem()
     {
+        var playerInventoryManager = PlayerInventoryManager.instance;
         if (playerInventoryManager.playerCash >= myModifiedItemValue)
         {
             //ITEM TRANSFER
@@ -115,6 +113,7 @@ public abstract class DockShopInventoryItemUI : CustomButton
     {
         //All itemUIs are subscribed to onItemTransferConfirmed. This first IF avoids having them all send their items
         //to the player inventory at once.
+        var playerInventoryManager = PlayerInventoryManager.instance;
         if (transferingItem == true)
         {
             if(playerInventoryManager.playerCash >= myModifiedItemValue * amountToTransfer)
@@ -146,32 +145,11 @@ public abstract class DockShopInventoryItemUI : CustomButton
     {
         if (changedItemID == myItemID)
         {
-            GetItemInformation();
+            GetItemInformation(); //change this to RefreshItemUI() just for organization's sake.
             SetUIInformation();
         }
     }
-    public void OnInventoryItemAdded()
-    {
-        GetItemID();
-        GetItemInformation();
-        SetUIInformation();
-    }
-    public void OnInventoryItemRemoved(int removedItemID)
-    {
-        if (removedItemID == myItemID)
-        {
-            //Debug.Log($"Destroying {gameItemDictionary.gameItemNames[myItemID]} itemUI");
-            Destroy(gameObject);
-        }
-    }
-    public void OnInventoryItemUIRemoved(int removedItemUIOrderInList)
-    {
-        if (removedItemUIOrderInList < orderInList)
-        {
-            orderInList -= 1;
-        }
-    }
-    public void OnSortModeChanged()
+    public void RefreshItemUI()
     {
         GetItemID();
         GetItemInformation();
@@ -179,16 +157,10 @@ public abstract class DockShopInventoryItemUI : CustomButton
     }
     protected virtual void OnDestroy()
     {
-        shopScreenManager.OnInventoryItemUIRemoved(orderInList);
         UnsubscribeFromAllEvents();
     }
     protected virtual void UnsubscribeFromAllEvents()
     {
-        shopInventoryManager.onInventoryChanged -= OnInventoryChanged;
-        shopInventoryManager.onInventoryItemAdded -= OnInventoryItemAdded;
-        shopInventoryManager.onInventoryItemRemoved -= OnInventoryItemRemoved;
-        shopInventoryManager.onSortModeChanged -= OnSortModeChanged;
-        shopScreenManager.onInventoryItemUIRemoved -= OnInventoryItemUIRemoved;
         shopScreenManager.onItemTransferConfirmed += TransferMultipleItems;
         shopScreenManager.onItemTransferCanceled += CancelItemTransfer;
     }

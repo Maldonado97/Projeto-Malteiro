@@ -189,7 +189,7 @@ public class PlayerControl : EntityController
         if(PlayerInventoryManager.instance.fuel > 0)
         {
             PlayerInventoryManager.instance.fuel -= currentFuelConsumption * Time.deltaTime;
-            Debug.Log($"Fuel: {PlayerInventoryManager.instance.fuel}/{PlayerInventoryManager.instance.maxFuel}");
+            //Debug.Log($"Fuel: {PlayerInventoryManager.instance.fuel}/{PlayerInventoryManager.instance.maxFuel}");
             UIManager.instance.UpdateFuelBar(PlayerInventoryManager.instance.fuel, PlayerInventoryManager.instance.maxFuel);
             outOfFuel = false;
         }

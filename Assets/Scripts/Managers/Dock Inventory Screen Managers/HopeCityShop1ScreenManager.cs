@@ -20,6 +20,6 @@ public class HopeCityShop1ScreenManager : GeneralDockShopScreenManager
         //ERROR: PortPioneerShop1InventoryManager not being recognized for some odd reason..
         //ERROR CAUSE: Inventory manager was loading after this  script, making it impossible to find it.
         //SOLUTION: changed start method on inventory manager to awake, so it would load before this script.
-        HopeCityShop1InventoryManager.instance.onInventoryItemAdded += CreateItemUI;
+        //HopeCityShop1InventoryManager.instance.onInventoryItemAdded += CreateItemUI;
     }
 }
