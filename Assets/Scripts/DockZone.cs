@@ -30,7 +30,7 @@ public class DockZone : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.Log("Ship entered " + dockID);
+            //Debug.Log("Ship entered " + dockID);
             playerInZone = true;
             UIManager.instance.ActivateDockPrompt();
 
@@ -42,7 +42,7 @@ public class DockZone : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.Log("Ship exited " + dockID);
+            //Debug.Log("Ship exited " + dockID);
             playerInZone = false;
             UIManager.instance.DeactivateDockPrompt();
 

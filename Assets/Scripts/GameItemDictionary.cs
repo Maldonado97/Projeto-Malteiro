@@ -46,7 +46,7 @@ public class GameItemDictionary : MonoBehaviour
         gameItemValues.Add(5f);
         gameItemWeights.Add(5f);
         //ID:4, Fuel Drum, value: 100, weight: 170
-        gameItemNames.Add("Fuel Barrel");
+        gameItemNames.Add("Fuel Drum");
         gameItemTypes.Add("Fuel");
         gameItemDescriptions.Add("55 Gallon drum of fuel. Can be used to refuel 200 liters.");
         gameItemValues.Add(100f);

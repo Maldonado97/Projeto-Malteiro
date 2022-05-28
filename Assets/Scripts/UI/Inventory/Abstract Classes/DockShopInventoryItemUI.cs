@@ -11,8 +11,8 @@ public abstract class DockShopInventoryItemUI : CustomButton
     [HideInInspector] public GeneralDockShopScreenManager shopScreenManager;
     [HideInInspector] public GeneralDockInventoryManager shopInventoryManager;
     [Header("UI Elements")]
-    [SerializeField] protected Color highlightedCellColor;
-    [SerializeField] protected Color defaultCellColor;
+    [SerializeField] protected Color highlightedCellColor = new Color(87, 101, 116, 200);
+    [SerializeField] protected Color defaultCellColor = new Color(87, 101, 116, 0);
     [SerializeField] protected TextMeshProUGUI itemNameTM;
     [SerializeField] protected TextMeshProUGUI itemAmountTM;
     [SerializeField] protected TextMeshProUGUI itemValueTM;

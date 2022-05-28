@@ -23,10 +23,6 @@ public abstract class DockUIManager : MonoBehaviour
     {
         SetInstance();
         dockMenu.SetActive(false);
-        //foreach(GeneralDockShopScreenManager dockShopScreenManager in dockShopScreenManagers)
-        //{
-            //dockShopScreenManager.onIventoryItemUICreated += FlashStoreScreen;
-        //}
     }
     protected abstract void SetInstance();
     public void OnPlayerDocked()

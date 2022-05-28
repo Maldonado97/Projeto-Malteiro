@@ -25,7 +25,7 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI playerCarryCapacityTM;
     [Header("Store Information")]
     [SerializeField] TextMeshProUGUI storeCashTM;
-
+    [Header("TESTING")]
     protected GeneralDockInventoryManager ownInventory;
     public List<DockShopInventoryItemUI> itemUIs;
     public List<DockShopInventoryItemUI> mirrorItemUIs;
@@ -154,7 +154,7 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     {
         bool removedItemFound = false;
         DockShopInventoryItemUI itemUIToRemove = null;
-        Debug.Log("Entering Foreach loop");
+        //Debug.Log("Entering Foreach loop");
         foreach (DockShopInventoryItemUI itemUI in mirrorItemUIs)
         {
             if (itemUI.myItemID == itemID)
