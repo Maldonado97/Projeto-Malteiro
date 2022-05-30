@@ -13,7 +13,6 @@ public class PlayerInventoryScreenManager : MonoBehaviour
     [SerializeField] GameObject inventoryItemUIParent;
     [Header("Inventory Information Area")]
     [SerializeField] TextMeshProUGUI playerCashTM;
-    [SerializeField] TextMeshProUGUI ownCashTM;
     [SerializeField] TextMeshProUGUI carryCapacityTM;
     [Header("Item Description Area")]
     [SerializeField] TextMeshProUGUI itemDescriptionTM;
