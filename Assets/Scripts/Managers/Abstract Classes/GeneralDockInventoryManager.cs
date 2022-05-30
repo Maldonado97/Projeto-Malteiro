@@ -26,8 +26,8 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
     public event Action onSortModeChanged;
     public void Start()
     {
-        //StartCoroutine(StartInventoryShuffleCounter(180));
-        StartCoroutine(StartInventoryShuffleCounter(1));
+        StartCoroutine(StartInventoryShuffleCounter(180));
+        //StartCoroutine(StartInventoryShuffleCounter(1));
         if (startingNewGame)
         {
             AddInitialItems();
@@ -161,7 +161,7 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
         {
             while (itemIDsInInventory.Count < newInventoryCount)
             {
-                Debug.Log($"SHUFFLER IS ADDING ITEMS TO INVENTORY");
+                //Debug.Log($"SHUFFLER IS ADDING ITEMS TO INVENTORY");
                 int itemToAdd = UnityEngine.Random.Range(0, GameItemDictionary.instance.gameItemNames.Count);
                 int amountToAdd = UnityEngine.Random.Range(1, 6);
                 //Debug.Log($"Shuffler will add {amountToAdd} of " +
@@ -170,7 +170,7 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
             }
             while (itemIDsInInventory.Count > newInventoryCount)
             {
-                Debug.Log($"SHUFFLER IS REMOVING ITEMS FROM INVENTORY");
+                //Debug.Log($"SHUFFLER IS REMOVING ITEMS FROM INVENTORY");
                 int itemToRemove = itemIDsInInventory[UnityEngine.Random.Range(0, itemIDsInInventory.Count)];
                 int amountToRemove = UnityEngine.Random.Range(1, itemAmount[itemToRemove] + 1);
                 //Debug.Log($"Shuffler will remove {amountToRemove} of " +
@@ -198,8 +198,8 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
                 OnInventoryCashChanged();
             }
         }
-        //StartCoroutine(StartInventoryShuffleCounter(UnityEngine.Random.Range(180, 301))); //3(180) to 5(300) minutes.
-        StartCoroutine(StartInventoryShuffleCounter(1));
+        StartCoroutine(StartInventoryShuffleCounter(UnityEngine.Random.Range(180, 301))); //3(180) to 5(300) minutes.
+        //StartCoroutine(StartInventoryShuffleCounter(1));
     }
     public void OnInventoryCashChanged()
     {

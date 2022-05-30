@@ -78,7 +78,7 @@ public class JoeysFuelBerthInventoryManager : GeneralDockInventoryManager
                 OnInventoryCashChanged();
             }
         }
-        //StartCoroutine(StartInventoryShuffleCounter(UnityEngine.Random.Range(180, 301))); //3(180) to 5(300) minutes.
-        StartCoroutine(StartInventoryShuffleCounter(1));
+        StartCoroutine(StartInventoryShuffleCounter(UnityEngine.Random.Range(180, 301))); //3(180) to 5(300) minutes.
+        //StartCoroutine(StartInventoryShuffleCounter(1));
     }
 }

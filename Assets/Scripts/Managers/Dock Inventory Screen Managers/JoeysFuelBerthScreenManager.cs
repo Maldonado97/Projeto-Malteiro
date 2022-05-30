@@ -6,6 +6,11 @@ public class JoeysFuelBerthScreenManager : GeneralDockShopScreenManager
 {
     public static JoeysFuelBerthScreenManager instance;
 
+    public override void Start()
+    {
+        base.Start();
+        activePlayerInventory = PlayerInventoryManager.instance.fuelItemsInInventory;
+    }
     public override void SetInstance()
     {
         instance = this;

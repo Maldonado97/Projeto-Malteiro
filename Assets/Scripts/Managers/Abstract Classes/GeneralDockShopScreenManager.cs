@@ -26,10 +26,13 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     [Header("Store Information")]
     [SerializeField] TextMeshProUGUI storeCashTM;
     [Header("TESTING")]
-    protected GeneralDockInventoryManager ownInventory;
+    public bool inTestingMode = false;
     public List<DockShopInventoryItemUI> itemUIs;
     public List<DockShopInventoryItemUI> mirrorItemUIs;
+    protected GeneralDockInventoryManager ownInventory;
     private string itemTypeToDisplay = "All";
+    protected List<int> activePlayerInventory = new List<int>();
+    protected List<int> previousPlayerInventory = new List<int>();
 
     //public event Action<int> onInventoryItemUIRemoved;
     //public event Action<GeneralDockShopScreenManager> onIventoryItemUICreated;
@@ -37,11 +40,12 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     public event Action<int> onItemTransferConfirmed;
     public event Action onItemTransferCanceled;
 
-    public void Start()
+    public virtual void Start()
     {
         SetInstance();
         SetOwnInventoryReference();
         SubscribeToEvents();
+        activePlayerInventory = PlayerInventoryManager.instance.itemIDsInInventory;
         UpdatePlayerCarryCapacityText();
         UpdatePlayerCashText();
         UpdateStoreCashText();
@@ -55,6 +59,20 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
         else
         {
             ownInventory.canShuffleInventory = true;
+        }
+        if (inTestingMode)
+        {
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                if(itemTypeToDisplay == "All")
+                {
+                    ChangePlayerInventoryFilter("Fuel");
+                }
+                else
+                {
+                    ChangePlayerInventoryFilter("All");
+                }
+            }
         }
     }
     public abstract void SetInstance();
@@ -73,7 +91,7 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
         ownInventory.onInventoryChanged += OnOwnInventoryItemChanged;
         ownInventory.onInventoryCashChanged += UpdateStoreCashText;
     }
-    //OWN ITEM UIS
+    //OWN INVENTORY
     public void CreateItemUI()
     {
         Instantiate(inventoryItemUI, ownInventoryPanel.transform);
@@ -125,7 +143,7 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
             itemUI.RefreshItemUI();
         }
     }
-    //MIRROR ITEM UIS
+    //MIRROR PLAYER INVENTORY
     public void CreateMirrorPlayerInventoryItemUI()
     {
         Instantiate(mirrorPlayerInventoryItemUI, mirrorPlayerInventoryPanel.transform);
@@ -141,7 +159,7 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     }
     public void GetMirrorItemUIItemID(DockShopInventoryItemUI itemUI)
     {
-        itemUI.myItemID = PlayerInventoryManager.instance.itemIDsInInventory[itemUI.orderInList];
+        itemUI.myItemID = activePlayerInventory[itemUI.orderInList];
     }
     public void OnPlayerInventoryItemChanged(int itemID)
     {
@@ -177,6 +195,44 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
             mirrorItemUI.RefreshItemUI();
         }
     }
+    public void ChangePlayerInventoryFilter(string newFilter)
+    {
+        if(newFilter == "All")
+        {
+            Debug.Log("Switching to All items Filter");
+            itemTypeToDisplay = "All";
+            previousPlayerInventory = activePlayerInventory;
+            activePlayerInventory = PlayerInventoryManager.instance.itemIDsInInventory;
+        }
+        if (newFilter == "Fuel")
+        {
+            Debug.Log("Switching to Fuel items Filter");
+            itemTypeToDisplay = "Fuel";
+            previousPlayerInventory = activePlayerInventory;
+            activePlayerInventory = PlayerInventoryManager.instance.fuelItemsInInventory;
+            foreach(int itemID in PlayerInventoryManager.instance.fuelItemsInInventory)
+            {
+                Debug.Log($"{GameItemDictionary.instance.gameItemNames[itemID]}: {PlayerInventoryManager.instance.itemAmount[itemID]}");
+            }
+        }
+        if (activePlayerInventory.Count < mirrorItemUIs.Count)
+        {
+            while (activePlayerInventory.Count < mirrorItemUIs.Count)
+            {
+                //mirrorItemUIs.RemoveAt(mirrorItemUIs.Count - 1);
+                //mirrorItemUIs.Remove(mirrorItemUIs[mirrorItemUIs.Count - 1]);
+                RemoveMirrorItemUI(mirrorItemUIs[mirrorItemUIs.Count - 1].myItemID);
+            }
+        }
+        if(activePlayerInventory.Count > mirrorItemUIs.Count)
+        {
+            while (activePlayerInventory.Count > mirrorItemUIs.Count)
+            {
+                CreateMirrorPlayerInventoryItemUI();
+            }
+        }
+        ReloadInventoryItemUIList(mirrorItemUIs);
+    }
     //INVENTORY INFORMATION
     public void UpdatePlayerCarryCapacityText()
     {
@@ -189,6 +245,13 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     public void UpdateStoreCashText()
     {
         storeCashTM.text = $"Store Cash: {Mathf.RoundToInt(ownInventory.storeCash)}";
+    }
+    public void ReloadInventoryItemUIList(List<DockShopInventoryItemUI> itemUIList)
+    {
+        foreach (DockShopInventoryItemUI itemUI in itemUIList)
+        {
+            itemUI.RefreshItemUI();
+        }
     }
     //TRANSFER AMOUNT SELECTOR
     public void OpenTransferAmountSelector(int itemAmount, float itemValue)
