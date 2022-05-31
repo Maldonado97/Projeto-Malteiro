@@ -146,8 +146,11 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     //MIRROR PLAYER INVENTORY
     public void CreateMirrorPlayerInventoryItemUI()
     {
-        Instantiate(mirrorPlayerInventoryItemUI, mirrorPlayerInventoryPanel.transform);
-        dockUIManager.FlashStoreScreen(this);
+        if (activePlayerInventory.Count > mirrorItemUIs.Count) //Checks if item added is part of the active inventory
+        {
+            Instantiate(mirrorPlayerInventoryItemUI, mirrorPlayerInventoryPanel.transform);
+            dockUIManager.FlashStoreScreen(this);
+        }
     }
     public void SubscribeMirrorItemUI(DockShopInventoryItemUI newItemUI)
     {
@@ -233,6 +236,13 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
         }
         ReloadInventoryItemUIList(mirrorItemUIs);
     }
+    public void ReloadInventoryItemUIList(List<DockShopInventoryItemUI> itemUIList)
+    {
+        foreach (DockShopInventoryItemUI itemUI in itemUIList)
+        {
+            itemUI.RefreshItemUI();
+        }
+    }
     //INVENTORY INFORMATION
     public void UpdatePlayerCarryCapacityText()
     {
@@ -245,13 +255,6 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     public void UpdateStoreCashText()
     {
         storeCashTM.text = $"Store Cash: {Mathf.RoundToInt(ownInventory.storeCash)}";
-    }
-    public void ReloadInventoryItemUIList(List<DockShopInventoryItemUI> itemUIList)
-    {
-        foreach (DockShopInventoryItemUI itemUI in itemUIList)
-        {
-            itemUI.RefreshItemUI();
-        }
     }
     //TRANSFER AMOUNT SELECTOR
     public void OpenTransferAmountSelector(int itemAmount, float itemValue)

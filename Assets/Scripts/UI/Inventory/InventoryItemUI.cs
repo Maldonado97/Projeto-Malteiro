@@ -16,8 +16,10 @@ public class InventoryItemUI : CustomButton
     [SerializeField] TextMeshProUGUI itemNameTM;
     [SerializeField] TextMeshProUGUI itemAmountTM;
     private Image cell;
-    private int orderInList;
-    [HideInInspector] public int myitemID;
+    [HideInInspector] public int orderInList;
+    [HideInInspector] public int myItemID;
+    public string myItemName;
+    public int myItemAmount;
     [HideInInspector] public bool itemSelected;
     private void Awake()
     {
@@ -30,69 +32,54 @@ public class InventoryItemUI : CustomButton
 
         SubscribeToEvents();
         GetItemID();
+        GetItemInformation();
         SetUIInformation();
+        SubscribeToItemUIList();
+    }
+    protected virtual void SubscribeToItemUIList()
+    {
+        inventoryScreenManager.SubscribeItemUI(this);
     }
     public void SubscribeToEvents()
     {
         inventoryManager.onInventoryChanged += OnInventoryChanged;
-        inventoryManager.onInventoryItemAdded += OnInventoryItemAdded;
-        inventoryManager.onInventoryItemRemoved += OnInventoryItemRemoved;
-        inventoryManager.onSortModeChanged += OnSortModeChanged;
-        inventoryScreenManager.onInventoryItemUIRemoved += OnInventoryItemUIRemoved;
         inventoryScreenManager.onAllItemsDeselected += DeselectThisItem;
-    }
-    public void OnInventoryChanged(int changedItemID)
-    {
-        if(changedItemID == myitemID)
-        {
-            SetUIInformation();
-        }
-    }
-    public void OnInventoryItemAdded()
-    {
-        GetItemID();
-        SetUIInformation();
-        if (myitemID == inventoryScreenManager.selectedItemID)
-        {
-            inventoryScreenManager.OnInventoryItemSelected(this);
-        }
-    }
-    public void OnInventoryItemRemoved(int removedItemID)
-    {
-        if(removedItemID == myitemID)
-        {
-            RemoveSelf();
-        }
-    }
-    public void OnInventoryItemUIRemoved(int removedItemUIOrderInList) 
-    {
-        if(removedItemUIOrderInList < orderInList)
-        {
-            orderInList -= 1;
-        }
-    }
-    public void OnSortModeChanged()
-    {
-        GetItemID();
-        SetUIInformation();
-        if (myitemID == inventoryScreenManager.selectedItemID)
-        {
-            inventoryScreenManager.OnInventoryItemSelected(this);
-        }
     }
     public void GetItemID()
     {
-        myitemID = inventoryManager.itemIDsInInventory[orderInList];
+        PlayerInventoryScreenManager.instance.GetItemUIItemID(this);
+        //myItemID = inventoryManager.itemIDsInInventory[orderInList];
+    }
+    public virtual void GetItemInformation()
+    {
+        myItemAmount = PlayerInventoryManager.instance.itemAmount[myItemID];
+        myItemName = GameItemDictionary.instance.gameItemNames[myItemID];
     }
     public void SetUIInformation()
     {
-        itemNameTM.text = gameItemDictionary.gameItemNames[myitemID];
-        itemAmountTM.text = inventoryManager.itemAmount[myitemID].ToString();
+        itemNameTM.text = myItemName;
+        itemAmountTM.text = $"{myItemAmount}";
     }
-    public void RemoveSelf()
+    public void OnInventoryChanged(int changedItemID)
     {
-        Destroy(gameObject);
+        if (changedItemID == myItemID)
+        {
+            GetItemInformation(); //change this to RefreshItemUI() just for organization's sake.
+            SetUIInformation();
+        }
     }
+    public void RefreshItemUI()
+    {
+        GetItemID();
+        GetItemInformation();
+        SetUIInformation();
+    }
+    public void UnsubscribeFromAllEvents()
+    {
+        inventoryManager.onInventoryChanged -= OnInventoryChanged;
+        inventoryScreenManager.onAllItemsDeselected -= DeselectThisItem;
+    }
+    //SELECTION METHODS
     public void SelectThisItem()
     {
         itemSelected = true;
@@ -111,23 +98,15 @@ public class InventoryItemUI : CustomButton
     {
         cell.color = defaultCellColor;
     }
+    //DESTROY
     public void OnDestroy()
     {
         if (itemSelected)
         {
             inventoryScreenManager.DeselectAllItems();
         }
-        inventoryScreenManager.OnInventoryItemUIRemoved(orderInList);
+        //inventoryScreenManager.OnInventoryItemUIRemoved(orderInList);
         UnsubscribeFromAllEvents();
-    }
-    public void UnsubscribeFromAllEvents()
-    {
-        inventoryManager.onInventoryChanged -= OnInventoryChanged;
-        inventoryManager.onInventoryItemAdded -= OnInventoryItemAdded;
-        inventoryManager.onInventoryItemRemoved -= OnInventoryItemRemoved;
-        inventoryManager.onSortModeChanged -= OnSortModeChanged;
-        inventoryScreenManager.onInventoryItemUIRemoved -= OnInventoryItemUIRemoved;
-        inventoryScreenManager.onAllItemsDeselected -= DeselectThisItem;
     }
     //USER INTERFACE METHODS
     public override void OnPointerClick(PointerEventData eventData)
