@@ -33,6 +33,8 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     private string itemTypeToDisplay = "All";
     protected List<int> activePlayerInventory = new List<int>();
     protected List<int> previousPlayerInventory = new List<int>();
+    protected List<int> customPlayerSubInventory = new List<int>();
+    protected List<string> customPlayerSubInventoryItemTypes = new List<string>();
 
     //public event Action<int> onInventoryItemUIRemoved;
     //public event Action<GeneralDockShopScreenManager> onIventoryItemUICreated;
@@ -66,7 +68,7 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
             {
                 if(itemTypeToDisplay == "All")
                 {
-                    ChangePlayerInventoryFilter("Fuel");
+                    ChangePlayerInventoryFilter("Custom");
                 }
                 else
                 {
@@ -80,7 +82,7 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     public virtual void SubscribeToEvents()
     {
         PlayerInventoryManager.instance.onInventoryChanged += OnPlayerInventoryItemChanged;
-        PlayerInventoryManager.instance.onInventoryItemAdded += CreateMirrorPlayerInventoryItemUI;
+        PlayerInventoryManager.instance.onInventoryItemAdded += OnPlayerInventoryItemAdded;
         PlayerInventoryManager.instance.onInventoryItemRemoved += RemoveMirrorItemUI;
         PlayerInventoryManager.instance.onSortModeChanged += OnPlayerInventorySortModeChanged;
         PlayerInventoryManager.instance.onInventoryWeightChanged += UpdatePlayerCarryCapacityText;
@@ -144,13 +146,30 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
         }
     }
     //MIRROR PLAYER INVENTORY
+    public void UpdateCustomPlayerSubInventory() //This should only be used if displaying custom item subinventory
+    {
+        var playerInventoryManager = PlayerInventoryManager.instance;
+        customPlayerSubInventory = playerInventoryManager.CreateCustomSubInventory(customPlayerSubInventoryItemTypes);
+        if(itemTypeToDisplay == "Custom") //Double checking because I don't trust myself
+        {
+            activePlayerInventory = customPlayerSubInventory;
+        }
+    }
+    public void OnPlayerInventoryItemAdded(int itemID)
+    {
+        if(itemTypeToDisplay == "Custom")
+        {
+            UpdateCustomPlayerSubInventory();
+        }
+        if (activePlayerInventory.Contains(itemID))
+        {
+            CreateMirrorPlayerInventoryItemUI();
+        }
+    }
     public void CreateMirrorPlayerInventoryItemUI()
     {
-        if (activePlayerInventory.Count > mirrorItemUIs.Count) //Checks if item added is part of the active inventory
-        {
-            Instantiate(mirrorPlayerInventoryItemUI, mirrorPlayerInventoryPanel.transform);
-            dockUIManager.FlashStoreScreen(this);
-        }
+        Instantiate(mirrorPlayerInventoryItemUI, mirrorPlayerInventoryPanel.transform);
+        dockUIManager.FlashStoreScreen(this);
     }
     public void SubscribeMirrorItemUI(DockShopInventoryItemUI newItemUI)
     {
@@ -214,6 +233,18 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
             previousPlayerInventory = activePlayerInventory;
             activePlayerInventory = PlayerInventoryManager.instance.fuelItemsInInventory;
             foreach(int itemID in PlayerInventoryManager.instance.fuelItemsInInventory)
+            {
+                Debug.Log($"{GameItemDictionary.instance.gameItemNames[itemID]}: {PlayerInventoryManager.instance.itemAmount[itemID]}");
+            }
+        }
+        if (newFilter == "Custom")
+        {
+            Debug.Log("Switching to custom Filter");
+            itemTypeToDisplay = "Custom";
+            previousPlayerInventory = activePlayerInventory;
+            UpdateCustomPlayerSubInventory();
+            activePlayerInventory = customPlayerSubInventory;
+            foreach (int itemID in customPlayerSubInventory)
             {
                 Debug.Log($"{GameItemDictionary.instance.gameItemNames[itemID]}: {PlayerInventoryManager.instance.itemAmount[itemID]}");
             }

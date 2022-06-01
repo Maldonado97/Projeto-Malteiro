@@ -9,7 +9,9 @@ public class JoeysFuelBerthScreenManager : GeneralDockShopScreenManager
     public override void Start()
     {
         base.Start();
-        activePlayerInventory = PlayerInventoryManager.instance.fuelItemsInInventory;
+        customPlayerSubInventoryItemTypes.Add("Fuel");
+        customPlayerSubInventoryItemTypes.Add("Contraband");
+        ChangePlayerInventoryFilter("Custom");
     }
     public override void SetInstance()
     {

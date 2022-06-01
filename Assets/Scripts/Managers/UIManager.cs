@@ -138,6 +138,7 @@ public class UIManager : MonoBehaviour
         else
         {
             HUD.SetActive(true);
+            PlayerInventoryScreenManager.instance.DeselectAllItems();
             playerMenu.SetActive(false);
             playerMenuOpen = false;
         }

@@ -37,7 +37,7 @@ public class PlayerInventoryScreenManager : MonoBehaviour
         UpdateCarryCapacityText();
         UpdatePlayerCashText();
 
-        PlayerInventoryManager.instance.onInventoryItemAdded += CreateItemUI;
+        PlayerInventoryManager.instance.onInventoryItemAdded += OnInventoryItemAdded;
         PlayerInventoryManager.instance.onInventoryWeightChanged += UpdateCarryCapacityText;
         PlayerInventoryManager.instance.onInventoryCashChanged += UpdatePlayerCashText;
 
@@ -62,17 +62,26 @@ public class PlayerInventoryScreenManager : MonoBehaviour
             }
         }
     }
+    public void OnInventoryItemAdded(int itemID)
+    {
+        if (activePlayerInventory.Contains(itemID))
+        {
+            CreateItemUI();
+        }
+    }
     public void CreateItemUI()
     {
         //Item could have been added to an inventory that's not being displayed, therefore, to avoid the unecessary
         //creation of an inventory itemUI, this first if statement makes sure that the newly added item belongs to the
         //inventory that's currently being displayed, because if it does, the activePlayerInventory.count should be greater
         //than the currently subscribed inventory itemUIs.
-        if (activePlayerInventory.Count > itemUIs.Count) 
-        {
-            Instantiate(inventoryItemUI, inventoryItemUIParent.transform);
-            FlashInventoryScreen();
-        }
+        //if (activePlayerInventory.Count > itemUIs.Count) 
+        //{
+        //Instantiate(inventoryItemUI, inventoryItemUIParent.transform);
+        //FlashInventoryScreen();
+        //}
+        Instantiate(inventoryItemUI, inventoryItemUIParent.transform);
+        FlashInventoryScreen();
     }
     public void SubscribeItemUI(InventoryItemUI newItemUI)
     {

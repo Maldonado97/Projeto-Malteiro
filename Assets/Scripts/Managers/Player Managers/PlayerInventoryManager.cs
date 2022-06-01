@@ -12,6 +12,9 @@ public class PlayerInventoryManager : MonoBehaviour
     [HideInInspector] public Dictionary<int, int> itemAmount = new Dictionary<int, int>();
     [HideInInspector] public List<int> itemIDsInInventory = new List<int>();
     [HideInInspector] public List<int> fuelItemsInInventory = new List<int>();
+    [HideInInspector] public List<int> cargo = new List<int>();
+    [HideInInspector] public List<int> resources = new List<int>();
+    [HideInInspector] public List<int> customSubInventory = new List<int>();
     [HideInInspector] public float playerCash;
     [HideInInspector] public float totalWeight = 0;
     [HideInInspector] public float maxWeight = 1000; //Initialization isn't working for some reason, so i'm setting the value on the awake method.
@@ -21,7 +24,7 @@ public class PlayerInventoryManager : MonoBehaviour
     private string sortMode = "Name";
 
     public event Action<int> onInventoryChanged;
-    public event Action onInventoryItemAdded;
+    public event Action<int> onInventoryItemAdded;
     public event Action<int> onInventoryItemRemoved;
     public event Action onInventoryWeightChanged;
     public event Action onInventoryCashChanged;
@@ -85,9 +88,9 @@ public class PlayerInventoryManager : MonoBehaviour
             {
                 fuelItemsInInventory.Add(itemID);
             }
-            SortInventory();
+            SortInventory(itemIDsInInventory);
             itemAmount.Add(itemID, amountToAdd);
-            onInventoryItemAdded?.Invoke();
+            onInventoryItemAdded?.Invoke(itemID);
         }
         AddInventoryWeight(itemID, amountToAdd);
         onInventoryWeightChanged?.Invoke();
@@ -129,6 +132,19 @@ public class PlayerInventoryManager : MonoBehaviour
             Debug.LogWarning("Tried to remove an item that does not exist in player inventory.");
         }
     }
+    public void RemoveItemFromSubInventories(int itemID)
+    {
+        var gameItemDictionary = GameItemDictionary.instance;
+
+        if (gameItemDictionary.gameItemTypes[itemID] == "Fuel")
+        {
+            fuelItemsInInventory.Remove(itemID);
+        }
+        if (gameItemDictionary.gameItemTypes[itemID] == "Cargo")
+        {
+            cargo.Remove(itemID);
+        }
+    }
     public void AddInventoryWeight(int itemID, int itemAmount)
     {
         float itemWeight = GameItemDictionary.instance.gameItemWeights[itemID];
@@ -143,19 +159,40 @@ public class PlayerInventoryManager : MonoBehaviour
     {
         onInventoryCashChanged?.Invoke();
     }
+    public List<int> CreateCustomSubInventory(List<string> allowedItemTypes)
+    {
+        List<int> customSubInventory = new List<int>();
+        bool canAddItem = false;
+        foreach(int itemID in itemIDsInInventory)
+        {
+            foreach(string allowedItemType in allowedItemTypes)
+            {
+                if(GameItemDictionary.instance.gameItemTypes[itemID] == allowedItemType)
+                {
+                    canAddItem = true;
+                }
+                if (canAddItem)
+                {
+                    customSubInventory.Add(itemID);
+                }
+                canAddItem = false;
+            }
+        }
+        return customSubInventory;
+    }
     //SORTING
-    public void ChangeSortMode(string desiredSortMode)
+    public void ChangeSortMode(string desiredSortMode) //UPDATE THIS TO WORK WITH ANY INVENTORY
     {
         if(desiredSortMode == "Value")
         {
             sortMode = "Value";
-            SortInventory();
+            SortInventory(itemIDsInInventory);
             onSortModeChanged?.Invoke();
         }
         else if(desiredSortMode == "Name")
         {
             sortMode = "Name";
-            SortInventory();
+            SortInventory(itemIDsInInventory);
             onSortModeChanged?.Invoke();
         }
         else
@@ -166,7 +203,7 @@ public class PlayerInventoryManager : MonoBehaviour
             onSortModeChanged?.Invoke();
         }
     }
-    public void SortInventory()
+    public void SortInventory(List<int> inventoryToSort) //UPDATE THIS TO WORK WITH ANY INVENTORY
     {
         if (itemIDsInInventory.Count > 1)
         {
@@ -184,7 +221,7 @@ public class PlayerInventoryManager : MonoBehaviour
             //Debug.LogWarning("Tried to sort inventory, but inventory does not have enough items to be sorted");
         }
     }
-    public void SortByValue()
+    public void SortByValue() //UPDATE THIS TO WORK WITH ANY INVENTORY
     {
         int buffer = 0;
         List<int> bufferInventory = new List<int>();

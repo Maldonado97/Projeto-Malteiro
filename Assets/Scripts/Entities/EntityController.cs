@@ -9,7 +9,7 @@ public abstract class EntityController : MonoBehaviour
     public virtual void DamageEntity(float damage)
     {
         Health -= damage;
-        Debug.Log($"{gameObject.name} took {damage} points of damage");
+        //Debug.Log($"{gameObject.name} took {damage} points of damage");
         if(Health <= 0)
         {
             KillEntity();

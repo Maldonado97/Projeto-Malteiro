@@ -101,6 +101,7 @@ public class CyclopsShark : MonoBehaviour
             {
                 targetAquired = false;
                 chasingTarget = false;
+                targetAtCloseRange = false;
                 targetIsSound = false;
             }
             MoveInDesiredHeading();

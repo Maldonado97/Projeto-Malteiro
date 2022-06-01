@@ -3884,7 +3884,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &214936589
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3902,7 +3902,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 219.021, y: -219.3515}
+  m_AnchoredPosition: {x: 219.021, y: -138.6109}
   m_SizeDelta: {x: 438.042, y: 75.7406}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &214936590
@@ -14535,7 +14535,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: People
+  m_text: Dry Docks
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f676d7611e78e824e9cc856f5c673bc2, type: 2}
   m_sharedMaterial: {fileID: -7572556740592436607, guid: f676d7611e78e824e9cc856f5c673bc2, type: 2}
@@ -18505,7 +18505,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 219.021, y: -300.0921}
+  m_AnchoredPosition: {x: 219.021, y: -219.3515}
   m_SizeDelta: {x: 438.042, y: 75.7406}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &998226368
@@ -22115,7 +22115,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1194541111
 RectTransform:
   m_ObjectHideFlags: 0
@@ -29043,7 +29043,7 @@ GameObject:
   - component: {fileID: 1603175529}
   - component: {fileID: 1603175528}
   m_Layer: 5
-  m_Name: Port Menu Option (1)
+  m_Name: Dry Docks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37584,7 +37584,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 219.021, y: -300.0921}
+  m_AnchoredPosition: {x: 219.021, y: -219.3515}
   m_SizeDelta: {x: 438.042, y: 75.7406}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2120557524
