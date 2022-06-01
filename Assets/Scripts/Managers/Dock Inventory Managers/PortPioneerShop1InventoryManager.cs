@@ -6,9 +6,14 @@ using UnityEngine;
 public class PortPioneerShop1InventoryManager : GeneralDockInventoryManager
 {
     public static PortPioneerShop1InventoryManager instance;
-    public void Awake() //Should be set to awake, otherwise screen manager can't find its instance
+
+    protected override void SetInstance()
     {
         instance = this;
+    }
+
+    protected override void SetStartingCash()
+    {
         storeCash = 8200;
     }
 }

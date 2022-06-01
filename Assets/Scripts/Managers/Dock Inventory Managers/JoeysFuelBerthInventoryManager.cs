@@ -6,14 +6,26 @@ public class JoeysFuelBerthInventoryManager : GeneralDockInventoryManager
 {
     public static JoeysFuelBerthInventoryManager instance;
 
-    private List<string> allowedItemTypes = new List<string>();
-    private void Awake()
+    public override void Start()
+    {
+        base.Start();
+
+        //allowedItemTypes.Add("Fuel");
+        desiredCash = 12000;
+
+        customPlayerSubInventoryAllowedItems.Add(0); //Box of Steaks
+        customPlayerSubInventoryAllowedItems.Add(4); //Fuel Drum
+        CreateMirrorCustomSubPlayerInventory();
+        JoeysFuelBerthScreenManager.instance.ChangePlayerInventoryFilter("Custom");
+    }
+    protected override void SetInstance()
     {
         instance = this;
+    }
 
-        allowedItemTypes.Add("Fuel");
-        desiredCash = 12000;
-        storeCash = 12000;
+    protected override void SetStartingCash()
+    {
+        storeCash = 12000; ;
     }
     public override void AddInitialItems()
     {

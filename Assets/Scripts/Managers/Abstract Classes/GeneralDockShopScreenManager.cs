@@ -27,14 +27,15 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI storeCashTM;
     [Header("TESTING")]
     public bool inTestingMode = false;
+
     public List<DockShopInventoryItemUI> itemUIs;
     public List<DockShopInventoryItemUI> mirrorItemUIs;
     protected GeneralDockInventoryManager ownInventory;
-    private string itemTypeToDisplay = "All";
+    private string itemFilter = "All";
     protected List<int> activePlayerInventory = new List<int>();
     protected List<int> previousPlayerInventory = new List<int>();
-    protected List<int> customPlayerSubInventory = new List<int>();
-    protected List<string> customPlayerSubInventoryItemTypes = new List<string>();
+    //protected List<int> customPlayerSubInventory = new List<int>();
+    //protected List<string> customPlayerSubInventoryItemTypes = new List<string>();
 
     //public event Action<int> onInventoryItemUIRemoved;
     //public event Action<GeneralDockShopScreenManager> onIventoryItemUICreated;
@@ -47,7 +48,8 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
         SetInstance();
         SetOwnInventoryReference();
         SubscribeToEvents();
-        activePlayerInventory = PlayerInventoryManager.instance.itemIDsInInventory;
+        //activePlayerInventory = PlayerInventoryManager.instance.itemIDsInInventory;
+        activePlayerInventory = ownInventory.mirrorPlayerInventory;
         UpdatePlayerCarryCapacityText();
         UpdatePlayerCashText();
         UpdateStoreCashText();
@@ -66,11 +68,10 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.P))
             {
-                if(itemTypeToDisplay == "All")
+                if(itemFilter == "All")
                 {
                     ChangePlayerInventoryFilter("Custom");
-                }
-                else
+                }else
                 {
                     ChangePlayerInventoryFilter("All");
                 }
@@ -81,17 +82,23 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     public abstract void SetOwnInventoryReference();
     public virtual void SubscribeToEvents()
     {
+        //PLAYER INVENTORY ITEM UI INFORMATION
         PlayerInventoryManager.instance.onInventoryChanged += OnPlayerInventoryItemChanged;
-        PlayerInventoryManager.instance.onInventoryItemAdded += OnPlayerInventoryItemAdded;
-        PlayerInventoryManager.instance.onInventoryItemRemoved += RemoveMirrorItemUI;
-        PlayerInventoryManager.instance.onSortModeChanged += OnPlayerInventorySortModeChanged;
         PlayerInventoryManager.instance.onInventoryWeightChanged += UpdatePlayerCarryCapacityText;
         PlayerInventoryManager.instance.onInventoryCashChanged += UpdatePlayerCashText;
+        //PlayerInventoryManager.instance.onInventoryItemAdded += OnPlayerInventoryItemAdded;
+        //PlayerInventoryManager.instance.onInventoryItemRemoved += RemoveMirrorItemUI;
+        PlayerInventoryManager.instance.onSortModeChanged += OnPlayerInventorySortModeChanged; //SOON TO BE REMOVED
+        //OWN INVENTORY
         ownInventory.onInventoryItemAdded += CreateItemUI;
         ownInventory.onInventoryItemRemoved += RemoveItemUI;
         ownInventory.onSortModeChanged += OnOwnInventorySortModeChanged;
         ownInventory.onInventoryChanged += OnOwnInventoryItemChanged;
         ownInventory.onInventoryCashChanged += UpdateStoreCashText;
+        //MIRROR INVENTORY
+        ownInventory.onMirrorInventoryItemAdded += OnMirrorPlayerInventoryItemAdded;
+        ownInventory.onMirrorInventoryItemRemoved += RemoveMirrorItemUI;
+        ownInventory.onMirrorInventorySortModeChanged += OnPlayerInventorySortModeChanged;
     }
     //OWN INVENTORY
     public void CreateItemUI()
@@ -140,28 +147,73 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
     }
     public void OnOwnInventorySortModeChanged()
     {
+        //if(itemFilter == "Custom") //Clean this code up later
+        //{
+            //OnPlayerInventorySortModeChanged();
+        //}
         foreach (DockShopInventoryItemUI itemUI in itemUIs)
         {
             itemUI.RefreshItemUI();
         }
     }
     //MIRROR PLAYER INVENTORY
-    public void UpdateCustomPlayerSubInventory() //This should only be used if displaying custom item subinventory
+    public void ChangePlayerInventoryFilter(string newFilter)
     {
-        var playerInventoryManager = PlayerInventoryManager.instance;
-        customPlayerSubInventory = playerInventoryManager.CreateCustomSubInventory(customPlayerSubInventoryItemTypes);
-        if(itemTypeToDisplay == "Custom") //Double checking because I don't trust myself
+        if (newFilter == "All")
         {
-            activePlayerInventory = customPlayerSubInventory;
+            Debug.Log("Switching to All items Filter");
+            itemFilter = "All";
+            previousPlayerInventory = activePlayerInventory;
+            activePlayerInventory = ownInventory.mirrorPlayerInventory;
         }
+        //if (newFilter == "Fuel")
+        //{
+           //Debug.Log("Switching to Fuel items Filter");
+            //itemFilter = "Fuel";
+            //previousPlayerInventory = activePlayerInventory;
+            //activePlayerInventory = PlayerInventoryManager.instance.fuelItemsInInventory; //MAKE LOCAL VERSION OF THIS
+            //foreach (int itemID in PlayerInventoryManager.instance.fuelItemsInInventory)
+            //{
+                //Debug.Log($"{GameItemDictionary.instance.gameItemNames[itemID]}: {PlayerInventoryManager.instance.itemAmount[itemID]}");
+            //}
+        //}
+        if (newFilter == "Custom")
+        {
+            Debug.Log("Switching to custom Filter");
+            itemFilter = "Custom";
+            previousPlayerInventory = activePlayerInventory;
+            //UpdateCustomPlayerSubInventory();
+            activePlayerInventory = ownInventory.mirrorCustomSubPlayerInventory;
+            foreach (int itemID in ownInventory.mirrorCustomSubPlayerInventory)
+            {
+                Debug.Log($"{GameItemDictionary.instance.gameItemNames[itemID]}: {PlayerInventoryManager.instance.itemAmount[itemID]}");
+            }
+        }
+        if (activePlayerInventory.Count < mirrorItemUIs.Count)
+        {
+            while (activePlayerInventory.Count < mirrorItemUIs.Count)
+            {
+                //mirrorItemUIs.RemoveAt(mirrorItemUIs.Count - 1);
+                //mirrorItemUIs.Remove(mirrorItemUIs[mirrorItemUIs.Count - 1]);
+                RemoveMirrorItemUI(mirrorItemUIs[mirrorItemUIs.Count - 1].myItemID);
+            }
+        }
+        if (activePlayerInventory.Count > mirrorItemUIs.Count)
+        {
+            while (activePlayerInventory.Count > mirrorItemUIs.Count)
+            {
+                CreateMirrorPlayerInventoryItemUI();
+            }
+        }
+        ReloadInventoryItemUIList(mirrorItemUIs);
     }
-    public void OnPlayerInventoryItemAdded(int itemID)
+    public void OnMirrorPlayerInventoryItemAdded(int itemID)
     {
-        if(itemTypeToDisplay == "Custom")
-        {
-            UpdateCustomPlayerSubInventory();
-        }
-        if (activePlayerInventory.Contains(itemID))
+        //if(itemFilter == "Custom")
+        //{
+            //UpdateCustomPlayerSubInventory();
+        //}
+        if (activePlayerInventory.Contains(itemID)) //USELESS
         {
             CreateMirrorPlayerInventoryItemUI();
         }
@@ -217,56 +269,7 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
             mirrorItemUI.RefreshItemUI();
         }
     }
-    public void ChangePlayerInventoryFilter(string newFilter)
-    {
-        if(newFilter == "All")
-        {
-            Debug.Log("Switching to All items Filter");
-            itemTypeToDisplay = "All";
-            previousPlayerInventory = activePlayerInventory;
-            activePlayerInventory = PlayerInventoryManager.instance.itemIDsInInventory;
-        }
-        if (newFilter == "Fuel")
-        {
-            Debug.Log("Switching to Fuel items Filter");
-            itemTypeToDisplay = "Fuel";
-            previousPlayerInventory = activePlayerInventory;
-            activePlayerInventory = PlayerInventoryManager.instance.fuelItemsInInventory;
-            foreach(int itemID in PlayerInventoryManager.instance.fuelItemsInInventory)
-            {
-                Debug.Log($"{GameItemDictionary.instance.gameItemNames[itemID]}: {PlayerInventoryManager.instance.itemAmount[itemID]}");
-            }
-        }
-        if (newFilter == "Custom")
-        {
-            Debug.Log("Switching to custom Filter");
-            itemTypeToDisplay = "Custom";
-            previousPlayerInventory = activePlayerInventory;
-            UpdateCustomPlayerSubInventory();
-            activePlayerInventory = customPlayerSubInventory;
-            foreach (int itemID in customPlayerSubInventory)
-            {
-                Debug.Log($"{GameItemDictionary.instance.gameItemNames[itemID]}: {PlayerInventoryManager.instance.itemAmount[itemID]}");
-            }
-        }
-        if (activePlayerInventory.Count < mirrorItemUIs.Count)
-        {
-            while (activePlayerInventory.Count < mirrorItemUIs.Count)
-            {
-                //mirrorItemUIs.RemoveAt(mirrorItemUIs.Count - 1);
-                //mirrorItemUIs.Remove(mirrorItemUIs[mirrorItemUIs.Count - 1]);
-                RemoveMirrorItemUI(mirrorItemUIs[mirrorItemUIs.Count - 1].myItemID);
-            }
-        }
-        if(activePlayerInventory.Count > mirrorItemUIs.Count)
-        {
-            while (activePlayerInventory.Count > mirrorItemUIs.Count)
-            {
-                CreateMirrorPlayerInventoryItemUI();
-            }
-        }
-        ReloadInventoryItemUIList(mirrorItemUIs);
-    }
+    //ITEM UI RELOAD
     public void ReloadInventoryItemUIList(List<DockShopInventoryItemUI> itemUIList)
     {
         foreach (DockShopInventoryItemUI itemUI in itemUIList)

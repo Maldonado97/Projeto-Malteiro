@@ -18,20 +18,24 @@ public class PlayerInventoryScreenManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI itemDescriptionTM;
     [SerializeField] TextMeshProUGUI itemWeightTM;
     [SerializeField] TextMeshProUGUI itemValueTM;
+    [SerializeField] GameObject useButton;
     [Header("TESTING")]
     [SerializeField] bool inTestingMode = false;
 
     [HideInInspector] public int selectedItemID;
-    private string itemTypeToDisplay = "All";
+    private string itemFilter = "All";
     public List<InventoryItemUI> itemUIs;
     protected List<int> activePlayerInventory = new List<int>();
     protected List<int> previousPlayerInventory = new List<int>();
 
     public event Action onAllItemsDeselected;
-    public event Action<int> onInventoryItemUIRemoved;
-    private void Start()
+    //public event Action<int> onInventoryItemUIRemoved;
+    private void Awake()
     {
         instance = this;
+    }
+    private void Start()
+    {
         selectedItemID = GameItemDictionary.instance.gameItemNames.Count;
         activePlayerInventory = PlayerInventoryManager.instance.itemIDsInInventory;
         UpdateCarryCapacityText();
@@ -51,9 +55,13 @@ public class PlayerInventoryScreenManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.P))
             {
-                if (itemTypeToDisplay == "All")
+                if (itemFilter == "All")
                 {
-                    ChangeInventoryFilter("Fuel");
+                    ChangeInventoryFilter("Resource");
+                }
+                else if (itemFilter == "Resource")
+                {
+                    ChangeInventoryFilter("Cargo");
                 }
                 else
                 {
@@ -71,15 +79,6 @@ public class PlayerInventoryScreenManager : MonoBehaviour
     }
     public void CreateItemUI()
     {
-        //Item could have been added to an inventory that's not being displayed, therefore, to avoid the unecessary
-        //creation of an inventory itemUI, this first if statement makes sure that the newly added item belongs to the
-        //inventory that's currently being displayed, because if it does, the activePlayerInventory.count should be greater
-        //than the currently subscribed inventory itemUIs.
-        //if (activePlayerInventory.Count > itemUIs.Count) 
-        //{
-        //Instantiate(inventoryItemUI, inventoryItemUIParent.transform);
-        //FlashInventoryScreen();
-        //}
         Instantiate(inventoryItemUI, inventoryItemUIParent.transform);
         FlashInventoryScreen();
     }
@@ -138,22 +137,33 @@ public class PlayerInventoryScreenManager : MonoBehaviour
     {
         if (newFilter == "All")
         {
-            Debug.Log("Switching to All items Filter");
-            itemTypeToDisplay = "All";
+            //Debug.Log("Switching to All items Filter");
+            itemFilter = "All";
             previousPlayerInventory = activePlayerInventory;
             activePlayerInventory = PlayerInventoryManager.instance.itemIDsInInventory;
         }
-        if (newFilter == "Fuel")
+        if (newFilter == "Cargo")
         {
-            Debug.Log("Switching to Fuel items Filter");
-            itemTypeToDisplay = "Fuel";
+            //Debug.Log("Switching to Fuel items Filter");
+            itemFilter = "Cargo";
             previousPlayerInventory = activePlayerInventory;
-            activePlayerInventory = PlayerInventoryManager.instance.fuelItemsInInventory;
-            foreach (int itemID in PlayerInventoryManager.instance.fuelItemsInInventory)
-            {
-                Debug.Log($"{GameItemDictionary.instance.gameItemNames[itemID]}: {PlayerInventoryManager.instance.itemAmount[itemID]}");
-            }
+            activePlayerInventory = PlayerInventoryManager.instance.cargo;
+            //foreach (int itemID in PlayerInventoryManager.instance.cargo)
+            //{
+                //Debug.Log($"{GameItemDictionary.instance.gameItemNames[itemID]}: {PlayerInventoryManager.instance.itemAmount[itemID]}");
+            //}
         }
+        if(newFilter == "Resource")
+        {
+            itemFilter = "Resource";
+            previousPlayerInventory = activePlayerInventory;
+            activePlayerInventory = PlayerInventoryManager.instance.resources;
+            //foreach (int itemID in PlayerInventoryManager.instance.resources)
+            //{
+            //Debug.Log($"{GameItemDictionary.instance.gameItemNames[itemID]}: {PlayerInventoryManager.instance.itemAmount[itemID]}");
+            //}
+        }
+
         if (activePlayerInventory.Count < itemUIs.Count)
         {
             while (activePlayerInventory.Count < itemUIs.Count)

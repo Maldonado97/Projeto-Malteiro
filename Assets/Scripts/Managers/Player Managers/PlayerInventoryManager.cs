@@ -11,7 +11,7 @@ public class PlayerInventoryManager : MonoBehaviour
     [SerializeField] bool testingModeActive = false;
     [HideInInspector] public Dictionary<int, int> itemAmount = new Dictionary<int, int>();
     [HideInInspector] public List<int> itemIDsInInventory = new List<int>();
-    [HideInInspector] public List<int> fuelItemsInInventory = new List<int>();
+    //[HideInInspector] public List<int> fuelItemsInInventory = new List<int>();
     [HideInInspector] public List<int> cargo = new List<int>();
     [HideInInspector] public List<int> resources = new List<int>();
     [HideInInspector] public List<int> customSubInventory = new List<int>();
@@ -84,11 +84,9 @@ public class PlayerInventoryManager : MonoBehaviour
         else
         {
             itemIDsInInventory.Add(itemID);
-            if (GameItemDictionary.instance.gameItemTypes[itemID] == "Fuel")
-            {
-                fuelItemsInInventory.Add(itemID);
-            }
-            SortInventory(itemIDsInInventory);
+            AddItemToSubInventories(itemID);
+
+            SortInventory(itemIDsInInventory, sortMode);
             itemAmount.Add(itemID, amountToAdd);
             onInventoryItemAdded?.Invoke(itemID);
         }
@@ -116,10 +114,8 @@ public class PlayerInventoryManager : MonoBehaviour
                 else if (itemAmount[itemID] == amountToRemove)
                 {
                     itemIDsInInventory.Remove(itemID);
-                    if (GameItemDictionary.instance.gameItemTypes[itemID] == "Fuel")
-                    {
-                        fuelItemsInInventory.Remove(itemID);
-                    }
+                    RemoveItemFromSubInventories(itemID);
+
                     itemAmount.Remove(itemID);
                     onInventoryItemRemoved?.Invoke(itemID);
                 }
@@ -132,17 +128,30 @@ public class PlayerInventoryManager : MonoBehaviour
             Debug.LogWarning("Tried to remove an item that does not exist in player inventory.");
         }
     }
+    public void AddItemToSubInventories(int itemID)
+    {
+        if (GameItemDictionary.instance.gameItemTypes[itemID] == "Cargo")
+        {
+            cargo.Add(itemID);
+        }
+        if (GameItemDictionary.instance.gameItemTypes[itemID] == "Resource")
+        {
+            resources.Add(itemID);
+        }
+        SortInventory(cargo, sortMode);
+        SortInventory(resources, sortMode);
+    }
     public void RemoveItemFromSubInventories(int itemID)
     {
         var gameItemDictionary = GameItemDictionary.instance;
 
-        if (gameItemDictionary.gameItemTypes[itemID] == "Fuel")
-        {
-            fuelItemsInInventory.Remove(itemID);
-        }
         if (gameItemDictionary.gameItemTypes[itemID] == "Cargo")
         {
             cargo.Remove(itemID);
+        }
+        if (gameItemDictionary.gameItemTypes[itemID] == "Resource")
+        {
+            resources.Remove(itemID);
         }
     }
     public void AddInventoryWeight(int itemID, int itemAmount)
@@ -159,7 +168,7 @@ public class PlayerInventoryManager : MonoBehaviour
     {
         onInventoryCashChanged?.Invoke();
     }
-    public List<int> CreateCustomSubInventory(List<string> allowedItemTypes)
+    public List<int> CreateCustomSubInventory(List<string> allowedItemTypes) //NOT SORTED
     {
         List<int> customSubInventory = new List<int>();
         bool canAddItem = false;
@@ -181,39 +190,37 @@ public class PlayerInventoryManager : MonoBehaviour
         return customSubInventory;
     }
     //SORTING
-    public void ChangeSortMode(string desiredSortMode) //UPDATE THIS TO WORK WITH ANY INVENTORY
+    public void ChangeSortMode(string desiredSortMode) //UPDATE THIS TO WORK WITH ANY SUB INVENTORY
     {
         if(desiredSortMode == "Value")
         {
             sortMode = "Value";
-            SortInventory(itemIDsInInventory);
-            onSortModeChanged?.Invoke();
+            SortInventory(itemIDsInInventory, "Value");
         }
         else if(desiredSortMode == "Name")
         {
             sortMode = "Name";
-            SortInventory(itemIDsInInventory);
-            onSortModeChanged?.Invoke();
+            SortInventory(itemIDsInInventory,"Name");
         }
         else
         {
             Debug.LogWarning("Desired sort mode does not exist. Sorting by default.");
             sortMode = "Name";
             itemIDsInInventory.Sort();
-            onSortModeChanged?.Invoke();
         }
+        onSortModeChanged?.Invoke();
     }
-    public void SortInventory(List<int> inventoryToSort) //UPDATE THIS TO WORK WITH ANY INVENTORY
+    public void SortInventory(List<int> inventoryToSort, string desiredSortMode) //UPDATE THIS TO WORK WITH ANY INVENTORY
     {
-        if (itemIDsInInventory.Count > 1)
+        if (inventoryToSort.Count > 1)
         {
-            if (sortMode == "Value")
+            if (desiredSortMode == "Value")
             {
-                SortByValue();
+                SortByValue(inventoryToSort);
             }
             else
             {
-                itemIDsInInventory.Sort();
+                inventoryToSort.Sort();
             }
         }
         else
@@ -221,7 +228,7 @@ public class PlayerInventoryManager : MonoBehaviour
             //Debug.LogWarning("Tried to sort inventory, but inventory does not have enough items to be sorted");
         }
     }
-    public void SortByValue() //UPDATE THIS TO WORK WITH ANY INVENTORY
+    public void SortByValue(List<int> inventoryToSort) //UPDATE THIS TO WORK WITH ANY INVENTORY
     {
         int buffer = 0;
         List<int> bufferInventory = new List<int>();
@@ -229,10 +236,10 @@ public class PlayerInventoryManager : MonoBehaviour
         while (!sortComplete)
         {
             buffer = 0;
-            foreach (int itemID in itemIDsInInventory)
+            foreach (int itemID in inventoryToSort)
             {
                 if (bufferInventory.Contains(itemID)) { continue; }
-                if (bufferInventory.Contains(buffer) || !itemIDsInInventory.Contains(buffer))
+                if (bufferInventory.Contains(buffer) || !inventoryToSort.Contains(buffer))
                 {
                     buffer = itemID;
                 }
@@ -242,16 +249,15 @@ public class PlayerInventoryManager : MonoBehaviour
                 }
             }
             bufferInventory.Add(buffer);
-            if (itemIDsInInventory.Count == bufferInventory.Count)
+            if (inventoryToSort.Count == bufferInventory.Count)
             {
                 sortComplete = true;
             }
         }
         for (int i = 0; i < bufferInventory.Count; i++)
         {
-            itemIDsInInventory[i] = bufferInventory[i];
+            inventoryToSort[i] = bufferInventory[i];
         }
-        //onSortModeChanged?.Invoke();
     }
     //TESTING METHODS
     public void AddTestItem() //Adds random amount of random item to player inventory
@@ -268,7 +274,7 @@ public class PlayerInventoryManager : MonoBehaviour
     {
         var gameItemDictionary = GameItemDictionary.instance;
         int randomItemID = UnityEngine.Random.Range(0, gameItemDictionary.gameItemNames.Count);
-        Debug.Log(gameItemDictionary.gameItemNames.Count - 1);
+        //Debug.Log(gameItemDictionary.gameItemNames.Count - 1);
         int randomAmount = UnityEngine.Random.Range(1, 10);
         RemoveItemFromInventory(randomItemID, randomAmount);
         Debug.Log("Removed " + randomAmount + " " + GameItemDictionary.instance.gameItemNames[randomItemID] + 

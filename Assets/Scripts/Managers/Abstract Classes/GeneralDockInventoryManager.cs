@@ -6,32 +6,52 @@ using UnityEngine;
 public abstract class GeneralDockInventoryManager : MonoBehaviour
 {
     public string shopId;
-    public bool testingModeActive = false;
+    [HideInInspector] public bool startingNewGame = true;
+    //INVENTORY LISTS
     [HideInInspector] public Dictionary<int, int> itemAmount = new Dictionary<int, int>();
     [HideInInspector] public List<int> itemIDsInInventory = new List<int>();
     [HideInInspector] public List<int> fuelItemsInInventory = new List<int>();
-
+    [HideInInspector] public List<int> mirrorPlayerInventory = new List<int>();
+    [HideInInspector] public List<int> mirrorCustomSubPlayerInventory = new List<int>();
+    protected List<int> customPlayerSubInventoryAllowedItems = new List<int>();
+    //SORTING
     private string sortMode = "Name";
-    [HideInInspector] public float storeCash;
+    private string mirrorInventorySortMode = "Name";
+    //SHUFFLING
     public bool canShuffleInventory = true;
-    [HideInInspector] public bool startingNewGame = true;
+    protected List<int> allowedItemTypes = new List<int>(); //USE THIS TO LIMIT ITEM SHUFFLER (NOT IMPLEMENTED YET)
     protected int desiredInventoryItems = 3;
     protected float desiredInventoryItemsVariance = .4f;
     protected int desiredCash = 12000;
+    //MISC
+    [HideInInspector] public float storeCash;
+    public bool testingModeActive = false;
 
     public event Action<int> onInventoryChanged;
     public event Action onInventoryItemAdded;
     public event Action<int> onInventoryItemRemoved;
+    public event Action<int> onMirrorInventoryItemAdded;
+    public event Action<int> onMirrorInventoryItemRemoved;
     public event Action onInventoryCashChanged;
     public event Action onSortModeChanged;
-    public void Start()
+    public event Action onMirrorInventorySortModeChanged;
+    protected void Awake()
     {
+        SetInstance();
+    }
+    public virtual void Start()
+    {
+        SetStartingCash();
         StartCoroutine(StartInventoryShuffleCounter(180));
         //StartCoroutine(StartInventoryShuffleCounter(1));
         if (startingNewGame)
         {
             AddInitialItems();
         }
+
+        PlayerInventoryManager.instance.onInventoryItemAdded += AddItemToMirrorInventory;
+        PlayerInventoryManager.instance.onInventoryItemRemoved += RemoveItemFromMirrorPlayerInventory;
+        CreateMirrorPlayerInventory();
     }
     protected void Update()
     {
@@ -61,6 +81,8 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
             }
         }
     }
+    protected abstract void SetInstance();
+    protected abstract void SetStartingCash();
     public void AddItemToInventory(int itemID, int amountToAdd)
     {
         if (itemAmount.ContainsKey(itemID))
@@ -73,9 +95,9 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
             itemIDsInInventory.Add(itemID);
             if(GameItemDictionary.instance.gameItemTypes[itemID] == "Fuel")
             {
-                fuelItemsInInventory.Add(itemID);
+                fuelItemsInInventory.Add(itemID); //THIS NEEDS TO BE SORTED AS WELL. ADD CODE FOR IT
             }
-            SortInventory();
+            SortInventory(itemIDsInInventory, sortMode);
             itemAmount.Add(itemID, amountToAdd);
             onInventoryItemAdded?.Invoke();
         }
@@ -112,6 +134,63 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
         {
             Debug.LogWarning("Tried to remove an item that does not exist in " + shopId + " inventory.");
         }
+    }
+    public void CreateMirrorPlayerInventory()
+    {
+        foreach (int itemID in PlayerInventoryManager.instance.itemIDsInInventory)
+        {
+            if (!mirrorPlayerInventory.Contains(itemID))
+            {
+                mirrorPlayerInventory.Add(itemID);
+            }
+        }
+    }
+    public void CreateMirrorCustomSubPlayerInventory()
+    {
+        mirrorCustomSubPlayerInventory.Clear(); //Does this work?
+        foreach (int itemID in mirrorPlayerInventory)
+        {
+            foreach (int allowedItemID in customPlayerSubInventoryAllowedItems)
+            {
+                bool canAddItem = false;
+                if (itemID == allowedItemID)
+                {
+                    canAddItem = true;
+                }
+                if (canAddItem)
+                {
+                    mirrorCustomSubPlayerInventory.Add(itemID);
+                }
+            }
+        }
+    }
+    public void AddItemToMirrorInventory(int itemID)
+    {
+        mirrorPlayerInventory.Add(itemID);
+        foreach (int allowedItemID in customPlayerSubInventoryAllowedItems)
+        {
+            bool canAddItem = false;
+            if (itemID == allowedItemID)
+            {
+                canAddItem = true;
+            }
+            if (canAddItem)
+            {
+                mirrorCustomSubPlayerInventory.Add(itemID);
+            }
+        }
+        SortInventory(mirrorCustomSubPlayerInventory, mirrorInventorySortMode);
+        SortInventory(mirrorPlayerInventory, mirrorInventorySortMode);
+        onMirrorInventoryItemAdded?.Invoke(itemID);
+    }
+    public void RemoveItemFromMirrorPlayerInventory(int itemID)
+    {
+        mirrorPlayerInventory.Remove(itemID);
+        if (mirrorCustomSubPlayerInventory.Contains(itemID))
+        {
+            mirrorCustomSubPlayerInventory.Remove(itemID);
+        }
+        onMirrorInventoryItemRemoved?.Invoke(itemID);
     }
     public virtual void AddInitialItems()
     {
@@ -206,45 +285,55 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
         onInventoryCashChanged?.Invoke();
     }
     //SORTING
-    public void ChangeSortMode(string desiredSortMode)
+    public void ChangeSortMode(string desiredSortMode) //Seperate mirror inventory from store inventory?
     {
         if (desiredSortMode == "Value")
         {
             sortMode = "Value";
-            SortInventory();
+            mirrorInventorySortMode = "Value";
+            SortInventory(itemIDsInInventory, "Value");
+            SortInventory(mirrorPlayerInventory, "Value");
+            SortInventory(mirrorCustomSubPlayerInventory, "Value");
         }
         else if (desiredSortMode == "Name")
         {
             sortMode = "Name";
-            SortInventory();
+            mirrorInventorySortMode = "Name";
+            SortInventory(itemIDsInInventory, "Name");
+            SortInventory(mirrorPlayerInventory, "Name");
+            SortInventory(mirrorCustomSubPlayerInventory, "Name");
         }
         else
         {
             Debug.LogWarning("Desired sort mode does not exist. Sorting by default.");
             sortMode = "Name";
+            mirrorInventorySortMode = "Name";
             itemIDsInInventory.Sort();
+            mirrorPlayerInventory.Sort();
+            mirrorCustomSubPlayerInventory.Sort();
         }
         onSortModeChanged?.Invoke();
+        onMirrorInventorySortModeChanged?.Invoke();
     }
-    public void SortInventory()
+    public void SortInventory(List<int> inventoryToSort, string desiredSortMode)
     {
-        if (itemIDsInInventory.Count > 1)
+        if (inventoryToSort.Count > 1)
         {
-            if (sortMode == "Value")
+            if (desiredSortMode == "Value")
             {
-                SortByValue();                
+                SortByValue(inventoryToSort);
             }
-            else
+            if(desiredSortMode == "Name")
             {
-                itemIDsInInventory.Sort();
+                inventoryToSort.Sort();
             }
         }
         else
         {
-            //Debug.LogWarning("Tried to sort " + shopId + " inventory, but inventory does not have enough items to be sorted");
+            //Debug.LogWarning("Tried to sort inventory, but inventory does not have enough items to be sorted");
         }
     }
-    public void SortByValue()
+    public void SortByValue(List<int> inventoryToSort) //UPDATE THIS TO WORK WITH ANY INVENTORY
     {
         int buffer = 0;
         List<int> bufferInventory = new List<int>();
@@ -252,29 +341,27 @@ public abstract class GeneralDockInventoryManager : MonoBehaviour
         while (!sortComplete)
         {
             buffer = 0;
-            foreach (int itemID in itemIDsInInventory)
+            foreach (int itemID in inventoryToSort)
             {
                 if (bufferInventory.Contains(itemID)) { continue; }
-                if (bufferInventory.Contains(buffer) || !itemIDsInInventory.Contains(buffer))
+                if (bufferInventory.Contains(buffer) || !inventoryToSort.Contains(buffer))
                 {
                     buffer = itemID;
-                    //Debug.Log(GameItemDictionary.instance.gameItemNames[itemID]);
                 }
                 if (GameItemDictionary.instance.gameItemValues[itemID] > GameItemDictionary.instance.gameItemValues[buffer])
                 {
                     buffer = itemID;
-                    //Debug.Log(GameItemDictionary.instance.gameItemNames[itemID]);
                 }
             }
             bufferInventory.Add(buffer);
-            if (itemIDsInInventory.Count == bufferInventory.Count)
+            if (inventoryToSort.Count == bufferInventory.Count)
             {
                 sortComplete = true;
             }
         }
         for (int i = 0; i < bufferInventory.Count; i++)
         {
-            itemIDsInInventory[i] = bufferInventory[i];
+            inventoryToSort[i] = bufferInventory[i];
         }
     }
     //COROUTINES

@@ -6,10 +6,19 @@ public class HopeCityShop1InventoryManager : GeneralDockInventoryManager
 {
     public static HopeCityShop1InventoryManager instance;
 
-    private void Awake()
+    public override void Start()
     {
+        base.Start();
+
         desiredInventoryItems = 5;
+    }
+    protected override void SetInstance()
+    {
         instance = this;
+    }
+
+    protected override void SetStartingCash()
+    {
         storeCash = 13400;
     }
 }
