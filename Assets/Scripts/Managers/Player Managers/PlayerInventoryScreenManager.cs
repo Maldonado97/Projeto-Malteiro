@@ -7,6 +7,8 @@ using TMPro;
 public class PlayerInventoryScreenManager : MonoBehaviour
 {
     public static PlayerInventoryScreenManager instance;
+    [Header("Inventory Tabs")]
+    [SerializeField] List<BoxButton> inventoryTabs = new List<BoxButton>();
     [Header("Item UI")]
     [SerializeField] GameObject inventoryItemUI;
     [Tooltip("Where the inventoryItemUI should spawn.")]
@@ -40,6 +42,7 @@ public class PlayerInventoryScreenManager : MonoBehaviour
         activePlayerInventory = PlayerInventoryManager.instance.itemIDsInInventory;
         UpdateCarryCapacityText();
         UpdatePlayerCashText();
+        DisplayCargoSubInventory();
 
         PlayerInventoryManager.instance.onInventoryItemAdded += OnInventoryItemAdded;
         PlayerInventoryManager.instance.onInventoryWeightChanged += UpdateCarryCapacityText;
@@ -55,17 +58,13 @@ public class PlayerInventoryScreenManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.P))
             {
-                if (itemFilter == "All")
+                if (itemFilter == "Resource")
                 {
-                    ChangeInventoryFilter("Resource");
-                }
-                else if (itemFilter == "Resource")
-                {
-                    ChangeInventoryFilter("Cargo");
+                    DisplayCargoSubInventory();
                 }
                 else
                 {
-                    ChangeInventoryFilter("All");
+                    DisplayResourcesSubInventory();
                 }
             }
         }
@@ -197,11 +196,20 @@ public class PlayerInventoryScreenManager : MonoBehaviour
             UIManager.instance.playerMenu.SetActive(false);
         }
     }
+    //DISPLAY
     public void DisplayItemDescription(string itemDescription, float itemWeight, float itemValue)
     {
         itemDescriptionTM.text = itemDescription;
         itemWeightTM.text = "Weight: " + itemWeight.ToString() + "Kg";
         itemValueTM.text = "Value: $" + itemValue.ToString();
+    }
+    public void UpdateCarryCapacityText()
+    {
+        carryCapacityTM.text = $"Carry Capacity: {PlayerInventoryManager.instance.totalWeight}/{PlayerInventoryManager.instance.maxWeight}";
+    }
+    public void UpdatePlayerCashText()
+    {
+        playerCashTM.text = $"Cash: {PlayerInventoryManager.instance.playerCash}";
     }
     public void DeselectAllItems()
     {
@@ -211,13 +219,46 @@ public class PlayerInventoryScreenManager : MonoBehaviour
         itemValueTM.text = "Value: -";
         selectedItemID = GameItemDictionary.instance.gameItemNames.Count + 1;
     }
-    public void UpdateCarryCapacityText()
+    public void DisplayCargoSubInventory()
     {
-        carryCapacityTM.text = $"Carry Capacity: {PlayerInventoryManager.instance.totalWeight}/{PlayerInventoryManager.instance.maxWeight}";
+        useButton.SetActive(false);
+        ChangeInventoryFilter("Cargo");
+        foreach(BoxButton inventoryTab in inventoryTabs)
+        {
+            if(inventoryTab.gameObject.name == "Cargo Tab")
+            {
+                SelectInventoryTab(inventoryTab);
+            }
+        }
     }
-    public void UpdatePlayerCashText()
+    public void DisplayResourcesSubInventory()
     {
-        playerCashTM.text = $"Cash: {PlayerInventoryManager.instance.playerCash}";
+        useButton.SetActive(true);
+        ChangeInventoryFilter("Resource");
+        foreach (BoxButton inventoryTab in inventoryTabs)
+        {
+            if (inventoryTab.gameObject.name == "Resource Tab")
+            {
+                SelectInventoryTab(inventoryTab);
+            }
+        }
+    }
+    //INVENTORY TABS
+    public void DeselectAllInventoryTabs()
+    {
+        foreach(BoxButton inventoryTab in inventoryTabs)
+        {
+            inventoryTab.selected = false;
+            inventoryTab.buttonTextTMPro.color = inventoryTab.defaultTextColor;
+            inventoryTab.boxImage.color = inventoryTab.defaultBoxColor;
+        }
+    }
+    public void SelectInventoryTab(BoxButton inventoryTab)
+    {
+        DeselectAllInventoryTabs();
+        inventoryTab.selected = true;
+        inventoryTab.buttonTextTMPro.color = inventoryTab.selectedTextColor;
+        inventoryTab.boxImage.color = inventoryTab.selectedBoxColor;
     }
     //EVENT METHODS
     public void OnInventoryItemSelected(InventoryItemUI inventoryItem)

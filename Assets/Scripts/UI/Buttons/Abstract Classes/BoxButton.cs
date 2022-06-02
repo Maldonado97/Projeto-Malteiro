@@ -8,15 +8,18 @@ using UnityEngine.UI;
 
 public class BoxButton : CustomButton
 {
-    [SerializeField] protected Color defaultTextColor;
-    [SerializeField] protected Color defaultBoxColor;
-    [SerializeField] protected Color highlightedTextColor;
-    [SerializeField] protected Color highlightedBoxColor;
-    [SerializeField] protected GameObject buttonText;
-    [SerializeField] protected GameObject box;
+    public Color defaultTextColor;
+    public Color defaultBoxColor;
+    public Color highlightedTextColor;
+    public Color highlightedBoxColor;
+    public Color selectedTextColor;
+    public Color selectedBoxColor;
+    public GameObject buttonText;
+    public GameObject box;
 
-    protected TextMeshProUGUI buttonTextTMPro;
-    protected Image boxImage;
+    [HideInInspector] public bool selected = false;
+    [HideInInspector] public TextMeshProUGUI buttonTextTMPro;
+    [HideInInspector] public Image boxImage;
 
     public void Start()
     {
@@ -35,20 +38,26 @@ public class BoxButton : CustomButton
     }
     public override void OnPointerClick(PointerEventData eventData)
     {
+        if (!selected)
+        {
+            UnhighlightButton();
+        }
         base.OnPointerClick(eventData);
-
-        UnhighlightButton();
     }
     public override void OnPointerEnter(PointerEventData eventData)
     {
+        if (!selected)
+        {
+            HighlightButton();
+        }
         base.OnPointerEnter(eventData);
-
-        HighlightButton();
     }
     public override void OnPointerExit(PointerEventData eventData)
     {
+        if (!selected)
+        {
+            UnhighlightButton();
+        }
         base.OnPointerExit(eventData);
-
-        UnhighlightButton();
     }
 }
