@@ -5,7 +5,7 @@ using UnityEngine;
 public class DynamicWaterSplash : MonoBehaviour
 {
     ParticleSystem waterSplash;
-    float waterSplashEmissionRate;
+    [SerializeField] float emissionMultiplier = 30;
     [Tooltip("What this particle system is attatched to.")]
     [SerializeField] GameObject attatchedShip;
     private Rigidbody2D attatchedShipRB;
@@ -21,7 +21,7 @@ public class DynamicWaterSplash : MonoBehaviour
     void Update()
     {
         var waterSplashEmisssion = waterSplash.emission;
-        waterSplashEmisssion.rateOverTime = GetShipSpeed() * 10;
+        waterSplashEmisssion.rateOverTime = GetShipSpeed() * emissionMultiplier;
     }
     public float GetShipSpeed()
     {

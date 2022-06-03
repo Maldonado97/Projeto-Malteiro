@@ -18,11 +18,11 @@ public class BoxButton : CustomButton
     public GameObject box;
 
     [HideInInspector] public bool selected = false;
-    [HideInInspector] public TextMeshProUGUI buttonTextTMPro;
-    [HideInInspector] public Image boxImage;
+    public TextMeshProUGUI buttonTextTMPro;
+    public Image boxImage;
     private bool mouseOnButton = false;
 
-    public void Start()
+    public void Awake()
     {
         buttonTextTMPro = buttonText.GetComponent<TextMeshProUGUI>();
         boxImage = box.GetComponent<Image>();
