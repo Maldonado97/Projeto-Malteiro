@@ -121,6 +121,14 @@ public class PlayerInventoryScreenManager : MonoBehaviour
         }
         itemUIs.Remove(itemUIToRemove);
     }
+    public void DeselectAllItems()
+    {
+        onAllItemsDeselected?.Invoke();
+        itemDescriptionTM.text = "-";
+        itemWeightTM.text = "Weight: -";
+        itemValueTM.text = "Value: -";
+        selectedItemID = GameItemDictionary.instance.gameItemNames.Count + 1;
+    }
     public void OnSortModeChanged()
     {
         foreach (InventoryItemUI itemUI in itemUIs)
@@ -211,14 +219,6 @@ public class PlayerInventoryScreenManager : MonoBehaviour
     {
         playerCashTM.text = $"Cash: {PlayerInventoryManager.instance.playerCash}";
     }
-    public void DeselectAllItems()
-    {
-        onAllItemsDeselected?.Invoke();
-        itemDescriptionTM.text = "-";
-        itemWeightTM.text = "Weight: -";
-        itemValueTM.text = "Value: -";
-        selectedItemID = GameItemDictionary.instance.gameItemNames.Count + 1;
-    }
     public void DisplayCargoSubInventory()
     {
         useButton.SetActive(false);
@@ -259,6 +259,26 @@ public class PlayerInventoryScreenManager : MonoBehaviour
         inventoryTab.selected = true;
         inventoryTab.buttonTextTMPro.color = inventoryTab.selectedTextColor;
         inventoryTab.boxImage.color = inventoryTab.selectedBoxColor;
+    }
+    //PLAYER INTERACTION
+    public void UseSelectedItem()
+    {
+        var inventoryManager = PlayerInventoryManager.instance;
+        float fuelDrumCapacity = 200;
+        if (selectedItemID == 4) //Fuel Drum
+        {
+            Debug.Log($"Fuel: {inventoryManager.fuel}, Max Fuel: {inventoryManager.maxFuel}," +
+                $" Fuel Drum Capacity: {fuelDrumCapacity}");
+            if(inventoryManager.fuel <= (inventoryManager.maxFuel - fuelDrumCapacity))
+            {
+                inventoryManager.RemoveItemFromInventory(4, 1);
+                inventoryManager.fuel += fuelDrumCapacity;
+            }
+            else
+            {
+                Debug.Log("Replenishing fuel now will overflow tank");
+            }
+        }
     }
     //EVENT METHODS
     public void OnInventoryItemSelected(InventoryItemUI inventoryItem)

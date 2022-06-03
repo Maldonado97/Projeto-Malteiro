@@ -20,6 +20,7 @@ public class BoxButton : CustomButton
     [HideInInspector] public bool selected = false;
     [HideInInspector] public TextMeshProUGUI buttonTextTMPro;
     [HideInInspector] public Image boxImage;
+    private bool mouseOnButton = false;
 
     public void Start()
     {
@@ -38,14 +39,11 @@ public class BoxButton : CustomButton
     }
     public override void OnPointerClick(PointerEventData eventData)
     {
-        if (!selected)
-        {
-            UnhighlightButton();
-        }
         base.OnPointerClick(eventData);
     }
     public override void OnPointerEnter(PointerEventData eventData)
     {
+        mouseOnButton = true;
         if (!selected)
         {
             HighlightButton();
@@ -54,10 +52,27 @@ public class BoxButton : CustomButton
     }
     public override void OnPointerExit(PointerEventData eventData)
     {
+        mouseOnButton = false;
         if (!selected)
         {
             UnhighlightButton();
         }
         base.OnPointerExit(eventData);
+    }
+    public override void OnPointerDown(PointerEventData eventData)
+    {
+        if (!selected)
+        {
+            UnhighlightButton();
+        }
+        base.OnPointerDown(eventData);
+    }
+    public override void OnPointerUp(PointerEventData eventData)
+    {
+        if (mouseOnButton)
+        {
+            HighlightButton();
+        }
+        base.OnPointerUp(eventData);
     }
 }
