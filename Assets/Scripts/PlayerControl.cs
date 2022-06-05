@@ -8,8 +8,10 @@ public class PlayerControl : EntityController
     public static PlayerControl instance;
 
     private Rigidbody2D playerRB;
-    private Collider2D playerCollider;
+    [HideInInspector] public Collider2D playerCollider;
     [SerializeField] GameObject ownInterface;
+    [SerializeField] List <Collider2D> shipColliders = new List<Collider2D>();
+    [SerializeField] List<GameObject> shipInterfaces = new List<GameObject>();
     //MOVEMENT
     [SerializeField] [Range(0, 10)] int engineControlSensitivity;
     [SerializeField] float engineForce = 2;
@@ -36,8 +38,9 @@ public class PlayerControl : EntityController
     void Awake()
     {
         instance = this;
+        SelectShip("Survival Ship");
         playerRB = gameObject.GetComponent<Rigidbody2D>();
-        playerCollider = gameObject.GetComponent<Collider2D>();
+        //playerCollider = gameObject.GetComponent<Collider2D>();
         //Debug.Log(Health);
     }
     void Update()
@@ -58,6 +61,35 @@ public class PlayerControl : EntityController
             }
         }
         GetShipHeading();
+    }
+    void SelectShip(string shipName)
+    {
+        foreach (Collider2D shipCollider in shipColliders)
+        {
+            shipCollider.enabled = false;
+        }
+        foreach (GameObject shipInterface in shipInterfaces)
+        {
+            shipInterface.SetActive(false);
+        }
+
+        if (shipName == "Wooden Ship") //ID: 0
+        {
+            shipColliders[0].enabled = true;
+            playerCollider = shipColliders[0];
+            shipInterfaces[0].SetActive(true);
+            ownInterface = shipInterfaces[0];
+        }else if (shipName == "Survival Ship") //ID: 1
+        {
+            shipColliders[1].enabled = true;
+            playerCollider = shipColliders[1];
+            shipInterfaces[1].SetActive(true);
+            ownInterface = shipInterfaces[1];
+        }
+        else
+        {
+            Debug.LogError("Non-existant ship selected in playerControl script.");
+        }
     }
     void GetShipHeading()
     {

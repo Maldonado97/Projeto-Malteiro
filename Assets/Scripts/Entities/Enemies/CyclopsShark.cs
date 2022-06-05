@@ -313,8 +313,15 @@ public class CyclopsShark : MonoBehaviour
                 }
             }
             target = closestTarget;
+            if (closestTarget.CompareTag("Player"))
+            {
+                targetCollider = PlayerControl.instance.playerCollider;
+            }
+            else
+            {
+                targetCollider = target.GetComponent<Collider2D>();
+            }
             targetRB = target.GetComponent<Rigidbody2D>();
-            targetCollider = target.GetComponent<Collider2D>();
             targetEntityController = target.GetComponent<EntityController>();
             distanceToTarget = closestTargetDistance;
             //Debug.Log($"Closest target is: {closestTarget.name}, at a distance of {closestTargetDistance}");
