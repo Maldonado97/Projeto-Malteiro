@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,9 +19,11 @@ public class BoxButton : CustomButton
     public GameObject box;
 
     [HideInInspector] public bool selected = false;
-    public TextMeshProUGUI buttonTextTMPro;
-    public Image boxImage;
-    private bool mouseOnButton = false;
+    [HideInInspector] public TextMeshProUGUI buttonTextTMPro;
+    [HideInInspector] public Image boxImage;
+    protected bool mouseOnButton = false;
+
+    public event Action onButtonClicked;
 
     public void Awake()
     {
@@ -32,6 +35,11 @@ public class BoxButton : CustomButton
         buttonTextTMPro.color = highlightedTextColor;
         boxImage.color = highlightedBoxColor;
     }
+    public void SelectButton()
+    {
+        buttonTextTMPro.color = selectedTextColor;
+        boxImage.color = selectedBoxColor;
+    }
     public void UnhighlightButton()
     {
         buttonTextTMPro.color = defaultTextColor;
@@ -39,6 +47,7 @@ public class BoxButton : CustomButton
     }
     public override void OnPointerClick(PointerEventData eventData)
     {
+        onButtonClicked?.Invoke();
         base.OnPointerClick(eventData);
     }
     public override void OnPointerEnter(PointerEventData eventData)

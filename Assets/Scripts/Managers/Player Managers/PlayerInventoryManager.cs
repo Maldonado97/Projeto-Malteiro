@@ -164,6 +164,16 @@ public class PlayerInventoryManager : MonoBehaviour
         float itemWeight = GameItemDictionary.instance.gameItemWeights[itemID];
         totalWeight -= itemWeight * itemAmount;
     }
+    public void AddCashToInventory(float amountToAdd)
+    {
+        playerCash += amountToAdd;
+        OnInventoryCashChanged();
+    }
+    public void RemoveCashFromInventory(float amountToRemove)
+    {
+        playerCash -= amountToRemove;
+        OnInventoryCashChanged();
+    }
     public void OnInventoryCashChanged()
     {
         onInventoryCashChanged?.Invoke();

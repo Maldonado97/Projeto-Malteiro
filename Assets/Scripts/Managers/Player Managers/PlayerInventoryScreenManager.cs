@@ -21,6 +21,8 @@ public class PlayerInventoryScreenManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI itemWeightTM;
     [SerializeField] TextMeshProUGUI itemValueTM;
     [SerializeField] GameObject useButton;
+    [Header("Item Use")]
+    [SerializeField] GameObject fuelFullWarning;
     [Header("TESTING")]
     [SerializeField] bool inTestingMode = false;
 
@@ -249,6 +251,7 @@ public class PlayerInventoryScreenManager : MonoBehaviour
         foreach(BoxButton inventoryTab in inventoryTabs)
         {
             inventoryTab.selected = false;
+            //Replace these for "inventoryTab.UnHighlightButton();"
             inventoryTab.buttonTextTMPro.color = inventoryTab.defaultTextColor;
             inventoryTab.boxImage.color = inventoryTab.defaultBoxColor;
         }
@@ -257,6 +260,7 @@ public class PlayerInventoryScreenManager : MonoBehaviour
     {
         DeselectAllInventoryTabs();
         inventoryTab.selected = true;
+        //Replace these for "inventoryTab.SelectButton();"
         inventoryTab.buttonTextTMPro.color = inventoryTab.selectedTextColor;
         inventoryTab.boxImage.color = inventoryTab.selectedBoxColor;
     }
@@ -267,8 +271,8 @@ public class PlayerInventoryScreenManager : MonoBehaviour
         float fuelDrumCapacity = 200;
         if (selectedItemID == 4) //Fuel Drum
         {
-            Debug.Log($"Fuel: {inventoryManager.fuel}, Max Fuel: {inventoryManager.maxFuel}," +
-                $" Fuel Drum Capacity: {fuelDrumCapacity}");
+            //Debug.Log($"Fuel: {inventoryManager.fuel}, Max Fuel: {inventoryManager.maxFuel}," +
+               // $" Fuel Drum Capacity: {fuelDrumCapacity}");
             if(inventoryManager.fuel <= (inventoryManager.maxFuel - fuelDrumCapacity))
             {
                 inventoryManager.RemoveItemFromInventory(4, 1);
@@ -276,7 +280,8 @@ public class PlayerInventoryScreenManager : MonoBehaviour
             }
             else
             {
-                Debug.Log("Replenishing fuel now will overflow tank");
+                fuelFullWarning.SetActive(true);
+                //Debug.Log("Replenishing fuel now will overflow tank");
             }
         }
     }

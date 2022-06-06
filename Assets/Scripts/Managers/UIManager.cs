@@ -52,6 +52,7 @@ public class UIManager : MonoBehaviour
         SubscribeToEvents();
         dockPrompt.SetActive(false);
         HUD.SetActive(true);
+        UpdateHealthBar();
     }
     private void SubscribeToEvents()
     {
@@ -82,16 +83,18 @@ public class UIManager : MonoBehaviour
     public void UpdateHUD()
     {
         headingIndicatorText.text = "Heading: " + Mathf.RoundToInt(PlayerControl.instance.shipHeading);
-        speedIndicatorText.text = "Speed: " + (Mathf.Round(PlayerControl.instance.GetShipSpeed() * 100)/100);
+        speedIndicatorText.text = $"Speed: {Mathf.RoundToInt(PlayerControl.instance.GetShipSpeed() * 100) /10}";
     }
     public void UpdateHealthBar()
     {
-        if(PlayerControl.instance.Health <= 0)
+        var playerControl = PlayerControl.instance;
+        int healthPercentage = Mathf.RoundToInt(((playerControl.health / playerControl.maxHealth) * 100));
+        if(healthPercentage <= 0)
         {
             healthBar.sprite = healthBarSprites[10];
         }else
         {
-            int i = Mathf.RoundToInt(PlayerControl.instance.Health / 10);
+            int i = Mathf.RoundToInt(healthPercentage / 10);
             healthBar.sprite = healthBarSprites[10 - i];
             //Debug.Log($"Player health is: {PlayerControl.instance.Health}");
         }

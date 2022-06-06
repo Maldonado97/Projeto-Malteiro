@@ -41,11 +41,13 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : DockShopInventoryIte
             playerInventoryManager.RemoveItemFromInventory(myItemID, 1);
             shopInventoryManager.AddItemToInventory(myItemID, 1);
             //CASH TRANSFER
-            playerInventoryManager.playerCash += myModifiedItemValue;
-            shopInventoryManager.storeCash -= myModifiedItemValue;
+            playerInventoryManager.AddCashToInventory(myModifiedItemValue);
+            //playerInventoryManager.playerCash += myModifiedItemValue;
+            shopInventoryManager.RemoveCashFromInventory(myModifiedItemValue);
+            //shopInventoryManager.storeCash -= myModifiedItemValue;
             //EVEN TRIGGER
-            playerInventoryManager.OnInventoryCashChanged();
-            shopInventoryManager.OnInventoryCashChanged();
+            //playerInventoryManager.OnInventoryCashChanged();
+            //shopInventoryManager.OnInventoryCashChanged();
         }
         else
         {
@@ -64,12 +66,16 @@ public abstract class DockShopMirrorPlayerInventoryItemUI : DockShopInventoryIte
                 playerInventoryManager.RemoveItemFromInventory(myItemID, amountToTransfer);
                 shopInventoryManager.AddItemToInventory(myItemID, amountToTransfer);
                 //CASH TRANSFER
-                playerInventoryManager.playerCash += myModifiedItemValue * amountToTransfer;
-                shopInventoryManager.storeCash -= myModifiedItemValue * amountToTransfer;
+                //playerInventoryManager.playerCash += myModifiedItemValue * amountToTransfer;
+                //shopInventoryManager.storeCash -= myModifiedItemValue * amountToTransfer;
                 //EVENT TRIGGER
-                playerInventoryManager.OnInventoryCashChanged();
-                shopInventoryManager.OnInventoryCashChanged();
-            }else
+                //playerInventoryManager.OnInventoryCashChanged();
+                //shopInventoryManager.OnInventoryCashChanged();
+
+                playerInventoryManager.AddCashToInventory(myModifiedItemValue * amountToTransfer);
+                shopInventoryManager.RemoveCashFromInventory(myModifiedItemValue * amountToTransfer);
+            }
+            else
             {
                 shopScreenManager.OpenInsufficientStoreFundsWarning();
                 Debug.LogWarning($"Store doesn't have enough cash to complete this transaction!");

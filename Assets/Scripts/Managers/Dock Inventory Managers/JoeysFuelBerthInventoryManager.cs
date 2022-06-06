@@ -25,7 +25,8 @@ public class JoeysFuelBerthInventoryManager : GeneralDockInventoryManager
 
     protected override void SetStartingCash()
     {
-        storeCash = 12000; ;
+        //storeCash = 12000;
+        AddCashToInventory(12000);
     }
     public override void AddInitialItems()
     {

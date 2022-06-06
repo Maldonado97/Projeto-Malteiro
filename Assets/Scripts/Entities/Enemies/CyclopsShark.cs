@@ -48,7 +48,7 @@ public class CyclopsShark : MonoBehaviour
     private bool chasingTarget = false;
     private bool targetAtCloseRange = false;
     private float damageVariation = .2f; //Percentage of how much base damage can vary
-    private float biteDamage = 25;
+    private float biteDamage = 250;
     private float biteForce = 2;
     private float biteCooldownTime = 3;
     private bool inBiteCooldown = false;

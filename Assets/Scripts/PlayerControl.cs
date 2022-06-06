@@ -40,10 +40,12 @@ public class PlayerControl : EntityController
         instance = this;
         SelectShip("Survival Ship");
         playerRB = gameObject.GetComponent<Rigidbody2D>();
+        maxHealth = 1000;
+        health = 500;
         //playerCollider = gameObject.GetComponent<Collider2D>();
         //Debug.Log(Health);
     }
-    void Update()
+    void LateUpdate()
     {
         if (!playerIsDead)
         {
@@ -263,7 +265,7 @@ public class PlayerControl : EntityController
         playerRB.angularVelocity = 0;
         //UIManager.instance.leftEngineSlider.value = 0;
         //UIManager.instance.rightEngineSlider.value = 0;
-        Health = 100;
+        health = maxHealth;
         PlayerInventoryManager.instance.fuel = PlayerInventoryManager.instance.maxFuel;
         //UIManager.instance.UpdateHealthBar();
         playerIsDead = false;

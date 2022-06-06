@@ -4,13 +4,14 @@ using UnityEngine;
 
 public abstract class EntityController : MonoBehaviour
 {
-    [HideInInspector] public float Health = 100;
+    [HideInInspector] public float health = 100;
+    [HideInInspector] public float maxHealth = 100;
 
     public virtual void DamageEntity(float damage)
     {
-        Health -= damage;
+        health -= damage;
         //Debug.Log($"{gameObject.name} took {damage} points of damage");
-        if(Health <= 0)
+        if(health <= 0)
         {
             KillEntity();
         }

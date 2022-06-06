@@ -19,6 +19,7 @@ public class HopeCityShop1InventoryManager : GeneralDockInventoryManager
 
     protected override void SetStartingCash()
     {
-        storeCash = 13400;
+        //storeCash = 13400;
+        AddCashToInventory(13400);
     }
 }

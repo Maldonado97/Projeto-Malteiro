@@ -14,6 +14,7 @@ public class PortPioneerShop1InventoryManager : GeneralDockInventoryManager
 
     protected override void SetStartingCash()
     {
-        storeCash = 8200;
+        //storeCash = 8200;
+        AddCashToInventory(8200);
     }
 }
