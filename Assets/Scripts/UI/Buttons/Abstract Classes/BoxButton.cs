@@ -37,8 +37,14 @@ public class BoxButton : CustomButton
     }
     public void SelectButton()
     {
+        selected = true;
         buttonTextTMPro.color = selectedTextColor;
         boxImage.color = selectedBoxColor;
+    }
+    public void DeselectButton()
+    {
+        selected = false;
+        UnhighlightButton();
     }
     public void UnhighlightButton()
     {

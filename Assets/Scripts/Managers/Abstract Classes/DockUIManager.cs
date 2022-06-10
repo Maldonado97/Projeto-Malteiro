@@ -25,9 +25,8 @@ public abstract class DockUIManager : MonoBehaviour
         dockMenu.SetActive(false);
     }
     protected abstract void SetInstance();
-    public void OnPlayerDocked()
+    public void OnPlayerDocked() //Player Docking and undocking handled by player control script.
     {
-        UIManager.instance.HUD.SetActive(false);
         dockMenu.SetActive(true);
     }
     public void FlashStoreScreen(GeneralDockShopScreenManager dockShopScreenManager)

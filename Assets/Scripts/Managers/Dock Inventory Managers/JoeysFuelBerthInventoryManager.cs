@@ -40,22 +40,30 @@ public class JoeysFuelBerthInventoryManager : GeneralDockInventoryManager
         int maxFuelDelta = Mathf.CeilToInt(desiredFuelAmount * desiredInventoryItemsVariance);
         //FUEL DELTA SELECTION
         int fuelDelta;
-        if (itemAmount[4] > fuelAmountUpperBound)
+
+        if (itemAmount.ContainsKey(4))
         {
-            fuelDelta = UnityEngine.Random.Range(-maxFuelDelta, 0);
-        }
-        else if (itemAmount[4] < fuelAmountLowerBound)
-        {
-            fuelDelta = UnityEngine.Random.Range(0, maxFuelDelta);
+            if (itemAmount[4] > fuelAmountUpperBound)
+            {
+                fuelDelta = UnityEngine.Random.Range(-maxFuelDelta, 0);
+            }
+            else if (itemAmount[4] < fuelAmountLowerBound)
+            {
+                fuelDelta = UnityEngine.Random.Range(0, maxFuelDelta);
+            }
+            else
+            {
+                fuelDelta = UnityEngine.Random.Range(-maxFuelDelta, maxFuelDelta);
+            }
+            //FUEL DELTA CORRECTION
+            if (itemAmount[4] + fuelDelta < 0)
+            {
+                fuelDelta = -itemAmount[4] + 1;
+            }
         }
         else
         {
-            fuelDelta = UnityEngine.Random.Range(-maxFuelDelta, maxFuelDelta);
-        }
-        //FUEL DELTA CORRECTION
-        if (itemAmount[4] + fuelDelta < 0)
-        {
-            fuelDelta = -itemAmount[4] + 1;
+            fuelDelta = UnityEngine.Random.Range(0, maxFuelDelta);
         }
         //SHUFFLE
         if (canShuffleInventory)

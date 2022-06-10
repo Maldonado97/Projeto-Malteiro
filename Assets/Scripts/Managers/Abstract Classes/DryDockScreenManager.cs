@@ -149,8 +149,8 @@ public abstract class DryDockScreenManager : MonoBehaviour
             totalRepairPriceDiscount = 1;
         }
         totalRepairAmount = playerControl.maxHealth - playerControl.health;
-        Debug.Log($"New total repair amount = {totalRepairAmount}");
-        Debug.Log($"New partial repair amount = {partialRepairAmount}");
+        //Debug.Log($"New total repair amount = {totalRepairAmount}");
+        //Debug.Log($"New partial repair amount = {partialRepairAmount}");
     }
     public void UpdateServicePrices()
     {
@@ -181,7 +181,7 @@ public abstract class DryDockScreenManager : MonoBehaviour
     {
         CalculateAmountToRepair();
         UpdateServicePrices();
-        Debug.Log("Repair services updated");
+        //Debug.Log("Repair services updated");
     }
     public void ExecuteService()
     {

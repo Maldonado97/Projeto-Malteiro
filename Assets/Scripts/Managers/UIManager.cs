@@ -35,10 +35,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] Image deathMessage;
     [SerializeField] float blackScreenTransitionSpeed;
     [SerializeField] float deathMessageTransitionSpeed;
-    public bool deathScreenActive = false;
 
+    public bool deathScreenActive = false;
     private bool pauseMenuOpen = false;
     private bool playerMenuOpen = false;
+    [HideInInspector] public bool playerDocked = false;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -62,15 +63,17 @@ public class UIManager : MonoBehaviour
         PlayerControl.instance.onDamageTaken += UpdateHealthBar;
         PlayerControl.instance.onPlayerDeath += OnPlayerDeath;
         PlayerControl.instance.onPlayerRespawn += OnPlayerRespawn;
+        PlayerControl.instance.onPlayerDocked += OnPlayerDocked;
+        PlayerControl.instance.onPlayerUndocked += OnPlayerUndocked;
     }
     void Update()
     {
         UpdateHUD();
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && !playerDocked && !playerMenuOpen && !deathScreenActive)
         {
             TogglePauseMenu();
         }
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetKeyDown(KeyCode.Tab) && !playerDocked && !pauseMenuOpen && !deathScreenActive)
         {
             TogglePlayerMenu();
         }
@@ -86,16 +89,16 @@ public class UIManager : MonoBehaviour
     public void UpdateHUD()
     {
         headingIndicatorText.text = "Heading: " + Mathf.RoundToInt(PlayerControl.instance.shipHeading);
-        speedIndicatorText.text = $"Speed: {Mathf.RoundToInt(PlayerControl.instance.GetShipSpeed() * 100) /10}";
+        speedIndicatorText.text = $"Speed: {Mathf.RoundToInt(PlayerControl.instance.GetShipSpeed() * 100) / 10}";
     }
     public void UpdateHealthBar()
     {
         var playerControl = PlayerControl.instance;
         int healthPercentage = Mathf.RoundToInt(((playerControl.health / playerControl.maxHealth) * 100));
-        if(healthPercentage <= 0)
+        if (healthPercentage <= 0)
         {
             healthBar.sprite = healthBarSprites[10];
-        }else
+        } else
         {
             int i = Mathf.RoundToInt(healthPercentage / 10);
             healthBar.sprite = healthBarSprites[10 - i];
@@ -162,12 +165,12 @@ public class UIManager : MonoBehaviour
         float deathMessageAlfa;
         float deathScreenAlfa;
         deathScreen.SetActive(true);
-        if(deathMessage.color.a < 1)
+        if (deathMessage.color.a < 1)
         {
             deathMessageAlfa = deathMessage.color.a + deathMessageTransitionSpeed * Time.deltaTime;
             deathMessage.color = new Color(deathMessage.color.r, deathMessage.color.g, deathMessage.color.b, deathMessageAlfa);
         }
-        if(deathMessage.color.a >= .3f && deathScreenImage.color.a < 1)
+        if (deathMessage.color.a >= .3f && deathScreenImage.color.a < 1)
         {
             deathScreenAlfa = deathScreenImage.color.a + blackScreenTransitionSpeed * Time.deltaTime;
             deathScreenImage.color = new Color(deathScreenImage.color.r, deathScreenImage.color.g, deathScreenImage.color.b, deathScreenAlfa);
@@ -180,6 +183,7 @@ public class UIManager : MonoBehaviour
         deathMessage.color = new Color(deathMessage.color.r, deathMessage.color.g, deathMessage.color.b, 0);
         deathScreenImage.color = new Color(deathScreenImage.color.r, deathScreenImage.color.g, deathScreenImage.color.b, 0);
     }
+    //EVENT METHODS
     public void OnPlayerDeath()
     {
         deathScreenActive = true;
@@ -192,5 +196,15 @@ public class UIManager : MonoBehaviour
         UpdateHealthBar();
         DeactivateDeathScreen();
         HUD.SetActive(true);
+    }
+    private void OnPlayerDocked()
+    {
+        HUD.SetActive(false);
+        playerDocked = true;
+    }
+    private void OnPlayerUndocked()
+    {
+        HUD.SetActive(true);
+        playerDocked = false;
     }
 }

@@ -179,15 +179,15 @@ public abstract class GeneralDockShopScreenManager : MonoBehaviour
         //}
         if (newFilter == "Custom")
         {
-            Debug.Log("Switching to custom Filter");
+            //Debug.Log("Switching to custom Filter");
             itemFilter = "Custom";
             previousPlayerInventory = activePlayerInventory;
             //UpdateCustomPlayerSubInventory();
             activePlayerInventory = ownInventory.mirrorCustomSubPlayerInventory;
-            foreach (int itemID in ownInventory.mirrorCustomSubPlayerInventory)
-            {
-                Debug.Log($"{GameItemDictionary.instance.gameItemNames[itemID]}: {PlayerInventoryManager.instance.itemAmount[itemID]}");
-            }
+            //foreach (int itemID in ownInventory.mirrorCustomSubPlayerInventory)
+            //{
+                //Debug.Log($"{GameItemDictionary.instance.gameItemNames[itemID]}: {PlayerInventoryManager.instance.itemAmount[itemID]}");
+            //}
         }
         if (activePlayerInventory.Count < mirrorItemUIs.Count)
         {

@@ -40,7 +40,8 @@ public class PlayerInventoryScreenManager : MonoBehaviour
     }
     private void Start()
     {
-        selectedItemID = GameItemDictionary.instance.gameItemNames.Count;
+        DeselectAllItems();
+        //selectedItemID = GameItemDictionary.instance.gameItemNames.Count;
         activePlayerInventory = PlayerInventoryManager.instance.itemIDsInInventory;
         UpdateCarryCapacityText();
         UpdatePlayerCashText();
@@ -127,8 +128,8 @@ public class PlayerInventoryScreenManager : MonoBehaviour
     {
         onAllItemsDeselected?.Invoke();
         itemDescriptionTM.text = "-";
-        itemWeightTM.text = "Weight: -";
-        itemValueTM.text = "Value: -";
+        itemWeightTM.text = ": -";
+        itemValueTM.text = ": -";
         selectedItemID = GameItemDictionary.instance.gameItemNames.Count + 1;
     }
     public void OnSortModeChanged()
@@ -210,16 +211,16 @@ public class PlayerInventoryScreenManager : MonoBehaviour
     public void DisplayItemDescription(string itemDescription, float itemWeight, float itemValue)
     {
         itemDescriptionTM.text = itemDescription;
-        itemWeightTM.text = "Weight: " + itemWeight.ToString() + "Kg";
-        itemValueTM.text = "Value: $" + itemValue.ToString();
+        itemWeightTM.text = ": " + itemWeight.ToString() + "Kg";
+        itemValueTM.text = ": $" + itemValue.ToString();
     }
     public void UpdateCarryCapacityText()
     {
-        carryCapacityTM.text = $"Carry Capacity: {PlayerInventoryManager.instance.totalWeight}/{PlayerInventoryManager.instance.maxWeight}";
+        carryCapacityTM.text = $": {PlayerInventoryManager.instance.totalWeight}/{PlayerInventoryManager.instance.maxWeight}";
     }
     public void UpdatePlayerCashText()
     {
-        playerCashTM.text = $"Cash: {PlayerInventoryManager.instance.playerCash}";
+        playerCashTM.text = $": {PlayerInventoryManager.instance.playerCash}";
     }
     public void DisplayCargoSubInventory()
     {
@@ -250,8 +251,8 @@ public class PlayerInventoryScreenManager : MonoBehaviour
     {
         foreach(BoxButton inventoryTab in inventoryTabs)
         {
+            //REPLACE FOR inventoryTab.DeselectButton();
             inventoryTab.selected = false;
-            //Replace these for "inventoryTab.UnHighlightButton();"
             inventoryTab.buttonTextTMPro.color = inventoryTab.defaultTextColor;
             inventoryTab.boxImage.color = inventoryTab.defaultBoxColor;
         }

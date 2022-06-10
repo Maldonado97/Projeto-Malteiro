@@ -35,6 +35,8 @@ public class PlayerControl : EntityController
     public event Action onDamageTaken;
     public event Action onPlayerDeath;
     public event Action onPlayerRespawn;
+    public event Action onPlayerDocked;
+    public event Action onPlayerUndocked;
     void Awake()
     {
         instance = this;
@@ -236,11 +238,16 @@ public class PlayerControl : EntityController
     {
         currentDockZone.DockShip(gameObject);
         currentDockZone.dockUIManager.OnPlayerDocked();
+        onPlayerDocked?.Invoke();
+        //UIManager.instance.HUD.SetActive(false);
+        //UIManager.instance.dockMenuOpen = true;
     }
     public void UndockShip() //Dock ship method is executed by dockzone scripts
     {
         playerDocked = false;
-        UIManager.instance.HUD.SetActive(true);
+        onPlayerUndocked?.Invoke();
+        //UIManager.instance.dockMenuOpen = false;
+        //UIManager.instance.HUD.SetActive(true);
     }
     public override void DamageEntity(float damage)
     {
