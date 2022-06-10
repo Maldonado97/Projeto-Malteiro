@@ -40,9 +40,12 @@ public class UIManager : MonoBehaviour
     private bool pauseMenuOpen = false;
     private bool playerMenuOpen = false;
     // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         instance = this;
+    }
+    void Start()
+    {
         headingIndicatorText = headingIndicator.GetComponent<TextMeshProUGUI>();
         speedIndicatorText = speedIndicator.GetComponent<TextMeshProUGUI>();
         leftEngineSlider = leftEngineSliderUI.GetComponent<Slider>();

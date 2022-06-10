@@ -13,15 +13,15 @@ public class CyclopsShark : MonoBehaviour
     [SerializeField] GameObject woodBurstParticle;
     [Tooltip("In degrees.")]
     [SerializeField] int sharkFieldOfView = 80;
-    [SerializeField] float sightRange = 10;
-    [SerializeField] float hearingRange = 4;
+    [SerializeField] float sightRange = 15;
+    [SerializeField] float hearingRange = 19;
     [SerializeField] float closeRange = 3.5f;
 
     //MOVEMENT
     private Rigidbody2D sharkRB;
     private float sharkSpeed; //1.5
-    private float chaseSpeed = 2.1f; //2.1f
-    private float normalSpeed = 1.5f; //1.5
+    private float chaseSpeed = 2.2f; //2.1f
+    private float normalSpeed = 1.7f; //1.5
     private float coolDownSpeed = 0.5f;
     private float turnTorque; //18
     private float normalTurnTorque = 18;
@@ -57,7 +57,7 @@ public class CyclopsShark : MonoBehaviour
     //OPTIMIZATION
     private GameObject player;
     private bool inStandby;
-    [SerializeField] private float activationRadius;
+    [SerializeField] private float activationRadius = 20;
     public void Start()
     {
         sharkRB = gameObject.GetComponent<Rigidbody2D>();
