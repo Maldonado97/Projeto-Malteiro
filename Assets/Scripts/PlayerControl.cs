@@ -47,14 +47,14 @@ public class PlayerControl : EntityController
         //playerCollider = gameObject.GetComponent<Collider2D>();
         //Debug.Log(Health);
     }
-    void LateUpdate()
+    void Update()
     {
         if (!playerIsDead)
         {
             if (!playerDocked)
             {
                 ControlEngineSliders();
-                MoveShip();
+                //MoveShip();
             }
             if (playerInDockZone)
             {
@@ -65,6 +65,16 @@ public class PlayerControl : EntityController
             }
         }
         GetShipHeading();
+    }
+    private void FixedUpdate()
+    {
+        if (!playerIsDead)
+        {
+            if (!playerDocked)
+            {
+                MoveShip();
+            }
+        }
     }
     void SelectShip(string shipName)
     {

@@ -73,11 +73,13 @@ public class CyclopsShark : MonoBehaviour
         if(GetGameObjectDistance(player) > activationRadius && inSharkZone)
         {
             inStandby = true;
+            tag = "Untagged";
             ownInterface.SetActive(false);
         }
         else
         {
             inStandby = false;
+            tag = "Cyclops Shark";
             ownInterface.SetActive(true);
         }
         if (!inStandby)
@@ -91,6 +93,11 @@ public class CyclopsShark : MonoBehaviour
                 {
                     ChaseTarget();
                     chasingTarget = true;
+                    Debug.Log("Cyclops shark chasing target.");
+                    if (targetIsSound)
+                    {
+                        Debug.Log("Cyclops shark chasing sound target.");
+                    }
                 }
                 else
                 {
@@ -178,21 +185,35 @@ public class CyclopsShark : MonoBehaviour
     public bool CheckIfTargetInView(GameObject possibleTarget)
     {
         bool targetInView;
-        //GetClosestTarget();
-        float fieldOfViewBearing1 = sharkHeading - (sharkFieldOfView / 2);
-        float fieldOfViewBearing2 = sharkHeading + (sharkFieldOfView / 2);
-        //float distanceToTarget = Vector3.Distance(transform.position, target.transform.position);
-        if (fieldOfViewBearing1 < 0)
+        
+        if(GetGameObjectDistance(possibleTarget) <= sightRange)
         {
-            fieldOfViewBearing1 += 360;
-        }
-        if (fieldOfViewBearing2 >= 360)
-        {
-            fieldOfViewBearing2 -= 360;
-        }
-        if (fieldOfViewBearing1 > fieldOfViewBearing2)
-        {
-            if (GetGameObjectBearing(possibleTarget) > fieldOfViewBearing1 || GetGameObjectBearing(possibleTarget) < fieldOfViewBearing2)
+            float fieldOfViewBearing1 = sharkHeading - (sharkFieldOfView / 2);
+            float fieldOfViewBearing2 = sharkHeading + (sharkFieldOfView / 2);
+
+            if (fieldOfViewBearing1 < 0)
+            {
+                fieldOfViewBearing1 += 360;
+            }
+            if (fieldOfViewBearing2 >= 360)
+            {
+                fieldOfViewBearing2 -= 360;
+            }
+
+            if (fieldOfViewBearing1 > fieldOfViewBearing2)
+            {
+                if (GetGameObjectBearing(possibleTarget) > fieldOfViewBearing1 || GetGameObjectBearing(possibleTarget) < fieldOfViewBearing2)
+                {
+                    targetInView = true;
+                    //Debug.Log("TARGET IN SIGHT!");
+                }
+                else
+                {
+                    targetInView = false;
+                    //Debug.Log("NO TARGET!");
+                }
+            }
+            else if (GetGameObjectBearing(possibleTarget) > fieldOfViewBearing1 && GetGameObjectBearing(possibleTarget) < fieldOfViewBearing2)
             {
                 targetInView = true;
                 //Debug.Log("TARGET IN SIGHT!");
@@ -200,19 +221,15 @@ public class CyclopsShark : MonoBehaviour
             else
             {
                 targetInView = false;
-                //Debug.Log("NO TARGET!");
+                //Debug.Log("NO TARGET IN VIEW!");
             }
-        }
-        else if (GetGameObjectBearing(possibleTarget) > fieldOfViewBearing1 && GetGameObjectBearing(possibleTarget) < fieldOfViewBearing2)
-        {
-            targetInView = true;
-            //Debug.Log("TARGET IN SIGHT!");
         }
         else
         {
             targetInView = false;
-            //Debug.Log("NO TARGET!");
+            //Debug.Log("NO TARGET IN VIEW!");
         }
+
         return targetInView;
     }
     public void GetClosestTarget()
@@ -220,18 +237,32 @@ public class CyclopsShark : MonoBehaviour
         GameObject closestTarget = null;
         List<GameObject> possibleVisualTargets = new List<GameObject>();
         List<GameObject> possibleAuditiveTargets = new List<GameObject>();
+
+        float farthestRange;
+
+        if (sightRange >= hearingRange)
+        {
+            farthestRange = sightRange;
+        }
+        else
+        {
+            farthestRange = hearingRange;
+        }
+
         float closestTargetDistance = 0;
         float possibleTargetDistance = 0;
+
         if(GameObject.FindGameObjectsWithTag("Player").Length != 0)
         {
             foreach (GameObject possibleTarget in GameObject.FindGameObjectsWithTag("Player"))
             {
-                if (GetGameObjectDistance(possibleTarget) <= sightRange)
+                if (GetGameObjectDistance(possibleTarget) <= farthestRange)
                 {
                     if (CheckIfTargetInView(possibleTarget))
                     {
                         possibleVisualTargets.Add(possibleTarget);
-                    }else if(GetGameObjectDistance(possibleTarget) <= hearingRange)
+                    }
+                    else if(GetGameObjectDistance(possibleTarget) <= hearingRange)
                     {
                         possibleAuditiveTargets.Add(possibleTarget);
                     }
@@ -272,6 +303,7 @@ public class CyclopsShark : MonoBehaviour
                 }
             }
         }
+
         if(possibleVisualTargets.Count > 0 || possibleAuditiveTargets.Count > 0)
         {
             targetAquired = true;
@@ -324,7 +356,7 @@ public class CyclopsShark : MonoBehaviour
             targetRB = target.GetComponent<Rigidbody2D>();
             targetEntityController = target.GetComponent<EntityController>();
             distanceToTarget = closestTargetDistance;
-            //Debug.Log($"Closest target is: {closestTarget.name}, at a distance of {closestTargetDistance}");
+            Debug.Log($"Closest target is: {closestTarget.name}, at a distance of {closestTargetDistance}");
         }
         else
         {
@@ -545,7 +577,7 @@ public class CyclopsShark : MonoBehaviour
     public void OnCollisionEnter2D(Collision2D other)
     {
         var otherCollider = other.collider;
-        if(otherCollider == targetCollider && chasingTarget)
+        if(otherCollider == targetCollider && chasingTarget && !inBiteCooldown)
         {
             //Debug.Log($"Biting target: {otherCollider.gameObject.name}");
             BiteTarget();

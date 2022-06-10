@@ -41,7 +41,7 @@ public class PlayerMenuManager : MonoBehaviour
         if (menuTabs.Contains(menuTab))
         {
             menuTabIndex = menuTabs.IndexOf(menuTab); //Could go wrong.
-            Debug.Log($"Selected menu tab index is: {menuTabIndex}.");
+            //Debug.Log($"Selected menu tab index is: {menuTabIndex}.");
         }
         else
         {

@@ -128,12 +128,14 @@ public class UIManager : MonoBehaviour
             HUD.SetActive(false);
             pauseMenu.SetActive(true);
             pauseMenuOpen = true;
+            GameManager.instance.PauseGame();
         }
         else
         {
             HUD.SetActive(true);
             pauseMenu.SetActive(false);
             pauseMenuOpen = false;
+            GameManager.instance.ResumeGame();
         }
     }
     public void TogglePlayerMenu()
@@ -143,6 +145,7 @@ public class UIManager : MonoBehaviour
             HUD.SetActive(false);
             playerMenu.SetActive(true);
             playerMenuOpen = true;
+            GameManager.instance.SlowGame();
         }
         else
         {
@@ -150,6 +153,7 @@ public class UIManager : MonoBehaviour
             PlayerInventoryScreenManager.instance.DeselectAllItems();
             playerMenu.SetActive(false);
             playerMenuOpen = false;
+            GameManager.instance.ResumeGame();
         }
     }
     public void ActivateDockPrompt()

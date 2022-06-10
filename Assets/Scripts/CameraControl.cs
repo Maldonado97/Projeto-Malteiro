@@ -53,12 +53,15 @@ public class CameraControl : MonoBehaviour
     {
         cameraComponent = gameObject.GetComponent<Camera>();
     }
-    void FixedUpdate()
+    private void Update()
     {
         GetCameraHeading();
         GetTargetHeading();
         GetTargetPosition();
         SetCameraDestination();
+    }
+    void FixedUpdate()
+    {
         MoveAndRotateCamera();
         DistortCameraZoom();
     }
@@ -88,11 +91,11 @@ public class CameraControl : MonoBehaviour
         PositionDeadZoneCheck();
         if (!PositionDeadZoneCheck() || GetTargetSpeed() >= cameraOffsetTriggerSpeed)
         {
-            transform.position = Vector3.Lerp(transform.position, cameraPos, positionLerpAlfa);
+            transform.position = Vector3.Lerp(transform.position, cameraPos, positionLerpAlfa * Time.timeScale);
         }
         if (!RotationDeadZoneCheck())
         {
-            transform.rotation = Quaternion.Lerp(transform.rotation, target.transform.rotation, rotationLerpAlfa);
+            transform.rotation = Quaternion.Lerp(transform.rotation, target.transform.rotation, rotationLerpAlfa * Time.timeScale);
         }
     }
     void DistortCameraZoom()
