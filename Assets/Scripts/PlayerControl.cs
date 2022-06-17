@@ -32,6 +32,8 @@ public class PlayerControl : EntityController
     [HideInInspector] public bool playerIsDead = false;
     private int respawnTime = 4;
 
+    float previousSpeed;
+
     public event Action onDamageTaken;
     public event Action onPlayerDeath;
     public event Action onPlayerRespawn;
@@ -65,6 +67,8 @@ public class PlayerControl : EntityController
             }
         }
         GetShipHeading();
+
+        previousSpeed = GetShipSpeed();
     }
     private void FixedUpdate()
     {
@@ -121,8 +125,14 @@ public class PlayerControl : EntityController
         headingRad = Mathf.Deg2Rad * shipHeading;
         forwardSpeed = (xSpeed * Mathf.Sin(headingRad)) + (ySpeed * Mathf.Cos(headingRad));
 
-
-        return forwardSpeed;
+        if(forwardSpeed > 0)
+        {
+            return Vector2.SqrMagnitude(playerRB.velocity);
+        }
+        else
+        {
+            return -Vector2.SqrMagnitude(playerRB.velocity);
+        }
     }
     void ControlEngineSliders()
     {
@@ -273,6 +283,48 @@ public class PlayerControl : EntityController
         onPlayerDeath?.Invoke();
         StartCoroutine(Respawn());
     }
+    //EVENTS
+    public void OnCollisionEnter2D(Collision2D other)
+    {
+        float crashSpeed = Mathf.Abs(previousSpeed); //Gets the previous frame's speed because this one is already 0
+        float crashAngle;
+
+        var otherCollider = other.collider;
+        if (otherCollider.CompareTag("Island") || otherCollider.CompareTag("Building"))
+        {
+            Debug.Log("Player Crashed!");
+            if(crashSpeed * 10 > 2)
+            {
+                crashAngle = Mathf.Abs(shipHeading - GetRealBearing(transform.position, otherCollider.ClosestPoint(transform.position)));
+                Debug.Log($"Crash Angle: {crashAngle}. Player will take {crashSpeed * 100 * Mathf.Abs(Mathf.Cos(Mathf.Deg2Rad * crashAngle))} damage");
+                DamageEntity(crashSpeed * 100 * Mathf.Abs(Mathf.Cos(Mathf.Deg2Rad * crashAngle)));
+            }
+        }
+    }
+    //TOOLS
+    float GetRealBearing(Vector2 origin, Vector2 point)
+    {
+        float targetRawBearing;
+        float realtiveBearing;
+        Vector2 bearingVector;
+
+        bearingVector = origin - point;
+        targetRawBearing = Mathf.Atan2(bearingVector.y, bearingVector.x) * Mathf.Rad2Deg;
+
+        if (targetRawBearing < 0)
+        {
+            targetRawBearing += 360;
+        }
+
+        realtiveBearing = 360 - targetRawBearing - 90;
+
+        if (realtiveBearing < 0)
+        {
+            realtiveBearing += 360;
+        }
+
+        return realtiveBearing;
+    }
     //IENUMERATORS
     private IEnumerator Respawn()
     {
@@ -280,8 +332,8 @@ public class PlayerControl : EntityController
         
         playerRB.velocity = Vector2.zero;
         playerRB.angularVelocity = 0;
-        //UIManager.instance.leftEngineSlider.value = 0;
-        //UIManager.instance.rightEngineSlider.value = 0;
+        UIManager.instance.leftEngineSlider.value = 0;
+        UIManager.instance.rightEngineSlider.value = 0;
         health = maxHealth;
         PlayerInventoryManager.instance.fuel = PlayerInventoryManager.instance.maxFuel;
         //UIManager.instance.UpdateHealthBar();

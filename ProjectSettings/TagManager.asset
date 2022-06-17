@@ -9,6 +9,7 @@ TagManager:
   - Cyclops Shark
   - Dead Player
   - Island
+  - Building
   layers:
   - Default
   - TransparentFX

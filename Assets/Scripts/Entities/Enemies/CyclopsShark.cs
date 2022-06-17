@@ -129,7 +129,7 @@ public class CyclopsShark : MonoBehaviour
     }
     float GetGameObjectBearing(GameObject target)
     {
-        float areaRawBearing;
+        float targetRawBearing;
         float targetBearing;
         Vector2 target2DPosition;
         Vector2 shark2DPosition;
@@ -138,12 +138,12 @@ public class CyclopsShark : MonoBehaviour
         target2DPosition = new Vector2(target.transform.position.x, target.transform.position.y);
         shark2DPosition = new Vector2(transform.position.x, transform.position.y);
         targetVector = shark2DPosition - target2DPosition;
-        areaRawBearing = Mathf.Atan2(targetVector.y, targetVector.x) * Mathf.Rad2Deg;
-        if (areaRawBearing < 0)
+        targetRawBearing = Mathf.Atan2(targetVector.y, targetVector.x) * Mathf.Rad2Deg;
+        if (targetRawBearing < 0)
         {
-            areaRawBearing += 360;
+            targetRawBearing += 360;
         }
-        targetBearing = 360 - areaRawBearing - 90;
+        targetBearing = 360 - targetRawBearing - 90;
         if (targetBearing < 0)
         {
             targetBearing += 360;

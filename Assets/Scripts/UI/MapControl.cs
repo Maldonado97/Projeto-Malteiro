@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,22 +7,31 @@ using UnityEngine.EventSystems;
 
 public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler
 {
-    [SerializeField] Canvas canvas;
+    public static MapControl instance;
+
+    public Canvas canvas;
     [SerializeField] GameObject border;
     [SerializeField] GameObject playerIndicator;
+    [Header("Scale Calculation")]
     [SerializeField] Transform realPoint1;
     [SerializeField] Transform realPoint2;
     [SerializeField] RectTransform mapPoint1;
     [SerializeField] RectTransform mapPoint2;
+    [Header("Plotting Prefabs")]
+    [SerializeField] GameObject knob;
+    [SerializeField] GameObject line;
 
-    RectTransform mapTransform;
+    bool plottingRoute = true;
+
+    [HideInInspector] public RectTransform mapTransform;
     RectTransform borderRectTransform;
     GameObject player;
-    private float xScaleFactor;
-    private float yScaleFactor;
+    private float xScale;
+    private float yScale;
     private float xOffset;
     private float yOffset;
 
+    public event Action onPlayerClick;
     //public UnityEvent onPointerEnter;
     //public UnityEvent onPointerExit;
     //public UnityEvent onPointerClick;
@@ -29,6 +39,10 @@ public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
     //public UnityEvent onPointerUp;
     //public UnityEvent onScroll;
     //public UnityEvent onDrag;
+    private void Awake()
+    {
+        instance = this;
+    }
     private void Start()
     {
         mapTransform = gameObject.GetComponent<RectTransform>();
@@ -47,15 +61,15 @@ public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
         float realDistanceX = Mathf.Abs(realPoint2.position.x - realPoint1.position.x);
         float realDistanceY = Mathf.Abs(realPoint2.position.y - realPoint1.position.y);
 
-        xScaleFactor = mapDistanceX / realDistanceX;
-        yScaleFactor = mapDistanceY / realDistanceY;
-        xOffset = mapPoint1.anchoredPosition.x - (realPoint1.position.x * xScaleFactor);
-        yOffset = mapPoint1.anchoredPosition.y - (realPoint1.position.y * yScaleFactor);
+        xScale = mapDistanceX / realDistanceX;
+        yScale = mapDistanceY / realDistanceY;
+        xOffset = mapPoint1.anchoredPosition.x - (realPoint1.position.x * xScale);
+        yOffset = mapPoint1.anchoredPosition.y - (realPoint1.position.y * yScale);
     }
     private void SetMapItemPosition(GameObject realItem, GameObject mapItem)
     {
-        float xPos = (realItem.transform.position.x * xScaleFactor) + xOffset;
-        float yPos = (realItem.transform.position.y * yScaleFactor) + yOffset;
+        float xPos = (realItem.transform.position.x * xScale) + xOffset;
+        float yPos = (realItem.transform.position.y * yScale) + yOffset;
 
         RectTransform mapItemRectTransform = mapItem.GetComponent<RectTransform>();
         mapItemRectTransform.anchoredPosition = new Vector3(xPos, yPos);
@@ -96,6 +110,7 @@ public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
+        plottingRoute = false;
     }
     public void OnDrag(PointerEventData eventData)
     {
@@ -174,9 +189,22 @@ public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
     }
     public void OnEndDrag(PointerEventData eventData)
     {
+        plottingRoute = true;
     }
     public virtual void OnPointerClick(PointerEventData eventData)
     {
+        if (plottingRoute)
+        {
+            Vector3 mousePosition = eventData.position * canvas.scaleFactor;
+            //Debug.Log($"{mousePosition}, {Input.mousePosition * canvas.scaleFactor}");
+            //Vector3 mouseRealtivePosition = (mousePosition - mapTransform.position) / mapTransform.localScale.x;
+
+            Instantiate(knob, mousePosition, mapTransform.rotation, mapTransform);
+            Instantiate(line, mousePosition, mapTransform.rotation, mapTransform);
+            //Debug.Log($"{mousePosition}, {mapTransform.position}");
+            //Debug.Log($"{mouseRealtivePosition}");
+            onPlayerClick?.Invoke();
+        }
     }
     public virtual void OnPointerDown(PointerEventData eventData)
     {

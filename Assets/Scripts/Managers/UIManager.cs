@@ -88,8 +88,19 @@ public class UIManager : MonoBehaviour
     }
     public void UpdateHUD()
     {
-        headingIndicatorText.text = "Heading: " + Mathf.RoundToInt(PlayerControl.instance.shipHeading);
-        speedIndicatorText.text = $"Speed: {Mathf.RoundToInt(PlayerControl.instance.GetShipSpeed() * 100) / 10}";
+        if(Mathf.RoundToInt(PlayerControl.instance.shipHeading) < 10)
+        {
+            headingIndicatorText.text = $"Heading: 00{Mathf.RoundToInt(PlayerControl.instance.shipHeading)}º";
+        }else if (Mathf.RoundToInt(PlayerControl.instance.shipHeading) < 100)
+        {
+            headingIndicatorText.text = $"Heading: 0{Mathf.RoundToInt(PlayerControl.instance.shipHeading)}º";
+        }
+        else
+        {
+            headingIndicatorText.text = $"Heading: {Mathf.RoundToInt(PlayerControl.instance.shipHeading)}º";
+        }
+
+        speedIndicatorText.text = $"Speed: {Mathf.RoundToInt(PlayerControl.instance.GetShipSpeed()*10)} Kts";
     }
     public void UpdateHealthBar()
     {
