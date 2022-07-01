@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class MapLine : MonoBehaviour
+public class MapRefrenceLine : MonoBehaviour
 {
     Vector3 basePosition;
     Vector3 mousePosition;
@@ -15,7 +15,7 @@ public class MapLine : MonoBehaviour
     {
         lineRectTransform = gameObject.GetComponent<RectTransform>();
 
-        MapControl.instance.onPlayerClick += StopEditingLine;
+        //MapControl.instance.onPlayerClick += StopEditingLine;
     }
     private void Update()
     {
@@ -66,6 +66,6 @@ public class MapLine : MonoBehaviour
     }
     private void OnDestroy()
     {
-        MapControl.instance.onPlayerClick -= StopEditingLine;
+        //MapControl.instance.onPlayerClick -= StopEditingLine;
     }
 }

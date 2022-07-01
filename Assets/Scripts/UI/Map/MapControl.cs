@@ -17,12 +17,12 @@ public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
     [SerializeField] Transform realPoint2;
     [SerializeField] RectTransform mapPoint1;
     [SerializeField] RectTransform mapPoint2;
-    [Header("Plotting Prefabs")]
-    [SerializeField] GameObject knob;
-    [SerializeField] GameObject line;
+    [Header("Route Plotting")]
+    [SerializeField] GameObject referenceLine;
+    [SerializeField] GameObject waypointPrefab;
+    public GameObject linePrefab;
 
-    bool plottingRoute = true;
-
+    bool draggingMap = false;
     [HideInInspector] public RectTransform mapTransform;
     RectTransform borderRectTransform;
     GameObject player;
@@ -30,15 +30,10 @@ public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
     private float yScale;
     private float xOffset;
     private float yOffset;
+    [HideInInspector] public List<MapWaypoint> mapWaypoints = new List<MapWaypoint>();
 
     public event Action onPlayerClick;
-    //public UnityEvent onPointerEnter;
-    //public UnityEvent onPointerExit;
-    //public UnityEvent onPointerClick;
-    //public UnityEvent onPointerDown;
-    //public UnityEvent onPointerUp;
-    //public UnityEvent onScroll;
-    //public UnityEvent onDrag;
+    public event Action onMapPositionChanged;
     private void Awake()
     {
         instance = this;
@@ -107,10 +102,12 @@ public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
             yScale = 9;
         }
         mapTransform.localScale = new Vector3(xScale, yScale);
+
+        onMapPositionChanged?.Invoke();
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
-        plottingRoute = false;
+        draggingMap = true;
     }
     public void OnDrag(PointerEventData eventData)
     {
@@ -189,20 +186,20 @@ public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
     }
     public void OnEndDrag(PointerEventData eventData)
     {
-        plottingRoute = true;
+        draggingMap = false;
+        onMapPositionChanged?.Invoke();
     }
     public virtual void OnPointerClick(PointerEventData eventData)
     {
-        if (plottingRoute)
+        if (!draggingMap)
         {
             Vector3 mousePosition = eventData.position * canvas.scaleFactor;
             //Debug.Log($"{mousePosition}, {Input.mousePosition * canvas.scaleFactor}");
             //Vector3 mouseRealtivePosition = (mousePosition - mapTransform.position) / mapTransform.localScale.x;
 
-            Instantiate(knob, mousePosition, mapTransform.rotation, mapTransform);
-            Instantiate(line, mousePosition, mapTransform.rotation, mapTransform);
-            //Debug.Log($"{mousePosition}, {mapTransform.position}");
-            //Debug.Log($"{mouseRealtivePosition}");
+            Instantiate(waypointPrefab, mousePosition, mapTransform.rotation, mapTransform);
+            referenceLine.transform.position = mousePosition;
+            //Instantiate(line, mousePosition, mapTransform.rotation, mapTransform);
             onPlayerClick?.Invoke();
         }
     }

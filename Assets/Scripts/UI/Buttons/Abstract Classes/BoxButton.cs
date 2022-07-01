@@ -9,6 +9,8 @@ using UnityEngine.UI;
 
 public class BoxButton : CustomButton
 {
+    [Header("Button Box")]
+    [Header("Button Text")]
     public Color defaultTextColor;
     public Color defaultBoxColor;
     public Color highlightedTextColor;
@@ -23,22 +25,35 @@ public class BoxButton : CustomButton
     [HideInInspector] public Image boxImage;
     protected bool mouseOnButton = false;
 
+    bool buttonHasText = false;
+
     public event Action onButtonClicked;
 
     public void Awake()
     {
-        buttonTextTMPro = buttonText.GetComponent<TextMeshProUGUI>();
+        if(buttonText != null)
+        {
+            buttonTextTMPro = buttonText.GetComponent<TextMeshProUGUI>();
+            buttonHasText = true;
+        }
+
         boxImage = box.GetComponent<Image>();
     }
     public void HighlightButton()
     {
-        buttonTextTMPro.color = highlightedTextColor;
+        if (buttonHasText)
+        {
+            buttonTextTMPro.color = highlightedTextColor;
+        }
         boxImage.color = highlightedBoxColor;
     }
     public void SelectButton()
     {
         selected = true;
-        buttonTextTMPro.color = selectedTextColor;
+        if (buttonHasText)
+        {
+            buttonTextTMPro.color = selectedTextColor;
+        }
         boxImage.color = selectedBoxColor;
     }
     public void DeselectButton()
@@ -48,7 +63,10 @@ public class BoxButton : CustomButton
     }
     public void UnhighlightButton()
     {
-        buttonTextTMPro.color = defaultTextColor;
+        if (buttonHasText)
+        {
+            buttonTextTMPro.color = defaultTextColor;
+        }
         boxImage.color = defaultBoxColor;
     }
     public override void OnPointerClick(PointerEventData eventData)
