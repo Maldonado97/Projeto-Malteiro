@@ -10,15 +10,16 @@ using UnityEngine.UI;
 public class BoxButton : CustomButton
 {
     [Header("Button Box")]
-    [Header("Button Text")]
-    public Color defaultTextColor;
-    public Color defaultBoxColor;
-    public Color highlightedTextColor;
-    public Color highlightedBoxColor;
-    public Color selectedTextColor;
-    public Color selectedBoxColor;
-    public GameObject buttonText;
     public GameObject box;
+    public Color defaultBoxColor;
+    public Color highlightedBoxColor;
+    public Color selectedBoxColor;
+    [Header("Button Text")]
+    [Tooltip("If the button has any text.")]
+    public GameObject buttonText;
+    public Color defaultTextColor;
+    public Color highlightedTextColor;
+    public Color selectedTextColor;
 
     [HideInInspector] public bool selected = false;
     [HideInInspector] public TextMeshProUGUI buttonTextTMPro;

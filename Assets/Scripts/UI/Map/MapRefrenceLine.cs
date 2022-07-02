@@ -10,16 +10,13 @@ public class MapRefrenceLine : MonoBehaviour
     RectTransform lineRectTransform;
     float lineWidth = 2;
     float lineHeight;
-    bool editingLine = true;
     private void Start()
     {
         lineRectTransform = gameObject.GetComponent<RectTransform>();
-
-        //MapControl.instance.onPlayerClick += StopEditingLine;
     }
     private void Update()
     {
-        if (editingLine)
+        if (MapControl.instance.editingWaypoints)
         {
             mousePosition = Input.mousePosition * MapControl.instance.canvas.scaleFactor;
             basePosition = lineRectTransform.position * MapControl.instance.canvas.scaleFactor;
@@ -59,13 +56,5 @@ public class MapRefrenceLine : MonoBehaviour
     {
         lineHeight = Vector3.Distance(basePosition, mousePosition) / MapControl.instance.mapTransform.localScale.x;
         lineRectTransform.sizeDelta = new Vector2(lineWidth, lineHeight);
-    }
-    private void StopEditingLine()
-    {
-        editingLine = false;
-    }
-    private void OnDestroy()
-    {
-        //MapControl.instance.onPlayerClick -= StopEditingLine;
     }
 }

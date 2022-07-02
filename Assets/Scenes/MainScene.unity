@@ -5466,6 +5466,132 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 12408141}
   m_CullTransparentMesh: 1
+--- !u!1 &16412114
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 16412115}
+  - component: {fileID: 16412118}
+  - component: {fileID: 16412117}
+  - component: {fileID: 16412116}
+  m_Layer: 5
+  m_Name: Edit Route Button
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &16412115
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 16412114}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1206895486}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 62.07}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &16412116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 16412114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7850653c6829c97498cd3172a6a3bf93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onPointerEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  onPointerExit:
+    m_PersistentCalls:
+      m_Calls: []
+  onPointerClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 912612054}
+        m_TargetAssemblyTypeName: MapControl, Assembly-CSharp
+        m_MethodName: OnNavToolClicked
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 16412116}
+          m_ObjectArgumentAssemblyTypeName: BoxButton, Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onPointerDown:
+    m_PersistentCalls:
+      m_Calls: []
+  onPointerUp:
+    m_PersistentCalls:
+      m_Calls: []
+  box: {fileID: 16412114}
+  defaultBoxColor: {r: 0.36078432, g: 0.41176474, b: 0.46274513, a: 1}
+  highlightedBoxColor: {r: 0.43666667, g: 0.5, b: 0.56, a: 1}
+  selectedBoxColor: {r: 0.28067797, g: 0.320339, b: 0.36, a: 1}
+  buttonText: {fileID: 0}
+  defaultTextColor: {r: 0, g: 0, b: 0, a: 1}
+  highlightedTextColor: {r: 0, g: 0, b: 0, a: 1}
+  selectedTextColor: {r: 0.0475, g: 0.0675, b: 0.09, a: 1}
+  selected: 0
+  buttonTextTMPro: {fileID: 0}
+  boxImage: {fileID: 0}
+--- !u!114 &16412117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 16412114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.36162275, g: 0.4113114, b: 0.461, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &16412118
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 16412114}
+  m_CullTransparentMesh: 1
 --- !u!1 &22044503
 GameObject:
   m_ObjectHideFlags: 0
@@ -15822,14 +15948,14 @@ MonoBehaviour:
   onPointerUp:
     m_PersistentCalls:
       m_Calls: []
-  defaultTextColor: {r: 0.12941177, g: 0.18039216, b: 0.2392157, a: 1}
+  box: {fileID: 92623627}
   defaultBoxColor: {r: 0.5137255, g: 0.58431375, b: 0.654902, a: 1}
-  highlightedTextColor: {r: 0.21068965, g: 0.29137936, b: 0.39, a: 1}
   highlightedBoxColor: {r: 0.6282723, g: 0.7162304, b: 0.8, a: 1}
-  selectedTextColor: {r: 0.0475, g: 0.0675, b: 0.09, a: 1}
   selectedBoxColor: {r: 0.39285713, g: 0.44642854, b: 0.5, a: 1}
   buttonText: {fileID: 1228446905}
-  box: {fileID: 92623627}
+  defaultTextColor: {r: 0.12941177, g: 0.18039216, b: 0.2392157, a: 1}
+  highlightedTextColor: {r: 0.21068965, g: 0.29137936, b: 0.39, a: 1}
+  selectedTextColor: {r: 0.0475, g: 0.0675, b: 0.09, a: 1}
   selected: 0
   buttonTextTMPro: {fileID: 0}
   boxImage: {fileID: 0}
@@ -22439,14 +22565,14 @@ MonoBehaviour:
   onPointerUp:
     m_PersistentCalls:
       m_Calls: []
-  defaultTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
+  box: {fileID: 175862571}
   defaultBoxColor: {r: 0.34117648, g: 0.39607844, b: 0.45490196, a: 1}
-  highlightedTextColor: {r: 0.69803923, g: 0.6745098, b: 0.6745098, a: 1}
   highlightedBoxColor: {r: 0.29411766, g: 0.3372549, b: 0.38039216, a: 1}
-  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selectedBoxColor: {r: 0, g: 0, b: 0, a: 0}
   buttonText: {fileID: 736066878}
-  box: {fileID: 175862571}
+  defaultTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
+  highlightedTextColor: {r: 0.69803923, g: 0.6745098, b: 0.6745098, a: 1}
+  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selected: 0
   buttonTextTMPro: {fileID: 0}
   boxImage: {fileID: 0}
@@ -24998,14 +25124,14 @@ MonoBehaviour:
   onPointerUp:
     m_PersistentCalls:
       m_Calls: []
-  defaultTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
+  box: {fileID: 255158610}
   defaultBoxColor: {r: 0.34117648, g: 0.39607844, b: 0.45490196, a: 1}
-  highlightedTextColor: {r: 0.69803923, g: 0.6745098, b: 0.6745098, a: 1}
   highlightedBoxColor: {r: 0.29411766, g: 0.3372549, b: 0.38039216, a: 1}
-  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selectedBoxColor: {r: 0, g: 0, b: 0, a: 0}
   buttonText: {fileID: 847555668}
-  box: {fileID: 255158610}
+  defaultTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
+  highlightedTextColor: {r: 0.69803923, g: 0.6745098, b: 0.6745098, a: 1}
+  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selected: 0
   buttonTextTMPro: {fileID: 0}
   boxImage: {fileID: 0}
@@ -25951,14 +26077,14 @@ MonoBehaviour:
   onPointerUp:
     m_PersistentCalls:
       m_Calls: []
-  defaultTextColor: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
+  box: {fileID: 306284770}
   defaultBoxColor: {r: 0.5176471, g: 0.54509807, b: 0.5803922, a: 1}
-  highlightedTextColor: {r: 0.7921569, g: 0.7921569, b: 0.7921569, a: 1}
   highlightedBoxColor: {r: 0.39607844, g: 0.41960785, b: 0.44705883, a: 1}
-  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selectedBoxColor: {r: 0, g: 0, b: 0, a: 0}
   buttonText: {fileID: 1024033746}
-  box: {fileID: 306284770}
+  defaultTextColor: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
+  highlightedTextColor: {r: 0.7921569, g: 0.7921569, b: 0.7921569, a: 1}
+  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selected: 0
   buttonTextTMPro: {fileID: 0}
   boxImage: {fileID: 0}
@@ -26536,14 +26662,14 @@ MonoBehaviour:
   onPointerUp:
     m_PersistentCalls:
       m_Calls: []
-  defaultTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
+  box: {fileID: 367598752}
   defaultBoxColor: {r: 0.34117648, g: 0.39607847, b: 0.454902, a: 1}
-  highlightedTextColor: {r: 0.69803923, g: 0.6745098, b: 0.6745098, a: 1}
   highlightedBoxColor: {r: 0.29411766, g: 0.3372549, b: 0.38039216, a: 1}
-  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selectedBoxColor: {r: 0, g: 0, b: 0, a: 0}
   buttonText: {fileID: 466619355}
-  box: {fileID: 367598752}
+  defaultTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
+  highlightedTextColor: {r: 0.69803923, g: 0.6745098, b: 0.6745098, a: 1}
+  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selected: 0
   buttonTextTMPro: {fileID: 0}
   boxImage: {fileID: 0}
@@ -32771,14 +32897,14 @@ MonoBehaviour:
   onPointerUp:
     m_PersistentCalls:
       m_Calls: []
-  defaultTextColor: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
+  box: {fileID: 430941728}
   defaultBoxColor: {r: 0.12941177, g: 0.18039216, b: 0.2392157, a: 1}
-  highlightedTextColor: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
   highlightedBoxColor: {r: 0.32941177, g: 0.45490196, b: 0.6039216, a: 1}
-  selectedTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
   selectedBoxColor: {r: 0.27058825, g: 0.3764706, b: 0.49411765, a: 1}
   buttonText: {fileID: 1467462888}
-  box: {fileID: 430941728}
+  defaultTextColor: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
+  highlightedTextColor: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
+  selectedTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
   selected: 0
   buttonTextTMPro: {fileID: 1467462891}
   boxImage: {fileID: 430941732}
@@ -43543,14 +43669,14 @@ MonoBehaviour:
   onPointerUp:
     m_PersistentCalls:
       m_Calls: []
-  defaultTextColor: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
+  box: {fileID: 699734317}
   defaultBoxColor: {r: 0.12941177, g: 0.18039216, b: 0.2392157, a: 1}
-  highlightedTextColor: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
   highlightedBoxColor: {r: 0.32941177, g: 0.45490196, b: 0.6039216, a: 1}
-  selectedTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
   selectedBoxColor: {r: 0.27058825, g: 0.3764706, b: 0.49411765, a: 1}
   buttonText: {fileID: 195946832}
-  box: {fileID: 699734317}
+  defaultTextColor: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
+  highlightedTextColor: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
+  selectedTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
   selected: 0
   buttonTextTMPro: {fileID: 195946835}
   boxImage: {fileID: 699734321}
@@ -44786,14 +44912,14 @@ MonoBehaviour:
   onPointerUp:
     m_PersistentCalls:
       m_Calls: []
-  defaultTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
+  box: {fileID: 741825181}
   defaultBoxColor: {r: 0.34117648, g: 0.39607847, b: 0.454902, a: 1}
-  highlightedTextColor: {r: 0.69803923, g: 0.6745098, b: 0.6745098, a: 1}
   highlightedBoxColor: {r: 0.29411766, g: 0.3372549, b: 0.38039216, a: 1}
-  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selectedBoxColor: {r: 0, g: 0, b: 0, a: 0}
   buttonText: {fileID: 1203397291}
-  box: {fileID: 741825181}
+  defaultTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
+  highlightedTextColor: {r: 0.69803923, g: 0.6745098, b: 0.6745098, a: 1}
+  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selected: 0
   buttonTextTMPro: {fileID: 0}
   boxImage: {fileID: 0}
@@ -58681,6 +58807,8 @@ MonoBehaviour:
   realPoint2: {fileID: 694211504}
   mapPoint1: {fileID: 1764468428}
   mapPoint2: {fileID: 154471907}
+  plotRouteButton: {fileID: 2114018025}
+  editRouteButton: {fileID: 16412116}
   referenceLine: {fileID: 7946232893753880587}
   waypointPrefab: {fileID: 6284497232497188543, guid: 0e51d1dfdc98dc74e9ca322b8b8681b6, type: 3}
   linePrefab: {fileID: 7946232893363567834, guid: bda7eeb09a17e5148aa355e3376ee358, type: 3}
@@ -59827,14 +59955,14 @@ MonoBehaviour:
   onPointerUp:
     m_PersistentCalls:
       m_Calls: []
-  defaultTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
+  box: {fileID: 952963961}
   defaultBoxColor: {r: 0.34117648, g: 0.39607844, b: 0.45490196, a: 1}
-  highlightedTextColor: {r: 0.69803923, g: 0.6745098, b: 0.6745098, a: 1}
   highlightedBoxColor: {r: 0.29411766, g: 0.3372549, b: 0.38039216, a: 1}
-  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selectedBoxColor: {r: 0, g: 0, b: 0, a: 0}
   buttonText: {fileID: 1116654810}
-  box: {fileID: 952963961}
+  defaultTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
+  highlightedTextColor: {r: 0.69803923, g: 0.6745098, b: 0.6745098, a: 1}
+  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selected: 0
   buttonTextTMPro: {fileID: 0}
   boxImage: {fileID: 0}
@@ -61334,14 +61462,14 @@ MonoBehaviour:
   onPointerUp:
     m_PersistentCalls:
       m_Calls: []
-  defaultTextColor: {r: 0.12941177, g: 0.18039216, b: 0.2392157, a: 1}
+  box: {fileID: 1009111902}
   defaultBoxColor: {r: 0.5137255, g: 0.58431375, b: 0.654902, a: 1}
-  highlightedTextColor: {r: 0.21068965, g: 0.29137936, b: 0.39, a: 1}
   highlightedBoxColor: {r: 0.6282723, g: 0.7162304, b: 0.8, a: 1}
-  selectedTextColor: {r: 0.0475, g: 0.0675, b: 0.09, a: 1}
   selectedBoxColor: {r: 0.39285713, g: 0.44642854, b: 0.5, a: 1}
   buttonText: {fileID: 1455016374}
-  box: {fileID: 1009111902}
+  defaultTextColor: {r: 0.12941177, g: 0.18039216, b: 0.2392157, a: 1}
+  highlightedTextColor: {r: 0.21068965, g: 0.29137936, b: 0.39, a: 1}
+  selectedTextColor: {r: 0.0475, g: 0.0675, b: 0.09, a: 1}
   selected: 0
   buttonTextTMPro: {fileID: 0}
   boxImage: {fileID: 0}
@@ -70664,7 +70792,8 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 16412115}
   m_Father: {fileID: 1037299331}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -71357,14 +71486,14 @@ MonoBehaviour:
   onPointerUp:
     m_PersistentCalls:
       m_Calls: []
-  defaultTextColor: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
+  box: {fileID: 1227363539}
   defaultBoxColor: {r: 0.12941177, g: 0.18039216, b: 0.2392157, a: 1}
-  highlightedTextColor: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
   highlightedBoxColor: {r: 0.32941177, g: 0.45490196, b: 0.6039216, a: 1}
-  selectedTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
   selectedBoxColor: {r: 0.27058825, g: 0.3764706, b: 0.49411765, a: 1}
   buttonText: {fileID: 822380379}
-  box: {fileID: 1227363539}
+  defaultTextColor: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
+  highlightedTextColor: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
+  selectedTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
   selected: 0
   buttonTextTMPro: {fileID: 822380382}
   boxImage: {fileID: 1227363543}
@@ -72274,14 +72403,14 @@ MonoBehaviour:
   onPointerUp:
     m_PersistentCalls:
       m_Calls: []
-  defaultTextColor: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
+  box: {fileID: 1273942695}
   defaultBoxColor: {r: 0.5176471, g: 0.54509807, b: 0.5803922, a: 1}
-  highlightedTextColor: {r: 0.7921569, g: 0.7921569, b: 0.7921569, a: 1}
   highlightedBoxColor: {r: 0.39607844, g: 0.41960785, b: 0.44705883, a: 1}
-  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selectedBoxColor: {r: 0, g: 0, b: 0, a: 0}
   buttonText: {fileID: 773882211}
-  box: {fileID: 1273942695}
+  defaultTextColor: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
+  highlightedTextColor: {r: 0.7921569, g: 0.7921569, b: 0.7921569, a: 1}
+  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selected: 0
   buttonTextTMPro: {fileID: 0}
   boxImage: {fileID: 0}
@@ -73377,14 +73506,14 @@ MonoBehaviour:
   onPointerUp:
     m_PersistentCalls:
       m_Calls: []
-  defaultTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
+  box: {fileID: 1352155682}
   defaultBoxColor: {r: 0.34117648, g: 0.39607847, b: 0.454902, a: 1}
-  highlightedTextColor: {r: 0.69803923, g: 0.6745098, b: 0.6745098, a: 1}
   highlightedBoxColor: {r: 0.29411766, g: 0.3372549, b: 0.38039216, a: 1}
-  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selectedBoxColor: {r: 0, g: 0, b: 0, a: 0}
   buttonText: {fileID: 301932886}
-  box: {fileID: 1352155682}
+  defaultTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
+  highlightedTextColor: {r: 0.69803923, g: 0.6745098, b: 0.6745098, a: 1}
+  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selected: 0
   buttonTextTMPro: {fileID: 0}
   boxImage: {fileID: 0}
@@ -96733,14 +96862,14 @@ MonoBehaviour:
   onPointerUp:
     m_PersistentCalls:
       m_Calls: []
-  defaultTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
+  box: {fileID: 1817034734}
   defaultBoxColor: {r: 0.34117648, g: 0.39607847, b: 0.454902, a: 1}
-  highlightedTextColor: {r: 0.69803923, g: 0.6745098, b: 0.6745098, a: 1}
   highlightedBoxColor: {r: 0.29411766, g: 0.3372549, b: 0.38039216, a: 1}
-  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selectedBoxColor: {r: 0, g: 0, b: 0, a: 0}
   buttonText: {fileID: 772045996}
-  box: {fileID: 1817034734}
+  defaultTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
+  highlightedTextColor: {r: 0.69803923, g: 0.6745098, b: 0.6745098, a: 1}
+  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selected: 0
   buttonTextTMPro: {fileID: 0}
   boxImage: {fileID: 0}
@@ -97764,14 +97893,14 @@ MonoBehaviour:
   onPointerUp:
     m_PersistentCalls:
       m_Calls: []
-  defaultTextColor: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
+  box: {fileID: 1849982860}
   defaultBoxColor: {r: 0.5176471, g: 0.54509807, b: 0.5803922, a: 1}
-  highlightedTextColor: {r: 0.7921569, g: 0.7921569, b: 0.7921569, a: 1}
   highlightedBoxColor: {r: 0.39607844, g: 0.41960785, b: 0.44705883, a: 1}
-  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selectedBoxColor: {r: 0, g: 0, b: 0, a: 0}
   buttonText: {fileID: 638389780}
-  box: {fileID: 1849982860}
+  defaultTextColor: {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
+  highlightedTextColor: {r: 0.7921569, g: 0.7921569, b: 0.7921569, a: 1}
+  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selected: 0
   buttonTextTMPro: {fileID: 0}
   boxImage: {fileID: 0}
@@ -103421,7 +103550,7 @@ GameObject:
   - component: {fileID: 2114018026}
   - component: {fileID: 2114018025}
   m_Layer: 5
-  m_Name: Map Tab
+  m_Name: Plot Route Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -103466,21 +103595,33 @@ MonoBehaviour:
       m_Calls: []
   onPointerClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 912612054}
+        m_TargetAssemblyTypeName: MapControl, Assembly-CSharp
+        m_MethodName: OnNavToolClicked
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 2114018025}
+          m_ObjectArgumentAssemblyTypeName: BoxButton, Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onPointerDown:
     m_PersistentCalls:
       m_Calls: []
   onPointerUp:
     m_PersistentCalls:
       m_Calls: []
-  defaultTextColor: {r: 0, g: 0, b: 0, a: 1}
+  box: {fileID: 2114018023}
   defaultBoxColor: {r: 0.36078432, g: 0.41176474, b: 0.46274513, a: 1}
-  highlightedTextColor: {r: 0.21068965, g: 0.29137936, b: 0.39, a: 1}
   highlightedBoxColor: {r: 0.43666667, g: 0.5, b: 0.56, a: 1}
-  selectedTextColor: {r: 0.0475, g: 0.0675, b: 0.09, a: 1}
   selectedBoxColor: {r: 0.28067797, g: 0.320339, b: 0.36, a: 1}
   buttonText: {fileID: 0}
-  box: {fileID: 2114018023}
+  defaultTextColor: {r: 0, g: 0, b: 0, a: 1}
+  highlightedTextColor: {r: 0, g: 0, b: 0, a: 1}
+  selectedTextColor: {r: 0.0475, g: 0.0675, b: 0.09, a: 1}
   selected: 0
   buttonTextTMPro: {fileID: 0}
   boxImage: {fileID: 0}
@@ -124618,14 +124759,14 @@ MonoBehaviour:
   onPointerUp:
     m_PersistentCalls:
       m_Calls: []
-  defaultTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
+  box: {fileID: 5520600589660978982}
   defaultBoxColor: {r: 0.34117648, g: 0.39607844, b: 0.45490196, a: 1}
-  highlightedTextColor: {r: 0.69803923, g: 0.6745098, b: 0.6745098, a: 1}
   highlightedBoxColor: {r: 0.29411766, g: 0.3372549, b: 0.38039216, a: 1}
-  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selectedBoxColor: {r: 0, g: 0, b: 0, a: 0}
   buttonText: {fileID: 5520600589419531578}
-  box: {fileID: 5520600589660978982}
+  defaultTextColor: {r: 0.99607843, g: 0.99607843, b: 0.99607843, a: 1}
+  highlightedTextColor: {r: 0.69803923, g: 0.6745098, b: 0.6745098, a: 1}
+  selectedTextColor: {r: 0, g: 0, b: 0, a: 0}
   selected: 0
   buttonTextTMPro: {fileID: 0}
   boxImage: {fileID: 0}

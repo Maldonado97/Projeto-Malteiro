@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler
 {
@@ -11,16 +12,22 @@ public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
 
     public Canvas canvas;
     [SerializeField] GameObject border;
-    [SerializeField] GameObject playerIndicator;
+    public GameObject playerIndicator;
     [Header("Scale Calculation")]
     [SerializeField] Transform realPoint1;
     [SerializeField] Transform realPoint2;
     [SerializeField] RectTransform mapPoint1;
     [SerializeField] RectTransform mapPoint2;
     [Header("Route Plotting")]
-    [SerializeField] GameObject referenceLine;
+    private List<BoxButton> navTools = new List<BoxButton>();
+    [SerializeField] BoxButton plotRouteButton;
+    [SerializeField] BoxButton editRouteButton;
+    public GameObject previewLine;
+    private Image previewLineImage;
     [SerializeField] GameObject waypointPrefab;
     public GameObject linePrefab;
+    [HideInInspector] public bool editingWaypoints = false;
+    bool doingSomethingRandom = false;
 
     bool draggingMap = false;
     [HideInInspector] public RectTransform mapTransform;
@@ -34,6 +41,7 @@ public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
 
     public event Action onPlayerClick;
     public event Action onMapPositionChanged;
+    public event Action<int> onWaypointRemoved;
     private void Awake()
     {
         instance = this;
@@ -43,7 +51,12 @@ public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
         mapTransform = gameObject.GetComponent<RectTransform>();
         borderRectTransform = border.GetComponent<RectTransform>();
         player = PlayerControl.instance.gameObject;
+        navTools.Add(plotRouteButton);
+        navTools.Add(editRouteButton);
         GetMapScaleFactor();
+        previewLineImage = previewLine.GetComponent<Image>();
+        previewLineImage.enabled = false;
+        //previewLine.SetActive(false);
     }
     private void Update()
     {
@@ -71,6 +84,73 @@ public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
         mapItemRectTransform.rotation = realItem.transform.rotation;
         //Debug.Log($"Map item position = {xPos}, {yPos}");
     }
+    public void OnWaypointRemoved(int waypointListIndex)
+    {
+        if (waypointListIndex == (mapWaypoints.Count))
+        {
+            if(mapWaypoints.Count > 0)
+            {
+                previewLine.transform.position = mapWaypoints[mapWaypoints.Count - 1].waypointPosition;
+            }
+            else
+            {
+                previewLineImage.enabled = false;
+            }
+        }
+        onWaypointRemoved?.Invoke(waypointListIndex);
+    }
+    public void OnNavToolClicked(BoxButton navTool)
+    {
+        if (navTool.selected)
+        {
+            if (navTool == plotRouteButton)
+            {
+                editingWaypoints = false;
+                //Debug.Log("Deselected Plot Route button");
+            }
+            if (navTool == editRouteButton)
+            {
+                doingSomethingRandom = false;
+                //Debug.Log("Deselected Edit Route button");
+            }
+            navTool.DeselectButton();
+        }
+        else
+        {
+            if (navTool == plotRouteButton)
+            {
+                editingWaypoints = true;
+                doingSomethingRandom = false;
+                //Debug.Log("Selected Plot Route button");
+            }
+            if (navTool == editRouteButton)
+            {
+                doingSomethingRandom = true;
+                editingWaypoints = false;
+                //Debug.Log("Selected Do Something Random button");
+            }
+            DeselectAllNavTools();
+            navTool.SelectButton();
+        }
+        if (editingWaypoints && mapWaypoints.Count > 0)
+        {
+            //previewLine.SetActive(true);
+            previewLineImage.enabled = true;
+        }
+        else
+        {
+            //previewLine.SetActive(false);
+            previewLineImage.enabled = false;
+        }
+    }
+    public void DeselectAllNavTools()
+    {
+        foreach(BoxButton navTool in navTools)
+        {
+            navTool.DeselectButton();
+        }
+    }
+    //POINTER EVENTS
     public void OnScroll(PointerEventData eventData)
     {
         //onScroll?.Invoke();
@@ -191,14 +271,16 @@ public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
     }
     public virtual void OnPointerClick(PointerEventData eventData)
     {
-        if (!draggingMap)
+        if (!draggingMap && editingWaypoints && !Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
         {
             Vector3 mousePosition = eventData.position * canvas.scaleFactor;
             //Debug.Log($"{mousePosition}, {Input.mousePosition * canvas.scaleFactor}");
             //Vector3 mouseRealtivePosition = (mousePosition - mapTransform.position) / mapTransform.localScale.x;
 
             Instantiate(waypointPrefab, mousePosition, mapTransform.rotation, mapTransform);
-            referenceLine.transform.position = mousePosition;
+            previewLine.transform.position = mousePosition;
+            //previewLine.SetActive(true);
+            previewLineImage.enabled = true;
             //Instantiate(line, mousePosition, mapTransform.rotation, mapTransform);
             onPlayerClick?.Invoke();
         }
