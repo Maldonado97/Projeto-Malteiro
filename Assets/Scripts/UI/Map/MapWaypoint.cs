@@ -39,9 +39,11 @@ public class MapWaypoint : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     public void CorrectHierarchy()
     {
         RectTransform playerIndicatorRectTransform = mapControl.playerIndicator.GetComponent<RectTransform>();
-        playerIndicatorRectTransform.SetAsLastSibling();
         RectTransform previewLineRectTransform = mapControl.previewLine.GetComponent<RectTransform>();
+        RectTransform pathInformationBoxRectTransform = mapControl.pathInformationBox.GetComponent<RectTransform>();
+        playerIndicatorRectTransform.SetAsLastSibling();
         previewLineRectTransform.SetAsLastSibling();
+        pathInformationBoxRectTransform.SetAsLastSibling();
     }
     private void GetWaypointPosition()
     {

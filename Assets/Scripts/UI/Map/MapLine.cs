@@ -52,8 +52,17 @@ public class MapLine : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     }
     public void OnPointerEnter(PointerEventData eventData)
     {
+        float course = 180 - lineRectTransform.eulerAngles.z;
+        if(course < 0)
+        {
+            course += 360;
+        }
+        mapControl.pathInformationText.text = $"Course: {Mathf.RoundToInt(course)}º";
+        mapControl.pathInformationBox.SetActive(true);
     }
     public void OnPointerExit(PointerEventData eventData)
     {
+        mapControl.pathInformationBox.SetActive(false);
+        mapControl.pathInformationText.text = $"Course: nothing";
     }
 }

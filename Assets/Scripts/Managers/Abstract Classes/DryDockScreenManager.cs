@@ -112,7 +112,7 @@ public abstract class DryDockScreenManager : MonoBehaviour
     }
     public void OnServiceOptionClicked(DryDockServiceOption serviceOption)
     {
-        DeselectAllServiceOptions();
+        //DeselectAllServiceOptions();
         SelectServiceOption(serviceOption);
         DisplayServiceDescription(serviceOption);
     }
@@ -127,7 +127,8 @@ public abstract class DryDockScreenManager : MonoBehaviour
     }
     public void SelectServiceOption(DryDockServiceOption serviceOption)
     {
-        serviceOption.selected = true;
+        //serviceOption.selected = true;
+        DeselectAllServiceOptions();
         serviceOption.SelectButton();
         selectedServiceOption = serviceOption;
         selectedServiceName = serviceOption.serviceName;
@@ -137,6 +138,12 @@ public abstract class DryDockScreenManager : MonoBehaviour
         serviceDescriptionText.text = serviceOption.serviceDescription;
         serviceValueText.text = $"Value: {serviceOption.serviceValue}";
         serviceNameText.text = $"{serviceOption.name}";
+    }
+    public void UpdateServices()
+    {
+        CalculateAmountToRepair();
+        UpdateServicePrices();
+        //Debug.Log("Repair services updated");
     }
     public void CalculateAmountToRepair()
     {
@@ -177,12 +184,6 @@ public abstract class DryDockScreenManager : MonoBehaviour
             DisplayServiceDescription(selectedServiceOption);
         }
     }
-    public void UpdateServices()
-    {
-        CalculateAmountToRepair();
-        UpdateServicePrices();
-        //Debug.Log("Repair services updated");
-    }
     public void ExecuteService()
     {
         var playerControl = PlayerControl.instance;
@@ -207,7 +208,7 @@ public abstract class DryDockScreenManager : MonoBehaviour
             }
             if (selectedServiceName == "Partial Repair")
             {
-                if (playerInventory.playerCash >= totalRepairPrice)
+                if (playerInventory.playerCash >= partialRepairPrice)
                 {
                     playerControl.health += partialRepairAmount;
                     playerInventory.RemoveCashFromInventory(partialRepairPrice);

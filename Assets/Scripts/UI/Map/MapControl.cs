@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
 public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler
 {
@@ -18,12 +19,15 @@ public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
     [SerializeField] Transform realPoint2;
     [SerializeField] RectTransform mapPoint1;
     [SerializeField] RectTransform mapPoint2;
-    [Header("Route Plotting")]
+    [Header("NavTools")]
     private List<BoxButton> navTools = new List<BoxButton>();
     [SerializeField] BoxButton plotRouteButton;
     [SerializeField] BoxButton editRouteButton;
+    [Header("Route Elements")]
     public GameObject previewLine;
     private Image previewLineImage;
+    public GameObject pathInformationBox;
+    public TextMeshProUGUI pathInformationText;
     [SerializeField] GameObject waypointPrefab;
     public GameObject linePrefab;
     [HideInInspector] public bool editingWaypoints = false;
@@ -56,11 +60,16 @@ public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
         GetMapScaleFactor();
         previewLineImage = previewLine.GetComponent<Image>();
         previewLineImage.enabled = false;
+        pathInformationBox.SetActive(false);
         //previewLine.SetActive(false);
     }
     private void Update()
     {
         SetMapItemPosition(player, playerIndicator);
+        if (pathInformationBox.activeSelf)
+        {
+            DisplayPathInformationBox();
+        }
     }
     private void GetMapScaleFactor()
     {
@@ -84,11 +93,39 @@ public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
         mapItemRectTransform.rotation = realItem.transform.rotation;
         //Debug.Log($"Map item position = {xPos}, {yPos}");
     }
+    private void DisplayPathInformationBox()
+    {
+        float pathInformationBoxXOffset = 40 * pathInformationBox.transform.lossyScale.x;
+        float pathInformationBoxYOffset = 13 * pathInformationBox.transform.lossyScale.y;
+        Vector3 infoBoxOffset = new Vector3(pathInformationBoxXOffset, pathInformationBoxYOffset);
+        float infoBoxBaseScale = 3;
+        float infoBoxXScale = infoBoxBaseScale / mapTransform.localScale.x;
+        float infoBoxYScale = infoBoxBaseScale / mapTransform.localScale.y; //Should be the same as xScale, unless map is distorted
+        
+        pathInformationBox.transform.localScale = new Vector3 (infoBoxXScale, infoBoxYScale, 1);
+        pathInformationBox.transform.position = GetMousePosition() + infoBoxOffset;
+    }
+    private Vector3 GetMousePosition()
+    {
+        Vector3 mousePosition;
+
+        mousePosition = Input.mousePosition * MapControl.instance.canvas.scaleFactor;
+
+        return mousePosition;
+    }
+    public void DeselectAllNavTools()
+    {
+        foreach (BoxButton navTool in navTools)
+        {
+            navTool.DeselectButton();
+        }
+    }
+    //EVENTS
     public void OnWaypointRemoved(int waypointListIndex)
     {
         if (waypointListIndex == (mapWaypoints.Count))
         {
-            if(mapWaypoints.Count > 0)
+            if (mapWaypoints.Count > 0)
             {
                 previewLine.transform.position = mapWaypoints[mapWaypoints.Count - 1].waypointPosition;
             }
@@ -141,13 +178,6 @@ public class MapControl : MonoBehaviour, IPointerClickHandler, IPointerDownHandl
         {
             //previewLine.SetActive(false);
             previewLineImage.enabled = false;
-        }
-    }
-    public void DeselectAllNavTools()
-    {
-        foreach(BoxButton navTool in navTools)
-        {
-            navTool.DeselectButton();
         }
     }
     //POINTER EVENTS
